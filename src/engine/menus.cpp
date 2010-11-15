@@ -28,7 +28,7 @@ struct menu : g3d_callback
         cgui = NULL;
     }
 
-    virtual void clear()
+    virtual void clear() 
     {
         DELETEA(onclear);
     }
@@ -79,7 +79,7 @@ struct delayedupdate
             default: return 0;
         }
     }
-
+   
     const char *getstring() const
     {
         switch(type)
@@ -103,7 +103,7 @@ struct delayedupdate
         }
     }
 };
-
+     
 static hashtable<const char *, menu> guis;
 static vector<menu *> guistack;
 static vector<delayedupdate> updatelater;
@@ -113,7 +113,7 @@ VARP(menudistance,  16, 40,  256);
 VARP(menuautoclose, 32, 120, 4096);
 
 vec menuinfrontofplayer()
-{
+{ 
     vec dir;
     vecfromyawpitch(camera1->yaw, 0, 1, 0, dir);
     dir.mul(menudistance).add(camera1->o);
@@ -135,7 +135,7 @@ void removegui(menu *m)
         m->clear();
         return;
     }
-}
+}    
 
 void pushgui(menu *m, int pos = -1)
 {
@@ -173,13 +173,13 @@ void showgui(const char *name)
 int cleargui(int n)
 {
     int clear = guistack.length();
-    if(mainmenu && !isconnected(true) && clear > 0 && guistack[0]->name && !strcmp(guistack[0]->name, "main"))
+    if(mainmenu && !isconnected(true) && clear > 0 && guistack[0]->name && !strcmp(guistack[0]->name, "main")) 
     {
         clear--;
         if(!clear) return 1;
     }
     if(n>0) clear = min(clear, n);
-    loopi(clear) popgui();
+    loopi(clear) popgui(); 
     if(!guistack.empty()) restoregui(guistack.length()-1);
     return clear;
 }
@@ -214,7 +214,7 @@ void guibutton(char *name, char *action, char *icon)
     if(!cgui) return;
     bool hideicon = !strcmp(icon, "0");
     int ret = cgui->button(name, GUI_BUTTON_COLOR, hideicon ? NULL : (icon[0] ? icon : (strstr(action, "showgui") ? "menu" : "action")));
-    if(ret&G3D_UP)
+    if(ret&G3D_UP) 
     {
         updatelater.add().schedule(action[0] ? action : name);
         if(shouldclearmenu) clearlater = true;
@@ -253,8 +253,8 @@ void guiimage(char *path, char *action, float *scale, int *overlaid, char *alt)
 
 void guicolor(int *color)
 {
-    if(cgui)
-    {
+    if(cgui) 
+    {   
         defformatstring(desc)("0x%06X", *color);
         cgui->text(desc, *color, NULL);
     }
@@ -422,11 +422,11 @@ void guibitfield(char *name, char *var, int *mask, char *onchange)
 
 //-ve length indicates a wrapped text field of any (approx 260 chars) length, |length| is the field width
 void guifield(char *var, int *maxlength, char *onchange)
-{
+{   
     if(!cgui) return;
     const char *initval = getsval(var);
 	char *result = cgui->field(var, GUI_BUTTON_COLOR, *maxlength ? *maxlength : 12, 0, initval);
-    if(result) updateval(var, result, onchange);
+    if(result) updateval(var, result, onchange); 
 }
 
 //-ve maxlength indicates a wrapped text field of any (approx 260 chars) length, |maxlength| is the field width
@@ -486,7 +486,7 @@ void newgui(char *name, char *contents, char *header)
 void guiservers()
 {
     extern char *showservers(g3d_gui *cgui);
-    if(cgui)
+    if(cgui) 
     {
         char *command = showservers(cgui);
         if(command)
@@ -600,12 +600,12 @@ void menuprocess()
     updatelater.shrink(0);
     if(wasmain > mainmenu || clearlater)
     {
-        if(wasmain > mainmenu || level==guistack.length())
+        if(wasmain > mainmenu || level==guistack.length()) 
         {
             loopvrev(guistack)
             {
                 menu *m = guistack[i];
-                if(m->onclear)
+                if(m->onclear) 
                 {
                     uint *action = m->onclear;
                     m->onclear = NULL;
@@ -613,7 +613,7 @@ void menuprocess()
                     delete[] action;
                 }
             }
-            cleargui(level);
+            cleargui(level); 
         }
         clearlater = false;
     }
@@ -634,8 +634,8 @@ void clearmainmenu()
 
 void g3d_mainmenu()
 {
-    if(!guistack.empty())
-    {
+    if(!guistack.empty()) 
+    {   
         extern int usegui2d;
         if(!mainmenu && !usegui2d && camera1->o.dist(menupos) > menuautoclose) cleargui();
         else g3d_addgui(guistack.last(), menupos, GUI_2D | GUI_FOLLOW);

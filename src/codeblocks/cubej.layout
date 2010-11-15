@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="default" />
+	<File name="../cubej/client.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="105" topLine="0" />
+	</File>
+	<File name="../cubej/client.hpp" open="1" top="0" tabpos="4">
+		<Cursor position="99" topLine="0" />
+	</File>
+	<File name="../cubej/cubej.h" open="1" top="0" tabpos="5">
+		<Cursor position="113" topLine="0" />
+	</File>
+	<File name="../cubej/entities.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="18" topLine="0" />
+	</File>
+	<File name="../cubej/stubs.cpp" open="1" top="1" tabpos="3">
+		<Cursor position="1313" topLine="13" />
+	</File>
+	<File name="../engine/3dgui.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="38219" topLine="1140" />
+	</File>
+	<File name="../engine/client.cpp" open="1" top="0" tabpos="8">
+		<Cursor position="6007" topLine="221" />
+	</File>
+	<File name="../engine/command.cpp" open="1" top="0" tabpos="7">
+		<Cursor position="6729" topLine="331" />
+	</File>
+	<File name="../engine/console.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="4581" topLine="148" />
+	</File>
+	<File name="../engine/engine.h" open="0" top="0" tabpos="0">
+		<Cursor position="8014" topLine="198" />
+	</File>
+	<File name="../engine/main.cpp" open="1" top="0" tabpos="6">
+		<Cursor position="37381" topLine="1164" />
+	</File>
+	<File name="../engine/menus.cpp" open="0" top="0" tabpos="5">
+		<Cursor position="324" topLine="12" />
+	</File>
+	<File name="../engine/octaedit.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="36362" topLine="1324" />
+	</File>
+	<File name="../engine/physics.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="68365" topLine="2072" />
+	</File>
+	<File name="../engine/rendergl.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="72972" topLine="2176" />
+	</File>
+	<File name="../engine/rendermodel.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="18523" topLine="739" />
+	</File>
+	<File name="../engine/serverbrowser.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="13703" topLine="467" />
+	</File>
+	<File name="../engine/textedit.h" open="0" top="0" tabpos="0">
+		<Cursor position="19265" topLine="639" />
+	</File>
+	<File name="../engine/world.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="33189" topLine="1192" />
+	</File>
+	<File name="../shared/command.h" open="0" top="0" tabpos="12">
+		<Cursor position="12494" topLine="0" />
+	</File>
+	<File name="../shared/ents.h" open="0" top="0" tabpos="0">
+		<Cursor position="6326" topLine="174" />
+	</File>
+	<File name="../shared/iengine.h" open="0" top="0" tabpos="8">
+		<Cursor position="4249" topLine="89" />
+	</File>
+	<File name="../shared/igame.h" open="0" top="0" tabpos="4">
+		<Cursor position="2375" topLine="0" />
+	</File>
+	<File name="../shared/tools.h" open="0" top="0" tabpos="0">
+		<Cursor position="15923" topLine="0" />
+	</File>
+</CodeBlocks_layout_file>

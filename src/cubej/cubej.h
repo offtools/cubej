@@ -3,6 +3,7 @@
 
 #include "cube.h"
 #include "client.hpp"
+#include "entities.hpp"
 
 namespace CubeJ
 {

@@ -1,21 +1,26 @@
-/*
- * server.cpp
- *
- *  Created on: 15.11.2010
- *      Author: tha
- */
-
 #include "server.hpp"
 
 namespace CubeJSrv {
 
-ClientInfo::ClientInfo() : clientnum(-1), connected(false), local(false) {
-	// TODO Auto-generated constructor stub
+	ClientInfo::ClientInfo() : clientnum(-1), connected(false), local(false) {}
 
-}
+	ClientInfo::~ClientInfo() {}
 
-ClientInfo::~ClientInfo() {
-	// TODO Auto-generated destructor stub
-}
+	Server::Server() {
+		map = '\0';
+	}
 
+	Server::~Server() {}
+
+	Server::init() {
+
+	}
+
+	Server::connect() {
+
+	}
+
+	Server::disconnect() {
+
+	}
 }

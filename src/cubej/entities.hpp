@@ -73,3 +73,5 @@ namespace CubeJ
 
     void EditEntity(int i, bool local);
 }
+
+#endif

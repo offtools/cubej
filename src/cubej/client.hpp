@@ -11,20 +11,22 @@ namespace CubeJ
 			Client();
 			~Client();
 
-			void Init();
-			void Update();
-			void Connect();
-			void Disconnect();
+			void init();
+			void update();
+			void connect();
+			void disconnect();
 
-			dynent* GetView(int num = 0);
+			dynent* getCamera(int num = 0);
+			void setCameraPosition(int num, vec o);
+			vec getCameraPosition(int num = 0);
 
-			void onEditToggle(bool on);
-			void onStartMap();
+			void edittoggle(bool on);
+			void startMap();
 		protected:
 		private:
 			//the client holds one entity for the engine, we just use this to provide a camera
 			bool connected;
-			vector<dynent*> views;
+			vector<dynent*> cameras;
 	};
 }
 

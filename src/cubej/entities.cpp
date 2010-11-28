@@ -107,7 +107,6 @@ namespace CubeJ
 	public:
 		EntityHandlerType()
 		{
-			conoutf("EntityHandlerType<LIGHT>::EntityHandlerType");
 			name = newstring("light");
 		}
 		~EntityHandlerType()
@@ -233,7 +232,7 @@ namespace CubeJ
 		}
 	};
 
-	static EntityHandler* handler[] =
+	static EntityHandler* entityhandler[] =
 	{
 		new EntityHandlerType<NOTUSED>,
 		new EntityHandlerType<LIGHT>,
@@ -249,6 +248,6 @@ namespace CubeJ
 
 	EntityHandler& GetEntityHandler(int type)
 	{
-		return type && type < NUMHANDLER ? *handler[type] : *handler[NOTUSED];
+		return type && type < NUMHANDLER ? *entityhandler[type] : *entityhandler[NOTUSED];
 	}
 }

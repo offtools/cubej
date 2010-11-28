@@ -2,37 +2,90 @@
 
 namespace entities
 {
-    void editent(int i, bool local) {}
-    const char *entnameinfo(entity &e) { return NULL; }
-    const char *entname(int i) { return NULL; }
-    int extraentinfosize() { return 0; }
-    void writeent(entity &e, char *buf) {}
-    void readent(entity &e, char *buf) {}
-    float dropheight(entity &e) { return 0; }
-    void fixentity(extentity &e) {}
-    void entradius(extentity &e, bool color) {}
-    bool mayattach(extentity &e) { return false; }
-    bool attachent(extentity &e, extentity &a) { return false; }
-    bool printent(extentity &e, char *buf) { return false; }
-    extentity *newentity() { return NULL; }
-    void deleteentity(extentity *e) {}
-    void clearents() {}
-    vector<extentity *> &getents() { return CubeJ::ents; }
-    const char *entmodel(const entity &e) { return NULL; }
-    void animatemapmodel(const extentity &e, int &anim, int &basetime) {}
+    void editent(int i, bool local) {
+    	CubeJ::EditEntity(i, local);
+    }
+
+    const char *entnameinfo(entity &e) {
+    	return CubeJ::GetEntityHandler(e.type).entnameinfo(e);
+    }
+
+    const char *entname(int i) {
+    	return  CubeJ::GetEntityHandler(i).entname();
+    }
+
+    int extraentinfosize() {
+    	return CubeJ::EntityInfosize();
+    }
+
+    void writeent(entity &e, char *buf) {
+    	CubeJ::GetEntityHandler(e.type).writeent(e, buf);
+    }
+
+    void readent(entity &e, char *buf) {
+    	CubeJ::GetEntityHandler(e.type).readent(e, buf);
+    }
+
+    float dropheight(entity &e) {
+    	return CubeJ::GetEntityHandler(e.type).dropheight(e);
+    }
+
+    void fixentity(extentity &e) {
+    	CubeJ::GetEntityHandler(e.type).fixentity(e);
+    }
+
+    void entradius(extentity &e, bool color) {
+    	CubeJ::GetEntityHandler(e.type).entradius(e, color);
+    }
+
+    bool mayattach(extentity &e) {
+    	return CubeJ::GetEntityHandler(e.type).mayattach(e);
+    }
+
+    bool attachent(extentity &e, extentity &a) {
+    	return CubeJ::GetEntityHandler(e.type).attachent(e, a);
+    }
+
+    bool printent(extentity &e, char *buf) {
+    	return CubeJ::GetEntityHandler(e.type).printent(e, buf);
+    }
+
+    extentity *newentity() {
+    	return CubeJ::NewEntity();
+    }
+
+    void deleteentity(extentity *e) {
+    	CubeJ::GetEntityHandler(e->type).deleteentity(e);
+    }
+
+    void clearents() {
+    	CubeJ::ClearEnts();
+    }
+
+    vector<extentity *> &getents() {
+    	return CubeJ::ents;
+    }
+
+    const char *entmodel(const entity &e) {
+    	return CubeJ::GetEntityHandler(e.type).entmodel(e);
+    }
+
+    void animatemapmodel(const extentity &e, int &anim, int &basetime) {
+    	return CubeJ::GetEntityHandler(e.type).animatemapmodel(e, anim, basetime);
+    }
 }
 
 namespace game
 {
     void parseoptions(vector<const char *> &args) {}
 
-    void gamedisconnect(bool cleanup) { conoutf("[DEBUG] game::gamedisconnect"); CubeJ::client.Disconnect(); }
+    void gamedisconnect(bool cleanup) { conoutf("[DEBUG] game::gamedisconnect"); CubeJ::client.disconnect(); }
     void parsepacketclient(int chan, packetbuf &p) {}
     void connectattempt(const char *name, const char *password, const ENetAddress &address) {}
     void connectfail() {}
-    void gameconnect(bool _remote)  { conoutf("[DEBUG] game::gameconnect"); CubeJ::client.Connect(); }
+    void gameconnect(bool _remote)  { conoutf("[DEBUG] game::gameconnect"); CubeJ::client.connect(); }
     bool allowedittoggle() { return true; }
-    void edittoggled(bool on) { CubeJ::client.onEditToggle(on); }
+    void edittoggled(bool on) { CubeJ::client.edittoggle(on); }
     void writeclientinfo(stream *f) {}
     void toserver(char *text) {}
     void changemap(const char *name) {}
@@ -47,8 +100,8 @@ namespace game
     const char *savedservers() { return "servers.cfg"; }
     void loadconfigs() { execfile("auth.cfg", false); }
 
-    void updateworld() { CubeJ::client.Update(); }
-    void initclient() { CubeJ::client.Init(); }
+    void updateworld() { CubeJ::client.update(); }
+    void initclient() { CubeJ::client.init(); }
     void physicstrigger(physent *d, bool local, int floorlevel, int waterlevel, int material) {}
     void bounced(physent *d, const vec &surface) {}
     void edittrigger(const selinfo &sel, int op, int arg1, int arg2, int arg3) {}
@@ -59,14 +112,14 @@ namespace game
     void resetgamestate() {}
     void suicide(physent *d) {}
     void newmap(int size) {}
-    void startmap(const char *name) { CubeJ::client.onStartMap(); }
+    void startmap(const char *name) { CubeJ::client.startMap(); }
     void preload() {}
     float abovegameplayhud(int w, int h) { return 0; }
     void gameplayhud(int w, int h) {}
     bool canjump() { return false; }
     bool allowmove(physent *d) { return false; }
     void doattack(bool on) {}
-    dynent *iterdynents(int i) { return !i ? CubeJ::client.GetView() : NULL; }
+    dynent *iterdynents(int i) { return !i ? CubeJ::client.getCamera() : NULL; }
     int numdynents() { return 1; }
     void rendergame(bool mainpass) {}
     void renderavatar() {}
@@ -91,8 +144,15 @@ namespace game
 
 namespace server
 {
-    void *newclientinfo() { return NULL; }
-    void deleteclientinfo(void *ci) {}
+    void *newclientinfo() {
+//    	return new CubeJSrv::ClientInfo();
+    	return NULL;
+    }
+
+    void deleteclientinfo(void *ci) {
+//    	delete (CubeJSrv::ClientInfo*)ci;
+    }
+
     void serverinit() {}
     int reserveclients() { return 0; }
     void clientdisconnect(int n) {}

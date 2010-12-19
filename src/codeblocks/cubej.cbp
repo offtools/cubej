@@ -9,7 +9,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="default">
-				<Option output="../../bin/cubej.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../../bin_unix/native_client" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../../" />
 				<Option object_output=".objs/default" />
 				<Option type="1" />
@@ -43,7 +43,7 @@
 				</Linker>
 			</Target>
 			<Target title="debug">
-				<Option output="../../bin/cubej.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../../bin_unix/native_client" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../../" />
 				<Option object_output=".objs/debug" />
 				<Option type="1" />
@@ -152,6 +152,12 @@
 		<Unit filename="../cubej/client.hpp" />
 		<Unit filename="../cubej/cubej.h" />
 		<Unit filename="../cubej/entities.cpp" />
+		<Unit filename="../cubej/entities.hpp" />
+		<Unit filename="../cubej/protocol.cpp" />
+		<Unit filename="../cubej/protocol.hpp" />
+		<Unit filename="../cubej/remote.cpp" />
+		<Unit filename="../cubej/server.cpp" />
+		<Unit filename="../cubej/server.hpp" />
 		<Unit filename="../cubej/stubs.cpp" />
 		<Unit filename="../engine/3dgui.cpp">
 			<Option target="default" />

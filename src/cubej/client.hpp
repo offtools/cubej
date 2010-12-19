@@ -5,29 +5,64 @@
 
 namespace CubeJ
 {
+    //holds information and status of an client (fpsent in sauer)
+    class Peer {
+    public:
+        Peer(int cn, const char* s) : clientnum(cn) {
+            if(!s)
+                name[0] = '\0';
+            else
+                copystring(name, s);
+        }
+        Peer() : clientnum(-1) {
+            name[0] = '\0';
+        }
+        ~Peer();
+
+        int clientnum;
+        string name;
+    };
+
 	class Client
 	{
 		public:
 			Client();
 			~Client();
 
-			void init();
-			void update();
-			void connect();
-			void disconnect();
+			void Init();
+			void Update();
+			void Disconnect();
+
+			//collect and send all messages to the server - formerly c2sinfo
+			void sendAllMessages(bool force = false);
 
 			dynent* getCamera(int num = 0);
-			void setCameraPosition(int num, vec o);
-			vec getCameraPosition(int num = 0);
 
-			void edittoggle(bool on);
-			void startMap();
+			void editMode(bool on);
+			void startScene();
+			void parsePacket(int chan, packetbuf &p);
+
+			void initConnect(int cn, int protocol);
+			//called when received a client info message about new connected client
+			void ackConnect(int cn, char* text);
+			void finishConnect(bool remote);
+
+			void requestScene(bool srvscene);
+
 		protected:
 		private:
-			//the client holds one entity for the engine, we just use this to provide a camera
+            Peer& self;
+            vector<Peer*> clients;
 			bool connected;
+			bool remote;
 			vector<dynent*> cameras;
+			vector<uchar> messages;
+			int messagecn;
+			bool messagereliable;
 	};
+
+	Client & GetClient();
+	//Scene& GetScene();
 }
 
 #endif // CUBEJ_CLIENT_H_INCLUDED

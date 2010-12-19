@@ -7,6 +7,7 @@ namespace CubeJProtocol
 {
 	static const int PROTOCOL_VERSION  = 1;
     static const int MAXNAMELEN = 15;
+
 	enum MSG_DIR {
 		MSG_DIR_S2C = 0,
 		MSG_DIR_C2S,
@@ -20,9 +21,11 @@ namespace CubeJProtocol
 		MSG_SND_SERVINFO,
 		MSG_REQ_CONNECT,
         MSG_CDIS,
-		MSG_SND_SRVSTATUS,
-		MSG_SND_CLIENTSTATUS,
+        MSG_SND_CLIENTINFO,
 		MSG_SND_SCENESTATUS,
+		MSG_REQ_SCENEINFO,
+        MSG_SND_SCENEINFO,
+		MSG_REQ_CHANGESCENE,
 		MSG_PONG,
 		MSG_PING,
 		NUM_MESSAGES
@@ -76,7 +79,32 @@ namespace CubeJProtocol
 		}
 	};
 
+	template <> struct MsgDataType<MSG_SND_CLIENTINFO> {
+		MsgDataType(int i, const char* text) : info(GetMsgTypeInfo(MSG_SND_CLIENTINFO)), cn(i), name(text) {}
+		MsgInfoType& info;
+        int cn;
+        const char* name;
+
+		void addmsg(packetbuf& p) {
+            putint(p, info.id);
+            putint(p, cn);
+            sendstring(name, p);
+		}
+	};
+
+	template <> struct MsgDataType<MSG_SND_SCENESTATUS> {
+		MsgDataType(bool b, const char* s) : info(GetMsgTypeInfo(MSG_SND_SCENESTATUS)), hasscene(b) {}
+		MsgInfoType& info;
+        bool hasscene;
+
+		void addmsg(packetbuf& p) {
+            putint(p, info.id);
+            putint(p, hasscene);
+		}
+	};
+
 	void ReceiveMessage(MSG_TYPE n, int sender, int channel, packetbuf& p);
+    void ReceiveMessageAll(int sender, int channel, packetbuf& p);
 }
 
 namespace CubeJ

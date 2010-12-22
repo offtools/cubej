@@ -633,7 +633,6 @@ void serverslice(bool dedicated, uint timeout)   // main server update, called f
         {
             case ENET_EVENT_TYPE_CONNECT:
             {
-                conoutf("connect addclient");
                 client &c = addclient();
                 c.type = ST_TCPIP;
                 c.peer = event.peer;

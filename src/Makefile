@@ -41,10 +41,11 @@ CLIENT_OBJS= \
 	engine/cubeloader.o \
 	engine/decal.o \
 	engine/dynlight.o \
+	engine/error.o \
 	engine/glare.o \
 	engine/grass.o \
 	engine/lightmap.o \
-	engine/main.o \
+    engine/main.o \
 	engine/material.o \
 	engine/menus.o \
 	engine/movie.o \
@@ -54,12 +55,14 @@ CLIENT_OBJS= \
 	engine/octarender.o \
 	engine/physics.o \
 	engine/pvs.o \
+	engine/renderbackground.o \
 	engine/rendergl.o \
 	engine/rendermodel.o \
 	engine/renderparticles.o \
 	engine/rendersky.o \
 	engine/rendertext.o \
 	engine/renderva.o \
+	engine/screen.o \
 	engine/server.o	\
 	engine/serverbrowser.o \
 	engine/shader.o \
@@ -88,14 +91,6 @@ SERVER_INCLUDES= -DSTANDALONE $(INCLUDES)
 SERVER_LIBS= -Lenet/.libs -lenet -lz
 endif
 
-ifneq (,$(findstring MINGW,$(PLATFORM)))
-REMOTE_INCLUDES= -DREMOTE $(INCLUDES) -Iinclude
-REMOTE_LIBS= -Llib -lzdll -lenet -lws2_32 -lwinmm
-else
-REMOTE_INCLUDES= -DREMOTE $(INCLUDES) $(CLIENT_INCLUDES)
-REMOTE_LIBS= -Lenet/.libs -lenet -lz
-endif
-
 SERVER_OBJS= \
 	shared/crypto-standalone.o \
 	shared/stream-standalone.o \
@@ -111,8 +106,6 @@ MASTER_OBJS= \
 	shared/tools-standalone.o \
 	engine/command-standalone.o \
 	engine/master-standalone.o
-REMOTE_OBJS= \
-    cubej/remote.o
 
 ifeq ($(PLATFORM),SunOS)
 CLIENT_LIBS+= -lsocket -lnsl -lX11
@@ -121,7 +114,7 @@ endif
 
 default: all
 
-all: client server remote
+all: client server
 
 enet/Makefile:
 	cd enet; ./configure --enable-shared=no --enable-static=yes
@@ -133,7 +126,7 @@ clean-enet: enet/Makefile
 	$(MAKE) -C enet/ clean
 
 clean:
-	-$(RM) $(CLIENT_PCH) $(CLIENT_OBJS) $(SERVER_OBJS) $(MASTER_OBJS) $(REMOTE_OBJS) cubej_client cubej_server cubej_master cubej_remote
+	-$(RM) $(CLIENT_PCH) $(CLIENT_OBJS) $(SERVER_OBJS) $(MASTER_OBJS) cubej_client cubej_server cubej_master
 
 %.h.gch: %.h
 	$(CXX) $(CXXFLAGS) -o $@.tmp $(subst .h.gch,.h,$@)
@@ -150,9 +143,6 @@ $(filter cubej/%,$(CLIENT_OBJS)): $(filter cubej/%,$(CLIENT_PCH))
 $(SERVER_OBJS): CXXFLAGS += $(SERVER_INCLUDES)
 $(filter-out $(SERVER_OBJS),$(MASTER_OBJS)): CXXFLAGS += $(SERVER_INCLUDES)
 
-$(REMOTE_OBJS): CXXFLAGS += $(REMOTE_INCLUDES)
-$(filter-out $(CLIENT_OBJS),$(REMOTE_OBJS)): CXXFLAGS += $(REMOTE_INCLUDES)
-
 ifneq (,$(findstring MINGW,$(PLATFORM)))
 vcpp/%.o:
 	$(CXX) $(CXXFLAGS) -c -o $@ $(subst .o,.c,$@)
@@ -167,9 +157,6 @@ server: $(SERVER_OBJS)
 master: $(MASTER_OBJS)
 	$(CXX) $(CXXFLAGS) -o ../bin/cubej_master.exe $(MASTER_OBJS) $(SERVER_LIBS)
 
-remote: $(REMOTE_OBJS)
-	$(CXX) $(CXXFLAGS) -o ../bin/cubej_remote.exe $(REMOTE_OBJS) $(REMOTE_LIBS)
-
 install: all
 else
 client:	libenet $(CLIENT_OBJS)
@@ -181,17 +168,12 @@ server:	libenet $(SERVER_OBJS)
 master: libenet $(MASTER_OBJS)
 	$(CXX) $(CXXFLAGS) -o cubej_master $(MASTER_OBJS) $(SERVER_LIBS)
 
-remote: libenet $(REMOTE_OBJS)
-	$(CXX) $(CXXFLAGS) -o cubej_remote $(REMOTE_OBJS) $(REMOTE_LIBS)
-
 install: all
 	cp cubej_client	../bin_unix/$(PLATFORM_PREFIX)_client
 	cp cubej_server	../bin_unix/$(PLATFORM_PREFIX)_server
-	cp cubej_remote	../bin_unix/$(PLATFORM_PREFIX)_remote
 ifneq (,$(STRIP))
 	$(STRIP) ../bin_unix/$(PLATFORM_PREFIX)_client
 	$(STRIP) ../bin_unix/$(PLATFORM_PREFIX)_server
-	$(STRIP) ../bin_unix/$(PLATFORM_PREFIX)_remote
 endif
 endif
 
@@ -199,7 +181,7 @@ depend:
 	makedepend -Y -Ishared -Iengine -Icubej $(subst .o,.cpp,$(CLIENT_OBJS))
 	makedepend -a -o.h.gch -Y -Ishared -Iengine -Icubej $(subst .h.gch,.h,$(CLIENT_PCH))
 	makedepend -a -o-standalone.o -Y -Ishared -Iengine -Icubej $(subst -standalone.o,.cpp,$(SERVER_OBJS))
-	makedepend -a -o-standalone.o -Y -Ishared -Iengine -Icubej $(subst -standalone.o,.cpp,$(filter-out $(SERVER_OBJS), $(MASTER_OBJS), $(REMOTE_OBJS)))
+	makedepend -a -o-standalone.o -Y -Ishared -Iengine -Icubej $(subst -standalone.o,.cpp,$(filter-out $(SERVER_OBJS), $(MASTER_OBJS)))
 
 engine/engine.h.gch: shared/cube.h.gch
 cubej/cubej.h.gch: shared/cube.h.gch

@@ -444,30 +444,39 @@ extern const char *addreleaseaction(char *s);
 extern void writebinds(stream *f);
 extern void writecompletions(stream *f);
 
-// main
+// main (stuff from main that creates depencies moved into own modules)
 enum
 {
     NOT_INITING = 0,
     INIT_LOAD,
     INIT_RESET
 };
+//error (__offtools__)
 extern int initing;
+extern vector<SDL_Event> events;
 
 enum
 {
     CHANGE_GFX   = 1<<0,
     CHANGE_SOUND = 1<<1
 };
+
+//error (__offtools__)
 extern bool initwarning(const char *desc, int level = INIT_RESET, int type = CHANGE_GFX);
 
+//screen (__offtools__)
 extern void pushevent(const SDL_Event &e);
 extern bool interceptkey(int sym);
 
+//renderbackground (__offtools__)
 extern float loadprogress;
 extern void renderbackground(const char *caption = NULL, Texture *mapshot = NULL, const char *mapname = NULL, const char *mapinfo = NULL, bool restore = false, bool force = false);
 extern void renderprogress(float bar, const char *text, GLuint tex = 0, bool background = false);
 
+//screen (__offtools__)
 extern void getfps(int &fps, int &bestdiff, int &worstdiff);
+extern void resetfpshistory();
+extern void updatefpshistory(int millis);
 extern void swapbuffers();
 
 // menu

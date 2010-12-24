@@ -2,6 +2,7 @@
 #define CUBEJ_SERVER_H_
 
 #include "cube.h"
+#include "clientinfo.h"
 
 namespace CubeJSrv {
 
@@ -16,29 +17,24 @@ namespace CubeJSrv {
 
 	class Server;
 
-	class ClientInfo {
+	class SvClientInfo : public CubeJ::ClientInfo {
 	friend class Server;
 	public:
-		ClientInfo();
-		~ClientInfo();
+		SvClientInfo();
+		~SvClientInfo();
 
 		void Init(int n, bool local);
 		void Update();
 
-		void setName(char* name);
 		bool isConnected();
 
 	private:
-		//unique id for an client
-		int clientnum;
 		//time since trying to connect
 		int connectmillis;
 		//is connected
 		bool connected; //( will be status )
 		//local client or not
 		bool local;
-		//name used for the client
-		string name;
 		//messages
 		vector<uchar> messages;
 	};
@@ -93,11 +89,13 @@ namespace CubeJSrv {
 
         void connectClient(int cn, char* name);
 
+        void connectRemoteClient(int cn);
+
 		int numClients();
 
 	private:
-		vector<ClientInfo*> clients;
-		vector<ClientInfo*> connecting;
+		vector<SvClientInfo*> clients;
+		vector<SvClientInfo*> connecting;
 		bool reliablemessages;
 		//time since message was send
 		enet_uint32 lastsend;

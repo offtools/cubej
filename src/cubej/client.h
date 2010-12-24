@@ -2,27 +2,10 @@
 #define CUBEJ_CLIENT_H_INCLUDED
 
 #include "cube.h"
+#include "clientinfo.h"
 
 namespace CubeJ
 {
-    //holds information and status of an client (fpsent in sauer)
-    class Peer {
-    public:
-        Peer(int cn, const char* s) : clientnum(cn) {
-            if(!s)
-                name[0] = '\0';
-            else
-                copystring(name, s);
-        }
-        Peer() : clientnum(-1) {
-            name[0] = '\0';
-        }
-        ~Peer();
-
-        int clientnum;
-        string name;
-    };
-
 	class Client
 	{
 		public:
@@ -51,8 +34,8 @@ namespace CubeJ
 
 		protected:
 		private:
-            Peer& self;
-            vector<Peer*> clients;
+            ClientInfo& self;
+            vector<ClientInfo*> clients;
 			bool connected;
 			bool remote;
 			vector<dynent*> cameras;

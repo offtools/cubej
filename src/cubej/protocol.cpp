@@ -1,87 +1,85 @@
-#include "protocol.hpp"
-#include "client.hpp"
-#include "server.hpp"
+#include "protocol.h"
 
 namespace CubeJProtocol
 {
-#ifndef STANDALONE
 
-#endif
+    ///TODO (__offtools__) this should be const
+	static MsgInfoType typeinfo[NUM_MESSAGES];
 
-	template <MSG_TYPE N> void receiveMessage(int sender, int channel, packetbuf& p) {}
-
-    template <> void receiveMessage<MSG_ERROR_OVERFLOW>(int sender, int channel, packetbuf& p) {}
-
-	template <> void receiveMessage<MSG_ERROR_TAG>(int sender, int channel, packetbuf& p) {}
-
-#ifndef STANDALONE
-	template <> void receiveMessage<MSG_SND_SERVINFO>(int sender, int channel, packetbuf& p) {
-        int clientnum = getint(p);
-        int protocol = getint(p);
-        conoutf("[DEBUG] receiveMessage<MSG_SND_SERVINFO>");
-        CubeJ::GetClient().initConnect(clientnum, protocol);
-	}
-#endif
-
-    template <> void receiveMessage<MSG_REQ_CONNECT>(int sender, int channel, packetbuf& p) {
-        conoutf("[DEBUG] receiveMessage<MSG_REQ_CONNECT>");
-        char text[MAXTRANS];
-        getstring(text, p);
-        filtertext(text, text, false, MAXNAMELEN);
-        MsgInfoType& info = GetMsgTypeInfo(MSG_REQ_CONNECT);
-        if (info.channel == channel)
-            CubeJSrv::GetServer().connectClient(sender, text);
+    void registermsgtype(MSG_TYPE type, const char* descr, int channel, int flag) {
+        if(type < NUM_MESSAGES) {
+            typeinfo[type].description = descr;
+            typeinfo[type].channel = channel;
+            typeinfo[type].flag = flag;
+            typeinfo[type].receivehandler = NULL;
+        }
     }
 
-    template <> void receiveMessage<MSG_CDIS>(int sender, int channel, packetbuf& p) {
-        int clientnum = getint(p);
-        conoutf("[DEBUG] receiveMessage<MSG_CDIS>: %d", clientnum);
+    void Init() {
+        conoutf("init: protocol");
+        registermsgtype( MSG_ERROR_OVERFLOW, "error_overflow", 1, 0);
+        registermsgtype( MSG_ERROR_TAG, "error_tag", 1, 0 );
+		registermsgtype( MSG_SND_SERVINFO, "serverinfo", 1, ENET_PACKET_FLAG_RELIABLE );
+        registermsgtype( MSG_REQ_CONNECT, "client_connect", 1, ENET_PACKET_FLAG_RELIABLE );
+        registermsgtype( MSG_REQ_REMOTE, "remoteclient_connect", 1, ENET_PACKET_FLAG_RELIABLE );
+        registermsgtype( MSG_CDIS, "client_disconnect", 1, ENET_PACKET_FLAG_RELIABLE );
+        registermsgtype( MSG_SND_CLIENTINFO, "server_clientinfo", 1, ENET_PACKET_FLAG_RELIABLE );
+        registermsgtype( MSG_SND_SCENESTATUS, "server_sceneinfo", 1, ENET_PACKET_FLAG_RELIABLE );
     }
 
-#ifndef STANDALONE
-    template <> void receiveMessage<MSG_SND_CLIENTINFO>(int sender, int channel, packetbuf& p) {
-        int cn = getint(p);
-        char text[MAXTRANS];
-        getstring(text, p);
-		CubeJ::GetClient().ackConnect(cn, text);
-        conoutf("[DEBUG] receiveMessage<MSG_SND_CLIENTINFO>: %d %s", cn, text);
-    }
-#endif
+    MsgDataType<MSG_REQ_CONNECT>::MsgDataType(const char* text) : info(GetMsgTypeInfo(MSG_REQ_CONNECT)), name(text) {}
 
-    template <> void receiveMessage<MSG_SND_SCENESTATUS>(int sender, int channel, packetbuf& p) {
-        int hasscene = getint(p);
-        conoutf("[DEBUG] receiveMessage<MSG_SND_SCENESTATUS> hasscene: %d", hasscene);
+    void MsgDataType<MSG_REQ_CONNECT>::addmsg(packetbuf& p) {
+        putint(p, MSG_REQ_CONNECT);
+        sendstring(name, p);
     }
 
-	static MsgInfoType typeinfo[NUM_MESSAGES] = {
-		{ MSG_ERROR_OVERFLOW, "error_overflow", 1, 0, MSG_DIR_DROP, receiveMessage<MSG_ERROR_OVERFLOW> },
-		{ MSG_ERROR_TAG, "error_tag", 1, 0, MSG_DIR_DROP, receiveMessage<MSG_ERROR_TAG> },
-		{ MSG_SND_SERVINFO, "serverinfo", 1, ENET_PACKET_FLAG_RELIABLE, MSG_DIR_S2C, receiveMessage<MSG_SND_SERVINFO> },
-        { MSG_REQ_CONNECT, "client_connect", 1, ENET_PACKET_FLAG_RELIABLE, MSG_DIR_S2C, receiveMessage<MSG_REQ_CONNECT> },
-        { MSG_CDIS, "client_disconnect", 1, ENET_PACKET_FLAG_RELIABLE, MSG_DIR_S2C, receiveMessage<MSG_CDIS> },
-        { MSG_SND_CLIENTINFO, "server_clientinfo", 1, ENET_PACKET_FLAG_RELIABLE, MSG_DIR_S2C, receiveMessage<MSG_SND_CLIENTINFO> },
-        { MSG_SND_SCENESTATUS, "server_sceneinfo", 1, ENET_PACKET_FLAG_RELIABLE, MSG_DIR_S2C, receiveMessage<MSG_SND_SCENESTATUS> }
-	};
+    MsgDataType<MSG_REQ_REMOTE>::MsgDataType() : info(GetMsgTypeInfo(MSG_REQ_REMOTE)){}
+
+    void MsgDataType<MSG_REQ_REMOTE>::addmsg(packetbuf& p) {
+        putint(p, MSG_REQ_REMOTE);
+    }
+
+    MsgDataType<MSG_SND_SERVINFO>::MsgDataType(int n, int p) : info(GetMsgTypeInfo(MSG_SND_SERVINFO)),  clientnum(n), protocol(p) {}
+
+    void MsgDataType<MSG_SND_SERVINFO>::addmsg(packetbuf& p) {
+        putint(p, MSG_SND_SERVINFO);
+        putint(p, clientnum);
+        putint(p, protocol);
+    }
+
+    MsgDataType<MSG_SND_CLIENTINFO>::MsgDataType(int i, const char* text) : info(GetMsgTypeInfo(MSG_SND_CLIENTINFO)), cn(i), name(text) {}
+
+    void MsgDataType<MSG_SND_CLIENTINFO>::addmsg(packetbuf& p) {
+        putint(p, MSG_SND_CLIENTINFO);
+        putint(p, cn);
+        sendstring(name, p);
+    }
 
     MsgInfoType& GetMsgTypeInfo(MSG_TYPE n) {
 		return typeinfo[n];
 	}
 
-    MsgDataType<MSG_REQ_CONNECT>::MsgDataType(const char* text) : info(GetMsgTypeInfo(MSG_REQ_CONNECT)), name(text) {}
-
-    void MsgDataType<MSG_REQ_CONNECT>::addmsg(packetbuf& p) {
-        putint(p, info.id);
-        sendstring(name, p);
+    void RegisterMsgHandler(MSG_TYPE n, void (*func)(int, int, packetbuf&) ) {
+        if(!typeinfo[n].receivehandler)
+            typeinfo[n].receivehandler = func;
+        else
+            conoutf("[DEBUG] CubeJProtocol::RegisterMsgHandler - handler already registered");
     }
 
 	void ReceiveMessage(MSG_TYPE n, int sender, int channel, packetbuf& p) {
-	    if (n < NUM_MESSAGES) {
+	    if (n < NUM_MESSAGES && typeinfo[n].receivehandler) {
             typeinfo[n].receivehandler(sender, channel, p);
+	    }
+	    else {
+            conoutf("[DEBUG] CubeJProtocol::ReceiveMessage - Message Type or Message Handler \"%s\" not found", typeinfo[n].description);
+            typeinfo[MSG_ERROR_TAG].receivehandler(sender, channel, p);
 	    }
 	}
 
-    void ReceiveMessageAll(int sender, int channel, packetbuf& p) {
+    void ReceiveMessage(int sender, int channel, packetbuf& p) {
         MSG_TYPE type = (MSG_TYPE)getint(p);
+        conoutf("ReceiveMessage: type %d, sender: %d", type, sender);
         ReceiveMessage(type, sender, channel, p);
     }
 }

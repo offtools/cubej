@@ -2,15 +2,11 @@
 #define CUBEJ_H_INCLUDED
 
 #include "cube.h"
-#include "client.hpp"
-#include "entities.hpp"
-#include "server.hpp"
-#include "protocol.hpp"
+#include "protocol.h"
 
 namespace CubeJ
 {
-	extern vector<extentity *> ents;
-	extern class Client client;
+// 	extern vector<extentity *> ents;
 }
 
 #endif // CUBEJ_H_INCLUDED

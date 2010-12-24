@@ -1,4 +1,4 @@
-#include "entities.hpp"
+#include "entities.h"
 
 namespace CubeJ
 {

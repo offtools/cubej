@@ -67,6 +67,8 @@ namespace CubeJ
 
     void ClearEnts();
 
+ 	extern vector<extentity *> ents;
+
     vector<extentity *> &GetEnts();
 
     int EntityInfosize();

@@ -8,20 +8,14 @@ namespace CubeJProtocol
 	static const int PROTOCOL_VERSION  = 1;
     static const int MAXNAMELEN = 15;
 
-	enum MSG_DIR {
-		MSG_DIR_S2C = 0,
-		MSG_DIR_C2S,
-		MSG_DIR_C2C,
-		MSG_DIR_DROP
-	};
-
 	enum MSG_TYPE {
-		MSG_ERROR_OVERFLOW = 0,
-		MSG_ERROR_TAG,
-		MSG_SND_SERVINFO,
-		MSG_REQ_CONNECT,
-        MSG_CDIS,
-        MSG_SND_CLIENTINFO,
+		MSG_ERROR_OVERFLOW = 0, //0
+		MSG_ERROR_TAG,          //1
+		MSG_SND_SERVINFO,       //2
+		MSG_REQ_CONNECT,        //3
+        MSG_REQ_REMOTE,         //4
+        MSG_CDIS,               //5
+        MSG_SND_CLIENTINFO,     //6
 		MSG_SND_SCENESTATUS,
 		MSG_REQ_SCENEINFO,
         MSG_SND_SCENEINFO,
@@ -34,13 +28,14 @@ namespace CubeJProtocol
 	struct MsgInfoType {
 			const MSG_TYPE id;
 			const char* description;
-			const int channel;
-			const int flag;
-			const int dir;
+			int channel;
+			int flag;
 			void (*receivehandler)(int sender, int channel, packetbuf& p);
 	};
 
+    void Init();
 	MsgInfoType& GetMsgTypeInfo(MSG_TYPE n);
+    void RegisterMsgHandler(MSG_TYPE n, void (*func)(int, int, packetbuf&));
 
     template <MSG_TYPE N> struct MsgDataType {
 		MsgDataType() : info(GetMsgTypeInfo(N)) {}
@@ -49,22 +44,23 @@ namespace CubeJProtocol
 	};
 
 	template <> struct MsgDataType<MSG_SND_SERVINFO> {
-		MsgDataType(int n, int p) : info(GetMsgTypeInfo(MSG_SND_SERVINFO)),  clientnum(n), protocol(p) {}
+		MsgDataType(int n, int p);
 		MsgInfoType& info;
 		int clientnum;
 		int protocol;
-
-		void addmsg(packetbuf& p) {
-            putint(p, info.id);
-            putint(p, clientnum);
-            putint(p, protocol);
-		}
+		void addmsg(packetbuf& p);
 	};
 
 	template <> struct MsgDataType<MSG_REQ_CONNECT> {
 		MsgDataType(const char* text);
 		MsgInfoType& info;
         const char* name;
+		void addmsg(packetbuf& p);
+	};
+
+	template <> struct MsgDataType<MSG_REQ_REMOTE> {
+		MsgDataType();
+		MsgInfoType& info;
 		void addmsg(packetbuf& p);
 	};
 
@@ -80,16 +76,11 @@ namespace CubeJProtocol
 	};
 
 	template <> struct MsgDataType<MSG_SND_CLIENTINFO> {
-		MsgDataType(int i, const char* text) : info(GetMsgTypeInfo(MSG_SND_CLIENTINFO)), cn(i), name(text) {}
+		MsgDataType(int i, const char* text);
 		MsgInfoType& info;
         int cn;
         const char* name;
-
-		void addmsg(packetbuf& p) {
-            putint(p, info.id);
-            putint(p, cn);
-            sendstring(name, p);
-		}
+		void addmsg(packetbuf& p);
 	};
 
 	template <> struct MsgDataType<MSG_SND_SCENESTATUS> {
@@ -104,7 +95,7 @@ namespace CubeJProtocol
 	};
 
 	void ReceiveMessage(MSG_TYPE n, int sender, int channel, packetbuf& p);
-    void ReceiveMessageAll(int sender, int channel, packetbuf& p);
+    void ReceiveMessage(int sender, int channel, packetbuf& p);
 }
 
 namespace CubeJ

@@ -1,4 +1,7 @@
-#include "cubej.h"
+#include "cube.h"
+#include "entities.h"
+#include "client.h"
+#include "clientinfo.h"
 
 #ifndef STANDALONE
 namespace entities
@@ -144,7 +147,7 @@ namespace game
 }
 #endif
 
-#include "server.hpp"
+#include "server.h"
 
 namespace game
 {
@@ -154,12 +157,11 @@ namespace game
 namespace server
 {
     void *newclientinfo() {
-    	return new CubeJSrv::ClientInfo();
-    	return NULL;
+    	return new CubeJSrv::SvClientInfo();
     }
 
     void deleteclientinfo(void *ci) {
-    	delete (CubeJSrv::ClientInfo*)ci;
+    	delete (CubeJSrv::SvClientInfo*)ci;
     }
 
     void serverinit()
@@ -191,7 +193,7 @@ namespace server
 
     bool allowbroadcast(int n) {
         conoutf("game::allowbroadcast");
-		CubeJSrv::ClientInfo *ci = (CubeJSrv::ClientInfo*)getclientinfo(n);
+		CubeJSrv::SvClientInfo *ci = (CubeJSrv::SvClientInfo*)getclientinfo(n);
         return ci && ci->isConnected();
 	}
 

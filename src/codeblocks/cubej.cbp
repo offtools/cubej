@@ -145,279 +145,92 @@
 		<Linker>
 			<Add option="-mwindows" />
 		</Linker>
-		<Unit filename="mingw.rc">
-			<Option compilerVar="WINDRES" />
-		</Unit>
 		<Unit filename="../cubej/client.cpp" />
-		<Unit filename="../cubej/client.hpp" />
+		<Unit filename="../cubej/client.h" />
+		<Unit filename="../cubej/clientinfo.cpp" />
+		<Unit filename="../cubej/clientinfo.h" />
 		<Unit filename="../cubej/cubej.h" />
+		<Unit filename="../cubej/debug.cpp" />
 		<Unit filename="../cubej/entities.cpp" />
-		<Unit filename="../cubej/entities.hpp" />
+		<Unit filename="../cubej/entities.h" />
 		<Unit filename="../cubej/protocol.cpp" />
-		<Unit filename="../cubej/protocol.hpp" />
+		<Unit filename="../cubej/protocol.h" />
 		<Unit filename="../cubej/remote.cpp" />
 		<Unit filename="../cubej/server.cpp" />
-		<Unit filename="../cubej/server.hpp" />
+		<Unit filename="../cubej/server.h" />
 		<Unit filename="../cubej/stubs.cpp" />
-		<Unit filename="../engine/3dgui.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/animmodel.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/bih.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/bih.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/blend.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/blob.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/client.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
+		<Unit filename="../engine/3dgui.cpp" />
+		<Unit filename="../engine/animmodel.h" />
+		<Unit filename="../engine/bih.cpp" />
+		<Unit filename="../engine/bih.h" />
+		<Unit filename="../engine/blend.cpp" />
+		<Unit filename="../engine/blob.cpp" />
+		<Unit filename="../engine/client.cpp" />
 		<Unit filename="../engine/command.cpp" />
-		<Unit filename="../engine/console.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/cubeloader.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/decal.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/depthfx.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/dynlight.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
+		<Unit filename="../engine/console.cpp" />
+		<Unit filename="../engine/cubeloader.cpp" />
+		<Unit filename="../engine/decal.cpp" />
+		<Unit filename="../engine/depthfx.h" />
+		<Unit filename="../engine/dynlight.cpp" />
 		<Unit filename="../engine/engine.h">
 			<Option compile="1" />
 			<Option weight="0" />
-			<Option target="default" />
-			<Option target="debug" />
 		</Unit>
-		<Unit filename="../engine/explosion.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/glare.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/grass.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/iqm.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/lensflare.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/lightmap.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/lightmap.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/lightning.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/main.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/master.cpp">
-			<Option target="master" />
-		</Unit>
-		<Unit filename="../engine/material.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/md2.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/md3.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/md5.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/menus.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/model.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/movie.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/mpr.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/normal.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/obj.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/octa.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/octa.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/octaedit.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/octarender.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/physics.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/pvs.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/ragdoll.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/rendergl.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/rendermodel.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/renderparticles.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/rendersky.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/rendertarget.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/rendertext.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/renderva.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/scale.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/server.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-			<Option target="server" />
-		</Unit>
-		<Unit filename="../engine/serverbrowser.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/shader.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/shadowmap.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/skelmodel.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/smd.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/sound.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/textedit.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/texture.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/texture.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/varray.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/vertmodel.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/water.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/world.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/world.h">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
-		<Unit filename="../engine/worldio.cpp">
-			<Option target="default" />
-			<Option target="debug" />
-		</Unit>
+		<Unit filename="../engine/error.cpp" />
+		<Unit filename="../engine/explosion.h" />
+		<Unit filename="../engine/glare.cpp" />
+		<Unit filename="../engine/grass.cpp" />
+		<Unit filename="../engine/iqm.h" />
+		<Unit filename="../engine/lensflare.h" />
+		<Unit filename="../engine/lightmap.cpp" />
+		<Unit filename="../engine/lightmap.h" />
+		<Unit filename="../engine/lightning.h" />
+		<Unit filename="../engine/main.cpp" />
+		<Unit filename="../engine/master.cpp" />
+		<Unit filename="../engine/material.cpp" />
+		<Unit filename="../engine/md2.h" />
+		<Unit filename="../engine/md3.h" />
+		<Unit filename="../engine/md5.h" />
+		<Unit filename="../engine/menus.cpp" />
+		<Unit filename="../engine/model.h" />
+		<Unit filename="../engine/movie.cpp" />
+		<Unit filename="../engine/mpr.h" />
+		<Unit filename="../engine/normal.cpp" />
+		<Unit filename="../engine/obj.h" />
+		<Unit filename="../engine/octa.cpp" />
+		<Unit filename="../engine/octa.h" />
+		<Unit filename="../engine/octaedit.cpp" />
+		<Unit filename="../engine/octarender.cpp" />
+		<Unit filename="../engine/pch.cpp" />
+		<Unit filename="../engine/physics.cpp" />
+		<Unit filename="../engine/pvs.cpp" />
+		<Unit filename="../engine/ragdoll.h" />
+		<Unit filename="../engine/renderbackground.cpp" />
+		<Unit filename="../engine/rendergl.cpp" />
+		<Unit filename="../engine/rendermodel.cpp" />
+		<Unit filename="../engine/renderparticles.cpp" />
+		<Unit filename="../engine/rendersky.cpp" />
+		<Unit filename="../engine/rendertarget.h" />
+		<Unit filename="../engine/rendertext.cpp" />
+		<Unit filename="../engine/renderva.cpp" />
+		<Unit filename="../engine/scale.h" />
+		<Unit filename="../engine/screen.cpp" />
+		<Unit filename="../engine/server.cpp" />
+		<Unit filename="../engine/serverbrowser.cpp" />
+		<Unit filename="../engine/shader.cpp" />
+		<Unit filename="../engine/shadowmap.cpp" />
+		<Unit filename="../engine/skelmodel.h" />
+		<Unit filename="../engine/smd.h" />
+		<Unit filename="../engine/sound.cpp" />
+		<Unit filename="../engine/textedit.h" />
+		<Unit filename="../engine/texture.cpp" />
+		<Unit filename="../engine/texture.h" />
+		<Unit filename="../engine/varray.h" />
+		<Unit filename="../engine/vertmodel.h" />
+		<Unit filename="../engine/water.cpp" />
+		<Unit filename="../engine/world.cpp" />
+		<Unit filename="../engine/world.h" />
+		<Unit filename="../engine/worldio.cpp" />
 		<Unit filename="../include/GL/glext.h">
 			<Option target="default" />
 			<Option target="debug" />
@@ -576,6 +389,10 @@
 		</Unit>
 		<Unit filename="../include/zconf.h" />
 		<Unit filename="../include/zlib.h" />
+		<Unit filename="../remote/main.cpp" />
+		<Unit filename="../remote/msghandler.cpp" />
+		<Unit filename="../remote/remoteclient.cpp" />
+		<Unit filename="../remote/remoteclient.h" />
 		<Unit filename="../shared/command.h" />
 		<Unit filename="../shared/crypto.cpp" />
 		<Unit filename="../shared/cube.h">

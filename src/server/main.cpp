@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "protocol.h"
 
 extern vector<const char *> gameargs;
 
@@ -11,6 +12,7 @@ int main(int argc, char* argv[])
     enet_time_set(0);
     for(int i = 1; i<argc; i++) if(argv[i][0]!='-' || !serveroption(argv[i])) gameargs.add(argv[i]);
     game::parseoptions(gameargs);
+	CubeJProtocol::Init();
     initserver(true, true);
     return 0;
 }

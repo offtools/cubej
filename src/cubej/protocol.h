@@ -8,34 +8,57 @@ namespace CubeJProtocol
 	static const int PROTOCOL_VERSION  = 1;
     static const int MAXNAMELEN = 15;
 
+	enum CHANNEL { CHANNEL_POSITIONS = 0, CHANNEL_PRECONNECT, CHANNEL_DEFAULT, CHANNEL_FILE, CHANNEL_REMOTE };
+	
 	enum MSG_TYPE {
 		MSG_ERROR_OVERFLOW = 0, //0
 		MSG_ERROR_TAG,          //1
 		MSG_SND_SERVINFO,       //2
 		MSG_REQ_CONNECT,        //3
-        MSG_REQ_REMOTE,         //4
+		//remote client requests a list of free clients to connect with
+		MSG_DISCOVER_REMOTE,    //4
         MSG_CDIS,               //5
         MSG_SND_CLIENTINFO,     //6
+		//7: server runs an active scene or not
 		MSG_SND_SCENESTATUS,
+		//8:
 		MSG_REQ_SCENEINFO,
+        //9:
         MSG_SND_SCENEINFO,
+		//10:
 		MSG_REQ_CHANGESCENE,
+		//11: Remote Gui Client sends request to an client
+		MSG_REQ_REMOTE,
+		//12: Client ack Remote Connection
+		MSG_ACK_REMOTE,
 		MSG_PONG,
 		MSG_PING,
 		NUM_MESSAGES
 	};
+
+	typedef void (*ReceiveHandler)(int sender, int channel, packetbuf& p);
 
 	struct MsgInfoType {
 			const MSG_TYPE id;
 			const char* description;
 			int channel;
 			int flag;
-			void (*receivehandler)(int sender, int channel, packetbuf& p);
+			//~ ReceiveHandler receivehandler;
+			//void (*receivehandler)(int sender, int channel, packetbuf& p);
 	};
 
+	struct MsgHandler {
+		void registerMsgHandler(MSG_TYPE n, void (*func)(int, int, packetbuf&));
+		void receive(MSG_TYPE n, int sender, int channel, packetbuf& p);
+		void receive(int sender, int channel, packetbuf& p);
+		CubeJProtocol::ReceiveHandler receivehandler[NUM_MESSAGES];
+	};
+	
     void Init();
+	
 	MsgInfoType& GetMsgTypeInfo(MSG_TYPE n);
-    void RegisterMsgHandler(MSG_TYPE n, void (*func)(int, int, packetbuf&));
+
+	void RegisterMsgHandler(MSG_TYPE n, void (*func)(int, int, packetbuf&));
 
     template <MSG_TYPE N> struct MsgDataType {
 		MsgDataType() : info(GetMsgTypeInfo(N)) {}
@@ -58,7 +81,7 @@ namespace CubeJProtocol
 		void addmsg(packetbuf& p);
 	};
 
-	template <> struct MsgDataType<MSG_REQ_REMOTE> {
+	template <> struct MsgDataType<MSG_DISCOVER_REMOTE> {
 		MsgDataType();
 		MsgInfoType& info;
 		void addmsg(packetbuf& p);
@@ -84,18 +107,28 @@ namespace CubeJProtocol
 	};
 
 	template <> struct MsgDataType<MSG_SND_SCENESTATUS> {
-		MsgDataType(bool b, const char* s) : info(GetMsgTypeInfo(MSG_SND_SCENESTATUS)), hasscene(b) {}
+		MsgDataType(bool b);
 		MsgInfoType& info;
         bool hasscene;
-
-		void addmsg(packetbuf& p) {
-            putint(p, info.id);
-            putint(p, hasscene);
-		}
+		void addmsg(packetbuf& p);
 	};
 
-	void ReceiveMessage(MSG_TYPE n, int sender, int channel, packetbuf& p);
-    void ReceiveMessage(int sender, int channel, packetbuf& p);
+	template <> struct MsgDataType<MSG_REQ_REMOTE> {
+		MsgDataType(int clientnum);
+		MsgInfoType& info;
+        int clientnum;
+		void addmsg(packetbuf& p);
+	};
+
+    template <> struct MsgDataType<MSG_ACK_REMOTE> {
+        MsgDataType(int clientnum);
+        MsgInfoType& info;
+		int clientnum;
+        void addmsg(packetbuf& p);
+    };
+
+	//~ void ReceiveMessage(MSG_TYPE n, int sender, int channel, packetbuf& p);
+    //~ void ReceiveMessage(int sender, int channel, packetbuf& p);
 }
 
 namespace CubeJ

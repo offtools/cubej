@@ -1,74 +1,98 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="default" />
-	<File name="../cubej/client.cpp" open="1" top="0" tabpos="1">
-		<Cursor position="2362" topLine="107" />
+	<File name="../cubej/client.cpp" open="1" top="0" tabpos="5">
+		<Cursor position="2123" topLine="27" />
 	</File>
-	<File name="../cubej/client.hpp" open="1" top="0" tabpos="6">
-		<Cursor position="1021" topLine="0" />
+	<File name="../cubej/client.h" open="1" top="0" tabpos="2">
+		<Cursor position="990" topLine="19" />
 	</File>
-	<File name="../cubej/cubej.h" open="1" top="0" tabpos="5">
-		<Cursor position="220" topLine="0" />
+	<File name="../cubej/clientinfo.cpp" open="1" top="0" tabpos="16">
+		<Cursor position="547" topLine="0" />
 	</File>
-	<File name="../cubej/entities.cpp" open="1" top="0" tabpos="2">
-		<Cursor position="3357" topLine="217" />
+	<File name="../cubej/clientinfo.h" open="1" top="0" tabpos="15">
+		<Cursor position="353" topLine="2" />
 	</File>
-	<File name="../cubej/entities.hpp" open="1" top="0" tabpos="7">
-		<Cursor position="0" topLine="43" />
+	<File name="../cubej/cubej.h" open="1" top="0" tabpos="4">
+		<Cursor position="157" topLine="0" />
 	</File>
-	<File name="../cubej/protocol.cpp" open="1" top="0" tabpos="10">
-		<Cursor position="1901" topLine="36" />
+	<File name="../cubej/entities.cpp" open="1" top="0" tabpos="6">
+		<Cursor position="21" topLine="0" />
 	</File>
-	<File name="../cubej/protocol.hpp" open="1" top="0" tabpos="9">
-		<Cursor position="341" topLine="0" />
+	<File name="../cubej/entities.h" open="0" top="0" tabpos="16">
+		<Cursor position="0" topLine="0" />
 	</File>
-	<File name="../cubej/remote.cpp" open="1" top="1" tabpos="13">
-		<Cursor position="1830" topLine="39" />
+	<File name="../cubej/protocol.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="2728" topLine="52" />
 	</File>
-	<File name="../cubej/server.cpp" open="1" top="0" tabpos="12">
-		<Cursor position="3342" topLine="100" />
+	<File name="../cubej/protocol.h" open="1" top="0" tabpos="9">
+		<Cursor position="3281" topLine="106" />
 	</File>
-	<File name="../cubej/server.hpp" open="1" top="0" tabpos="4">
-		<Cursor position="440" topLine="0" />
+	<File name="../cubej/remote.cpp" open="0" top="0" tabpos="9">
+		<Cursor position="2594" topLine="73" />
 	</File>
-	<File name="../cubej/stubs.cpp" open="1" top="0" tabpos="3">
-		<Cursor position="5787" topLine="163" />
+	<File name="../cubej/server.cpp" open="1" top="1" tabpos="8">
+		<Cursor position="1564" topLine="15" />
+	</File>
+	<File name="../cubej/server.h" open="1" top="0" tabpos="3">
+		<Cursor position="458" topLine="0" />
+	</File>
+	<File name="../cubej/stubs.cpp" open="1" top="0" tabpos="7">
+		<Cursor position="1536" topLine="50" />
 	</File>
 	<File name="../engine/3dgui.cpp" open="0" top="0" tabpos="0">
 		<Cursor position="38219" topLine="1140" />
 	</File>
-	<File name="../engine/client.cpp" open="1" top="0" tabpos="11">
-		<Cursor position="4918" topLine="170" />
+	<File name="../engine/client.cpp" open="1" top="0" tabpos="10">
+		<Cursor position="5183" topLine="170" />
 	</File>
-	<File name="../engine/command.cpp" open="0" top="0" tabpos="7">
-		<Cursor position="6729" topLine="331" />
+	<File name="../engine/command.cpp" open="0" top="0" tabpos="10">
+		<Cursor position="4788" topLine="0" />
 	</File>
-	<File name="../engine/console.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="4581" topLine="148" />
+	<File name="../engine/console.cpp" open="0" top="0" tabpos="18">
+		<Cursor position="8279" topLine="242" />
 	</File>
-	<File name="../engine/engine.h" open="0" top="0" tabpos="0">
-		<Cursor position="8014" topLine="198" />
+	<File name="../engine/engine.h" open="0" top="0" tabpos="4">
+		<Cursor position="18242" topLine="454" />
 	</File>
-	<File name="../engine/main.cpp" open="1" top="0" tabpos="15">
-		<Cursor position="36296" topLine="1124" />
+	<File name="../engine/error.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="713" topLine="0" />
+	</File>
+	<File name="../engine/lightmap.cpp" open="0" top="0" tabpos="19">
+		<Cursor position="2742" topLine="92" />
+	</File>
+	<File name="../engine/main.cpp" open="0" top="0" tabpos="1">
+		<Cursor position="22028" topLine="675" />
+	</File>
+	<File name="../engine/master.cpp" open="0" top="0" tabpos="14">
+		<Cursor position="18726" topLine="675" />
 	</File>
 	<File name="../engine/menus.cpp" open="0" top="0" tabpos="5">
 		<Cursor position="324" topLine="12" />
 	</File>
-	<File name="../engine/octaedit.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="36362" topLine="1324" />
+	<File name="../engine/movie.cpp" open="0" top="0" tabpos="20">
+		<Cursor position="26827" topLine="724" />
 	</File>
-	<File name="../engine/physics.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="68365" topLine="2072" />
+	<File name="../engine/octaedit.cpp" open="0" top="0" tabpos="21">
+		<Cursor position="37128" topLine="1323" />
 	</File>
-	<File name="../engine/rendergl.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="72972" topLine="2176" />
+	<File name="../engine/physics.cpp" open="0" top="0" tabpos="22">
+		<Cursor position="60524" topLine="1816" />
 	</File>
-	<File name="../engine/rendermodel.cpp" open="0" top="0" tabpos="0">
+	<File name="../engine/renderbackground.cpp" open="0" top="0" tabpos="7">
+		<Cursor position="139" topLine="294" />
+	</File>
+	<File name="../engine/rendergl.cpp" open="0" top="0" tabpos="25">
+		<Cursor position="61604" topLine="1694" />
+	</File>
+	<File name="../engine/rendermodel.cpp" open="0" top="0" tabpos="13">
 		<Cursor position="18523" topLine="739" />
 	</File>
-	<File name="../engine/server.cpp" open="1" top="0" tabpos="8">
-		<Cursor position="1132" topLine="42" />
+	<File name="../engine/screen.cpp" open="0" top="0" tabpos="2">
+		<Cursor position="1397" topLine="0" />
+	</File>
+	<File name="../engine/server.cpp" open="1" top="0" tabpos="18">
+		<Cursor position="5386" topLine="188" />
 	</File>
 	<File name="../engine/serverbrowser.cpp" open="0" top="0" tabpos="12">
 		<Cursor position="5810" topLine="212" />
@@ -76,8 +100,23 @@
 	<File name="../engine/textedit.h" open="0" top="0" tabpos="0">
 		<Cursor position="19265" topLine="639" />
 	</File>
+	<File name="../engine/vertmodel.h" open="0" top="0" tabpos="0">
+		<Cursor position="20005" topLine="528" />
+	</File>
 	<File name="../engine/world.cpp" open="0" top="0" tabpos="4">
 		<Cursor position="33189" topLine="1192" />
+	</File>
+	<File name="../remote/main.cpp" open="1" top="0" tabpos="14">
+		<Cursor position="920" topLine="33" />
+	</File>
+	<File name="../remote/msghandler.cpp" open="1" top="0" tabpos="17">
+		<Cursor position="1767" topLine="11" />
+	</File>
+	<File name="../remote/remoteclient.cpp" open="1" top="0" tabpos="11">
+		<Cursor position="2659" topLine="0" />
+	</File>
+	<File name="../remote/remoteclient.h" open="1" top="0" tabpos="12">
+		<Cursor position="869" topLine="17" />
 	</File>
 	<File name="../shared/command.h" open="0" top="0" tabpos="12">
 		<Cursor position="12494" topLine="0" />
@@ -85,11 +124,14 @@
 	<File name="../shared/crypto.cpp" open="0" top="0" tabpos="15">
 		<Cursor position="24863" topLine="768" />
 	</File>
+	<File name="../shared/cube.h" open="0" top="0" tabpos="12">
+		<Cursor position="0" topLine="46" />
+	</File>
 	<File name="../shared/ents.h" open="0" top="0" tabpos="0">
 		<Cursor position="6326" topLine="174" />
 	</File>
-	<File name="../shared/iengine.h" open="0" top="0" tabpos="11">
-		<Cursor position="15047" topLine="317" />
+	<File name="../shared/iengine.h" open="0" top="0" tabpos="17">
+		<Cursor position="15312" topLine="322" />
 	</File>
 	<File name="../shared/igame.h" open="0" top="0" tabpos="4">
 		<Cursor position="2375" topLine="0" />
@@ -97,10 +139,10 @@
 	<File name="../shared/stream.cpp" open="0" top="0" tabpos="16">
 		<Cursor position="12497" topLine="470" />
 	</File>
-	<File name="../shared/tools.h" open="0" top="0" tabpos="13">
-		<Cursor position="6011" topLine="240" />
+	<File name="../shared/tools.h" open="1" top="0" tabpos="13">
+		<Cursor position="4942" topLine="190" />
 	</File>
-	<File name="../shared/zip.cpp" open="0" top="0" tabpos="0">
-		<Cursor position="16363" topLine="532" />
+	<File name="../shared/zip.cpp" open="0" top="0" tabpos="12">
+		<Cursor position="1068" topLine="28" />
 	</File>
 </CodeBlocks_layout_file>

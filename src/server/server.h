@@ -3,6 +3,7 @@
 
 #include "cube.h"
 #include "clientinfo.h"
+#include "protocol.h"
 
 namespace CubeJSrv {
 
@@ -55,7 +56,7 @@ namespace CubeJSrv {
 
 		int newobject(int type, int owner);
 		int deleteobject(int id);
-		void sendsceneinfo(packetbuf& p);
+		void sendscenestatus(packetbuf& p);
 		void reset();
 
 	private:
@@ -64,7 +65,7 @@ namespace CubeJSrv {
 		hashset<SceneObject*> objects;
 	};
 
-	class Server {
+	class Server : public CubeJProtocol::MsgHandler {
 	public:
 		Server();
 		~Server();
@@ -87,9 +88,12 @@ namespace CubeJSrv {
 		//parse received packets from clients
 		void parsePacket(int sender, int chan, packetbuf &p);
 
-        void connectClient(int cn, char* name);
+        void registerClient(int cn, char* name);
 
-        void connectRemoteClient(int cn);
+        void registerRemoteClient(int cn);
+
+        //after receiving ack from head, etablish connection between remote client and head
+        void connectRemoteClient(int head, int remote);
 
 		int numClients();
 
@@ -101,10 +105,17 @@ namespace CubeJSrv {
 		enet_uint32 lastsend;
 		//time since current scene started
 		int scenemillis;
+
+		//~ void registerMsgHandler(MSG_TYPE n, void (*func)(int, int, packetbuf&));
+		//~ void receive(MSG_TYPE n, int sender, int channel, packetbuf& p);
+		//~ void receive(int sender, int channel, packetbuf& p);
+		//~ CubeJProtocol::ReceiveHandler receivehandler[CubeJProtocol::NUM_MESSAGES];
 	};
 
 	Server& GetServer();
 	SceneManager& GetSceneManager();
+	
+	template <MSG_TYPE N> void receiveMessage(int sender, int channel, packetbuf& p) { p.cleanup(); }
 }
 
 #endif /* SERVER_H_ */

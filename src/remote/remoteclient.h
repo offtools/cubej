@@ -8,21 +8,24 @@
 #include "cube.h"
 
 #include "protocol.h"
-
+#include "clientinfo.h"
 
 namespace CubeJRemote {
 
-    class RemoteClient {
+    class RemoteClient : public CubeJProtocol::MsgHandler {
         public:
             RemoteClient();
             ~RemoteClient();
 
             void connect(const char* sname, int port, int rate);
-            void update();
+			void update();
             void disconnect();
 
             void setclientnum(int n);
+            int getclientnum();
 
+			void updateclientcache(int cn, int type, char* name);
+			
             ENetPeer* peer;
         private:
             std::string servername;
@@ -32,12 +35,12 @@ namespace CubeJRemote {
             int rate;
             int numchannels;
             int clientnum;
-
-//            struct headinfo { int clientnum; string name; };
-//            vector<headinfo*> heads;
+            vector <CubeJ::ClientInfo*> clientcache;
     };
 
     RemoteClient& GetRemoteClient();
+
+    template <CubeJProtocol::MSG_TYPE N> void receiveMessage(int sender, int channel, packetbuf& p) { p.cleanup(); }
 
     template <CubeJProtocol::MSG_TYPE N> void SendMessage(CubeJProtocol::MsgDataType<N>& data) {
         packetbuf p(MAXTRANS, data.info.flag);

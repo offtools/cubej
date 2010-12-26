@@ -6,7 +6,7 @@
 
 namespace CubeJ
 {
-// 	extern vector<extentity *> ents;
+    extern void debug (char * format, ...);
 }
 
 #endif // CUBEJ_H_INCLUDED

@@ -1,49 +1,20 @@
 #include "client.h"
-#include "protocol.h"
 
 namespace CubeJ
-{
-    template <MSG_TYPE N> void receiveMessage(int sender, int channel, packetbuf& p) { p.cleanup(); }
-
-    template <> void receiveMessage<MSG_ERROR_OVERFLOW>(int sender, int channel, packetbuf& p) { p.cleanup(); }
-
-    template <> void receiveMessage<MSG_ERROR_TAG>(int sender, int channel, packetbuf& p) { p.cleanup(); }
-
-    template <> void receiveMessage<MSG_SND_SERVINFO>(int sender, int channel, packetbuf& p) {
-        int clientnum = getint(p);
-        int protocol = getint(p);
-        conoutf("[DEBUG] receiveMessage<MSG_SND_SERVINFO>");
-        CubeJ::GetClient().initConnect(clientnum, protocol);
-	}
-
-    template <> void receiveMessage<MSG_REQ_CONNECT>(int sender, int channel, packetbuf& p) {
-        conoutf("[DEBUG] receiveMessage<MSG_REQ_CONNECT>");
-        char text[MAXTRANS];
-        getstring(text, p);
-        filtertext(text, text, false, MAXNAMELEN);
-        conoutf("[DEBUG] received by client - error %d:%s", sender, text);
-    }
-
-    template <> void receiveMessage<MSG_CDIS>(int sender, int channel, packetbuf& p) {
-        int clientnum = getint(p);
-        conoutf("[DEBUG] receiveMessage<MSG_CDIS>: %d", clientnum);
-    }
-
-    template <> void receiveMessage<MSG_SND_CLIENTINFO>(int sender, int channel, packetbuf& p) {
-        int cn = getint(p);
-        char text[MAXTRANS];
-        getstring(text, p);
-		CubeJ::GetClient().ackConnect(cn, text);
-        conoutf("[DEBUG] receiveMessage<MSG_SND_CLIENTINFO>: %d %s", cn, text);
-    }
-
-    template <> void receiveMessage<MSG_SND_SCENESTATUS>(int sender, int channel, packetbuf& p) {
-        int hasscene = getint(p);
-        conoutf("[DEBUG] receiveMessage<MSG_SND_SCENESTATUS> hasscene: %d", hasscene);
-    }
+{	
 
 	Client::Client() : self(*new ClientInfo), connected(false), messagecn(-1), messagereliable(false)
 	{
+				
+        registerMsgHandler( MSG_ERROR_OVERFLOW , receiveMessage<MSG_ERROR_OVERFLOW>);
+        registerMsgHandler( MSG_ERROR_TAG , receiveMessage<MSG_ERROR_TAG>);
+        registerMsgHandler( MSG_SND_SERVINFO , receiveMessage<MSG_SND_SERVINFO>);
+        registerMsgHandler( MSG_CDIS , receiveMessage<MSG_CDIS>);
+        registerMsgHandler( MSG_SND_CLIENTINFO , receiveMessage<MSG_SND_CLIENTINFO>);
+        registerMsgHandler( MSG_SND_SCENESTATUS , receiveMessage<MSG_SND_SCENESTATUS>);
+        registerMsgHandler( MSG_DISCOVER_REMOTE , receiveMessage<MSG_DISCOVER_REMOTE>);
+        registerMsgHandler( MSG_REQ_REMOTE , receiveMessage<MSG_REQ_REMOTE>);
+		
 		cameras.add(new dynent);
 		clients.add(&self);
 	}
@@ -65,14 +36,6 @@ namespace CubeJ
 	    conoutf("[DEBUG] Client::Init");
 		setvar("mainmenu", false);
 		setvar("hidehud", 1);
-        CubeJProtocol::Init();
-        CubeJProtocol::RegisterMsgHandler( MSG_ERROR_OVERFLOW , receiveMessage<MSG_ERROR_OVERFLOW>);
-        CubeJProtocol::RegisterMsgHandler( MSG_ERROR_TAG , receiveMessage<MSG_ERROR_TAG>);
-        CubeJProtocol::RegisterMsgHandler( MSG_SND_SERVINFO , receiveMessage<MSG_SND_SERVINFO>);
-        CubeJProtocol::RegisterMsgHandler( MSG_CDIS , receiveMessage<MSG_CDIS>);
-        CubeJProtocol::RegisterMsgHandler( MSG_SND_CLIENTINFO , receiveMessage<MSG_SND_CLIENTINFO>);
-        CubeJProtocol::RegisterMsgHandler( MSG_SND_SCENESTATUS , receiveMessage<MSG_SND_SCENESTATUS>);
-        CubeJProtocol::RegisterMsgHandler( MSG_REQ_CONNECT , receiveMessage<MSG_REQ_CONNECT>);
 
 		if(!connected)
 			localconnect();
@@ -169,7 +132,7 @@ namespace CubeJ
         while(p.remaining())
         {
             CubeJProtocol::MSG_TYPE type = (CubeJProtocol::MSG_TYPE)getint(p);
-            CubeJProtocol::ReceiveMessage(type, -1, chan, p);
+            receive(type, -1, chan, p);
         }
 	}
 
@@ -181,6 +144,14 @@ namespace CubeJ
             //change scene
         }
     }
+
+	void Client::connectRemoteClient(int n) {
+		conoutf("[DEBUG] Client::connectRemoteClient");
+		//TODO: check remote client
+		clients.add(new ClientInfo (CLIENT_TYPE_REMOTE, n));
+        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_ACK_REMOTE> data(n);
+        SendMessage(data);
+	}
 
 	Client& GetClient() {
 		static Client client;

@@ -1,6 +1,7 @@
 // main.cpp: initialisation & main loop
 
 #include "engine.h"
+#include "protocol.h"
 
 void cleanup()
 {
@@ -595,6 +596,7 @@ int main(int argc, char **argv)
     game::parseoptions(gameargs);
     initserver(dedicated>0, dedicated>1);  // never returns if dedicated
     ASSERT(dedicated <= 1);
+	CubeJProtocol::Init();
     game::initclient();
 
     log("video: mode");

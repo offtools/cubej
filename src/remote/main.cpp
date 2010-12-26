@@ -4,6 +4,7 @@
 #include "engine.h"
 #include "cube.h"
 
+#include "cubej.h"
 #include "protocol.h"
 #include "remoteclient.h"
 

@@ -14,10 +14,23 @@ namespace CubeJ
             copystring(name, s);
     }
 
+	ClientInfo::ClientInfo(int t, int cn)  : clientnum(cn), type(t) {
+		name[0] = '\0';
+	}
+
     ClientInfo::~ClientInfo() {}
 
     void ClientInfo::setName(char* text)  {
-        if(!text[0]) copystring(text, "unnamed");
+        if(!text || !*text) copystring(text, "unnamed");
         copystring(name, text, CubeJProtocol::MAXNAMELEN+1);
     }
+
+    int ClientInfo::getclientnum() {
+        return clientnum;
+    }
+
+	int ClientInfo::gettype() {
+		return type;
+	}
+
 }

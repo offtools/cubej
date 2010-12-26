@@ -3,10 +3,11 @@
 
 #include "cube.h"
 #include "clientinfo.h"
+#include "protocol.h"
 
 namespace CubeJ
 {
-	class Client
+	class Client : public CubeJProtocol::MsgHandler
 	{
 		public:
 			Client();
@@ -26,11 +27,15 @@ namespace CubeJ
 			void parsePacket(int chan, packetbuf &p);
 
 			void initConnect(int cn, int protocol);
+
 			//called when received a client info message about new connected client
 			void ackConnect(int cn, char* text);
+
 			void finishConnect(bool remote);
 
 			void requestScene(bool srvscene);
+
+			void connectRemoteClient(int n);
 
 		protected:
 		private:
@@ -46,6 +51,8 @@ namespace CubeJ
 
 	Client & GetClient();
 	//Scene& GetScene();
+
+	template <CubeJProtocol::MSG_TYPE N> void receiveMessage(int sender, int channel, packetbuf& p) { p.cleanup(); }
 }
 
 #endif // CUBEJ_CLIENT_H_INCLUDED

@@ -170,7 +170,7 @@ extern void renderentattachment(const extentity &e);
 extern void renderentsphere(const extentity &e, float radius);
 extern void renderentring(const extentity &e, float radius, int axis = 0);
 
-// main
+// main -> error (__offtools__)
 extern void fatal(const char *s, ...);
 extern void keyrepeat(bool on);
 
@@ -365,7 +365,9 @@ extern bool haslocalclients();
 extern void sendserverinforeply(ucharbuf &p);
 extern bool requestmaster(const char *req);
 extern bool requestmasterf(const char *fmt, ...);
-
+//added by __offtools__, separated server main routine
+extern void initserver(bool listen, bool dedicated);
+extern bool serveroption(char *opt);
 // client
 extern void sendclientpacket(ENetPacket *packet, int chan);
 extern void flushclient();

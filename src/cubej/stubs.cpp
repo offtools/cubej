@@ -1,9 +1,11 @@
 #include "cube.h"
-#include "entities.h"
-#include "client.h"
 #include "clientinfo.h"
 
 #ifndef STANDALONE
+
+#include "client.h"
+#include "entities.h"
+
 namespace entities
 {
     void editent(int i, bool local) {

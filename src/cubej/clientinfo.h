@@ -13,10 +13,13 @@ namespace CubeJ
     friend class Client;
     public:
         ClientInfo();
-        ClientInfo(int n, const char* s);
+		ClientInfo(int cn, const char* s);
+        ClientInfo(int type, int cn);
         ~ClientInfo();
 
         void setName(char* text);
+        int getclientnum();
+		int gettype();
 
     protected:
         //unique id for an client

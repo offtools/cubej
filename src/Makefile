@@ -4,117 +4,11 @@ override CXXFLAGS+= -Wall -fsigned-char
 PLATFORM= $(shell uname -s)
 PLATFORM_PREFIX= native
 
-INCLUDES= -Ishared -Iengine -Icubej -Ienet/include
-
-STRIP=
-ifeq (,$(findstring -g,$(CXXFLAGS)))
-ifeq (,$(findstring -pg,$(CXXFLAGS)))
-  STRIP=strip
-endif
-endif
-
 MV=mv
-ifneq (,$(findstring MINGW,$(PLATFORM)))
-WINDRES= windres
-CLIENT_INCLUDES= $(INCLUDES) -Iinclude
-CLIENT_LIBS= -mwindows -Llib -lSDL -lSDL_image -lSDL_mixer -lzdll -lopengl32 -lenet -lws2_32 -lwinmm
-else
-CLIENT_INCLUDES= $(INCLUDES) -I/usr/X11R6/include `sdl-config --cflags`
-CLIENT_LIBS= -Lenet/.libs -lenet -L/usr/X11R6/lib `sdl-config --libs` -lSDL_image -lSDL_mixer -lz -lGL
-endif
-ifeq ($(PLATFORM),Linux)
-CLIENT_LIBS+= -lrt
-endif
-CLIENT_OBJS= \
-	shared/crypto.o \
-	shared/geom.o \
-	shared/stream.o \
-	shared/tools.o \
-	shared/zip.o \
-	engine/3dgui.o \
-	engine/bih.o \
-	engine/blend.o \
-	engine/blob.o \
-	engine/client.o	\
-	engine/command.o \
-	engine/console.o \
-	engine/cubeloader.o \
-	engine/decal.o \
-	engine/dynlight.o \
-	engine/error.o \
-	engine/glare.o \
-	engine/grass.o \
-	engine/lightmap.o \
-    engine/main.o \
-	engine/material.o \
-	engine/menus.o \
-	engine/movie.o \
-	engine/normal.o	\
-	engine/octa.o \
-	engine/octaedit.o \
-	engine/octarender.o \
-	engine/physics.o \
-	engine/pvs.o \
-	engine/renderbackground.o \
-	engine/rendergl.o \
-	engine/rendermodel.o \
-	engine/renderparticles.o \
-	engine/rendersky.o \
-	engine/rendertext.o \
-	engine/renderva.o \
-	engine/screen.o \
-	engine/server.o	\
-	engine/serverbrowser.o \
-	engine/shader.o \
-	engine/shadowmap.o \
-	engine/sound.o \
-	engine/texture.o \
-	engine/water.o \
-	engine/world.o \
-	engine/worldio.o \
-	cubej/client.o \
-	cubej/entities.o \
-	cubej/protocol.o \
-	cubej/server.o \
-	cubej/stubs.o
-
-ifneq (,$(findstring MINGW,$(PLATFORM)))
-CLIENT_OBJS+= vcpp/SDL_win32_main.o
-endif
-CLIENT_PCH= shared/cube.h.gch engine/engine.h.gch cubej/cubej.h.gch
-
-ifneq (,$(findstring MINGW,$(PLATFORM)))
-SERVER_INCLUDES= -DSTANDALONE $(INCLUDES) -Iinclude
-SERVER_LIBS= -Llib -lzdll -lenet -lws2_32 -lwinmm
-else
-SERVER_INCLUDES= -DSTANDALONE $(INCLUDES)
-SERVER_LIBS= -Lenet/.libs -lenet -lz
-endif
-
-SERVER_OBJS= \
-	shared/crypto-standalone.o \
-	shared/stream-standalone.o \
-	shared/tools-standalone.o \
-	engine/command-standalone.o \
-	engine/server-standalone.o \
-	cubej/protocol-standalone.o \
-	cubej/stubs-standalone.o \
-	cubej/server-standalone.o
-MASTER_OBJS= \
-	shared/crypto-standalone.o \
-	shared/stream-standalone.o \
-	shared/tools-standalone.o \
-	engine/command-standalone.o \
-	engine/master-standalone.o
-
-ifeq ($(PLATFORM),SunOS)
-CLIENT_LIBS+= -lsocket -lnsl -lX11
-SERVER_LIBS+= -lsocket -lnsl
-endif
 
 default: all
 
-all: client server
+all: client server remote
 
 enet/Makefile:
 	cd enet; ./configure --enable-shared=no --enable-static=yes
@@ -126,62 +20,27 @@ clean-enet: enet/Makefile
 	$(MAKE) -C enet/ clean
 
 clean:
-	-$(RM) $(CLIENT_PCH) $(CLIENT_OBJS) $(SERVER_OBJS) $(MASTER_OBJS) cubej_client cubej_server cubej_master
+	$(MAKE) -C client/ clean
+	$(MAKE) -C server/ clean
+	$(MAKE) -C remote/ clean
 
-%.h.gch: %.h
-	$(CXX) $(CXXFLAGS) -o $@.tmp $(subst .h.gch,.h,$@)
-	$(MV) $@.tmp $@
 
-%-standalone.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $(subst -standalone.o,.cpp,$@)
-
-$(CLIENT_OBJS): CXXFLAGS += $(CLIENT_INCLUDES)
-$(filter shared/%,$(CLIENT_OBJS)): $(filter shared/%,$(CLIENT_PCH))
-$(filter engine/%,$(CLIENT_OBJS)): $(filter engine/%,$(CLIENT_PCH))
-$(filter cubej/%,$(CLIENT_OBJS)): $(filter cubej/%,$(CLIENT_PCH))
-
-$(SERVER_OBJS): CXXFLAGS += $(SERVER_INCLUDES)
-$(filter-out $(SERVER_OBJS),$(MASTER_OBJS)): CXXFLAGS += $(SERVER_INCLUDES)
-
-ifneq (,$(findstring MINGW,$(PLATFORM)))
-vcpp/%.o:
-	$(CXX) $(CXXFLAGS) -c -o $@ $(subst .o,.c,$@)
-
-client: $(CLIENT_OBJS)
-	$(WINDRES) -I vcpp -i vcpp/mingw.rc -J rc -o vcpp/mingw.res -O coff
-	$(CXX) $(CXXFLAGS) -o ../bin/cubej.exe vcpp/mingw.res $(CLIENT_OBJS) $(CLIENT_LIBS)
-
-server: $(SERVER_OBJS)
-	$(CXX) $(CXXFLAGS) -o ../bin/cubej_server.exe $(SERVER_OBJS) $(SERVER_LIBS)
-
-master: $(MASTER_OBJS)
-	$(CXX) $(CXXFLAGS) -o ../bin/cubej_master.exe $(MASTER_OBJS) $(SERVER_LIBS)
-
-install: all
-else
 client:	libenet $(CLIENT_OBJS)
-	$(CXX) $(CXXFLAGS) -o cubej_client $(CLIENT_OBJS) $(CLIENT_LIBS)
+	$(MAKE) -C client/ client
 
 server:	libenet $(SERVER_OBJS)
-	$(CXX) $(CXXFLAGS) -o cubej_server $(SERVER_OBJS) $(SERVER_LIBS)
+	$(MAKE) -C server/ server
 
-master: libenet $(MASTER_OBJS)
-	$(CXX) $(CXXFLAGS) -o cubej_master $(MASTER_OBJS) $(SERVER_LIBS)
+#master: libenet $(MASTER_OBJS)
+#	$(MAKE) -C master/ install
+
+remote: libenet $(CLIENT_OBJS)
+	$(MAKE) -C remote/ remote
 
 install: all
-	cp cubej_client	../bin_unix/$(PLATFORM_PREFIX)_client
-	cp cubej_server	../bin_unix/$(PLATFORM_PREFIX)_server
-ifneq (,$(STRIP))
-	$(STRIP) ../bin_unix/$(PLATFORM_PREFIX)_client
-	$(STRIP) ../bin_unix/$(PLATFORM_PREFIX)_server
-endif
-endif
-
-depend:
-	makedepend -Y -Ishared -Iengine -Icubej $(subst .o,.cpp,$(CLIENT_OBJS))
-	makedepend -a -o.h.gch -Y -Ishared -Iengine -Icubej $(subst .h.gch,.h,$(CLIENT_PCH))
-	makedepend -a -o-standalone.o -Y -Ishared -Iengine -Icubej $(subst -standalone.o,.cpp,$(SERVER_OBJS))
-	makedepend -a -o-standalone.o -Y -Ishared -Iengine -Icubej $(subst -standalone.o,.cpp,$(filter-out $(SERVER_OBJS), $(MASTER_OBJS)))
+	$(MAKE) -C client/ install
+	$(MAKE) -C server/ install
+	$(MAKE) -C remote/ install
 
 engine/engine.h.gch: shared/cube.h.gch
 cubej/cubej.h.gch: shared/cube.h.gch

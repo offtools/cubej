@@ -1,38 +1,13 @@
 #include "remoteclient.h"
 namespace CubeJRemote {
 
-    template <CubeJProtocol::MSG_TYPE N> void receiveMessage(int sender, int channel, packetbuf& p) { p.cleanup(); }
-
-    template <> void receiveMessage<CubeJProtocol::MSG_ERROR_OVERFLOW>(int sender, int channel, packetbuf& p) { p.cleanup(); }
-
-    template <> void receiveMessage<CubeJProtocol::MSG_ERROR_TAG>(int sender, int channel, packetbuf& p) { p.cleanup(); }
-
-    template <> void receiveMessage<CubeJProtocol::MSG_SND_SERVINFO>(int sender, int channel, packetbuf& p) {
-        int clientnum = getint(p);
-        int protocol = getint(p);
-        if(protocol != CubeJProtocol::PROTOCOL_VERSION) {
-            std::cout << "[DEBUG] receiveMessage<CubeJProtocol::MSG_SND_SERVINFO> - wrong protocol version" << std::endl;
-            return;
-        }
-        std::cout << "[DEBUG] receiveMessage<MSG_SND_SERVINFO> clientnum: " << clientnum << ", protocol: " << protocol << std::endl;
-
-        GetRemoteClient().setclientnum(clientnum);
-
-        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_REMOTE> data;
-        SendMessage(data);
-	}
-
-    template <> void receiveMessage<CubeJProtocol::MSG_SND_CLIENTINFO>(int sender, int channel, packetbuf& p) {
-        int clientnum = getint(p);
-        char text[MAXTRANS];
-        getstring(text, p);
-        std::cout << "[DEBUG] receiveMessage<CubeJProtocol::MSG_SND_CLIENTINFO> clientnum: %d, name: %s" << clientnum << text << std::endl;
-    }
-
     RemoteClient::RemoteClient() : peer(NULL), host(NULL), rate(0), numchannels(3), clientnum(-1) {
-        CubeJProtocol::RegisterMsgHandler( CubeJProtocol::MSG_SND_SERVINFO , receiveMessage<CubeJProtocol::MSG_SND_SERVINFO>);
-        CubeJProtocol::RegisterMsgHandler( CubeJProtocol::MSG_ERROR_OVERFLOW , receiveMessage<CubeJProtocol::MSG_ERROR_OVERFLOW>);
-        CubeJProtocol::RegisterMsgHandler( CubeJProtocol::MSG_ERROR_TAG , receiveMessage<CubeJProtocol::MSG_ERROR_TAG>);
+        registerMsgHandler( CubeJProtocol::MSG_ERROR_OVERFLOW , receiveMessage<CubeJProtocol::MSG_ERROR_OVERFLOW>);
+        registerMsgHandler( CubeJProtocol::MSG_ERROR_TAG , receiveMessage<CubeJProtocol::MSG_ERROR_TAG>);
+        registerMsgHandler( CubeJProtocol::MSG_SND_SERVINFO , receiveMessage<CubeJProtocol::MSG_SND_SERVINFO>);
+        registerMsgHandler( CubeJProtocol::MSG_SND_CLIENTINFO , receiveMessage<CubeJProtocol::MSG_SND_CLIENTINFO>);
+        registerMsgHandler( CubeJProtocol::MSG_SND_SCENESTATUS , receiveMessage<CubeJProtocol::MSG_SND_SCENESTATUS>);
+        registerMsgHandler( CubeJProtocol::MSG_ACK_REMOTE , receiveMessage<CubeJProtocol::MSG_ACK_REMOTE>);
     }
 
     RemoteClient::~RemoteClient()
@@ -76,7 +51,9 @@ namespace CubeJRemote {
                 {
                     packetbuf p(event.packet);
                     int chan = event.channelID;
-                    CubeJProtocol::ReceiveMessage( -1, chan, p);
+                    while(p.remaining()) {
+                        receive( -1, chan, p);
+                    }
                     enet_packet_destroy(event.packet);
                     break;
                 }
@@ -96,12 +73,26 @@ namespace CubeJRemote {
         std::cout << "[DEBUG] RemoteClient::setclientnum " << clientnum << std::endl;
     }
 
+    int RemoteClient::getclientnum() {
+        return clientnum;
+    }
+
+	void RemoteClient::updateclientcache(int cn, int type, char* name) {
+		loopv(clientcache) if(clientcache[i]->getclientnum() == cn) {
+			delete clientcache.remove(i);
+		}
+		CubeJ::ClientInfo* ci = clientcache.add(new CubeJ::ClientInfo(type, cn));
+		if(name && *name && ci->gettype() == CubeJ::CLIENT_TYPE_HEAD) {
+			ci->setName(name);
+		}
+	}
+
     void RemoteClient::disconnect() {
         std::cout << "[DEBUG] RemoteClient::disconnect"<< std::endl;
         enet_peer_disconnect(peer, DISC_NONE);
         enet_host_flush(host);
         enet_peer_reset (peer);
-
+		clientcache.deletecontents();
     }
 
     RemoteClient& GetRemoteClient() {

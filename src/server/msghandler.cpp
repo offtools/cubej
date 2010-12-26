@@ -9,12 +9,13 @@ namespace CubeJSrv {
 
     template <> void receiveMessage<MSG_REQ_CONNECT>(int sender, int channel, packetbuf& p) {
         conoutf("[DEBUG] receiveMessage<MSG_REQ_CONNECT>");
-        char text[MAXTRANS];
+		char text[MAXTRANS];
         getstring(text, p);
         filtertext(text, text, false, MAXNAMELEN);
-        MsgInfoType& info = GetMsgTypeInfo(MSG_REQ_CONNECT);
-        conoutf("[DEBUG] info.channel: %d, channel: %d", info.channel, channel);
-        //if (info.channel == channel)
+
+		MsgInfoType& info = GetMsgTypeInfo(MSG_REQ_CONNECT);
+
+		if (info.channel == channel)
             CubeJSrv::GetServer().registerClient(sender, text);
     }
 

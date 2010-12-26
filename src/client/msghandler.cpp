@@ -41,9 +41,9 @@ namespace CubeJ {
 		conoutf("[TODO] get scene from server or upload running scene");
     }
 
-    template <> void receiveMessage<MSG_REQ_REMOTE_CONNECT>(int sender, int channel, packetbuf& p) {
+    template <> void receiveMessage<MSG_REQ_REMOTE>(int sender, int channel, packetbuf& p) {
         int clientnum = getint(p);
-        conoutf("[DEBUG] receiveMessage<MSG_REQ_REMOTE_CONNECT> sender: %d, remote client: %d", sender, clientnum);
+        conoutf("[DEBUG] receiveMessage<MSG_REQ_REMOTE> sender: %d, remote client: %d", sender, clientnum);
 		GetClient().connectRemoteClient(clientnum);
     }
 }

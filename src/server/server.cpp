@@ -2,41 +2,14 @@
 #include "protocol.h"
 
 namespace CubeJSrv {
+
 	using namespace CubeJProtocol;
-
-    //-------------Message Handler-----------------//
-	template <MSG_TYPE N> void receiveMessage(int sender, int channel, packetbuf& p) { p.cleanup(); }
-
-    template <> void receiveMessage<MSG_ERROR_OVERFLOW>(int sender, int channel, packetbuf& p) { p.cleanup(); }
-
-    template <> void receiveMessage<MSG_ERROR_TAG>(int sender, int channel, packetbuf& p) { p.cleanup(); }
-
-    template <> void receiveMessage<MSG_REQ_CONNECT>(int sender, int channel, packetbuf& p) {
-        conoutf("[DEBUG] receiveMessage<MSG_REQ_CONNECT>");
-        char text[MAXTRANS];
-        getstring(text, p);
-        filtertext(text, text, false, MAXNAMELEN);
-        MsgInfoType& info = GetMsgTypeInfo(MSG_REQ_CONNECT);
-        conoutf("[DEBUG] info.channel: %d, channel: %d", info.channel, channel);
-        //if (info.channel == channel)
-            CubeJSrv::GetServer().connectClient(sender, text);
-    }
-
-    template <> void receiveMessage<MSG_REQ_REMOTE>(int sender, int channel, packetbuf& p) {
-        conoutf("[DEBUG] receiveMessage<MSG_REQ_REMOTE> sender: %d, channel: %d", sender, channel);
-        GetServer().connectRemoteClient(sender);
-    }
-
+	
     //--------Client Info Implementation------------//
 
 	SvClientInfo::SvClientInfo() : connectmillis(0), connected(false), local(false) {}
 
 	SvClientInfo::~SvClientInfo() {}
-
-//	void SvClientInfo::setName(char* text) {
-//		if(!text[0]) copystring(text, "unnamed");
-//		copystring(name, text, CubeJSrv::MAXNAMELEN+1);
-//	}
 
 	bool SvClientInfo::isConnected() {
 		return connected;
@@ -67,8 +40,8 @@ namespace CubeJSrv {
 
     int SceneManager::deleteobject(int id) { return 0; }
 
-    void SceneManager::sendsceneinfo(packetbuf& p) {
-        MsgDataType<MSG_SND_SCENESTATUS> data(hasscene, mapname);
+    void SceneManager::sendscenestatus(packetbuf& p) {
+        MsgDataType<MSG_SND_SCENESTATUS> data(hasscene);
         data.addmsg(p);
     }
 
@@ -76,23 +49,45 @@ namespace CubeJSrv {
         hasscene = false;
         mapname[0] = '\0';
     }
-
+	
     //--------Server Implementation------------//
 
-	Server::Server() : reliablemessages(false), lastsend(0), scenemillis(0) {}
+	Server::Server() : reliablemessages(false), lastsend(0), scenemillis(0) {
+        registerMsgHandler( CubeJProtocol::MSG_ERROR_OVERFLOW , receiveMessage<CubeJProtocol::MSG_ERROR_OVERFLOW>);
+        registerMsgHandler( CubeJProtocol::MSG_ERROR_TAG , receiveMessage<CubeJProtocol::MSG_ERROR_TAG>);
+        registerMsgHandler( CubeJProtocol::MSG_REQ_CONNECT , receiveMessage<CubeJProtocol::MSG_REQ_CONNECT>);
+        registerMsgHandler( CubeJProtocol::MSG_DISCOVER_REMOTE , receiveMessage<CubeJProtocol::MSG_DISCOVER_REMOTE>);
+        registerMsgHandler( CubeJProtocol::MSG_REQ_REMOTE , receiveMessage<CubeJProtocol::MSG_REQ_REMOTE>);
+        registerMsgHandler( CubeJProtocol::MSG_ACK_REMOTE , receiveMessage<CubeJProtocol::MSG_ACK_REMOTE>);
+	}
 
 	Server::~Server() {}
 
+	//--------Server: Network Message Handler------------//
+
+	//~ void Server::registerMsgHandler(MSG_TYPE n, void (*func)(int, int, packetbuf&)) {
+		//~ if( n < CubeJProtocol::NUM_MESSAGES )
+			//~ receivehandler[n] = func;
+	//~ }
+	
+	//~ void Server::receive(CubeJProtocol::MSG_TYPE n, int sender, int channel, packetbuf& p) {
+	    //~ if (  n < CubeJProtocol::NUM_MESSAGES && receivehandler[n] &&  channel == CubeJProtocol::GetMsgTypeInfo(n).channel ) {
+            //~ receivehandler[n](sender, channel, p);
+	    //~ }
+	    //~ else {
+            //~ conoutf("[DEBUG] CubeJProtocol::ReceiveMessage - Message Type or Message Handler \"%s\" not found", CubeJProtocol::GetMsgTypeInfo(n).description);
+            //~ receivehandler[n](sender, channel, p);
+	    //~ }
+	//~ }
+
+	//~ void Server::receive(int sender, int channel, packetbuf& p) {
+        //~ CubeJProtocol::MSG_TYPE type = (CubeJProtocol::MSG_TYPE)getint(p);
+        //~ receive(type, sender, channel, p);
+	//~ }
+	
 	void Server::Init() {
         conoutf("[DEBUG] Server::Init");
-#ifndef STANDALONE
-	    CubeJProtocol::Init();
-#endif
-        CubeJProtocol::RegisterMsgHandler( MSG_ERROR_OVERFLOW , receiveMessage<MSG_ERROR_OVERFLOW>);
-        CubeJProtocol::RegisterMsgHandler( MSG_ERROR_TAG , receiveMessage<MSG_ERROR_TAG>);
-        CubeJProtocol::RegisterMsgHandler( MSG_REQ_CONNECT , receiveMessage<MSG_REQ_CONNECT>);
-        CubeJProtocol::RegisterMsgHandler( MSG_REQ_REMOTE , receiveMessage<MSG_REQ_REMOTE>);
-        GetSceneManager().reset();
+		GetSceneManager().reset();
 	}
 
 	void Server::Update() {
@@ -109,7 +104,7 @@ namespace CubeJSrv {
         SvClientInfo *ci = (SvClientInfo *)getclientinfo(n);
 		ci->Init(n, local);
         connecting.add(ci);
-        MsgDataType<MSG_SND_SERVINFO> data(ci->clientnum, PROTOCOL_VERSION);
+        MsgDataType<CubeJProtocol::MSG_SND_SERVINFO> data(ci->clientnum, CubeJProtocol::PROTOCOL_VERSION);
         SendMessage(ci->clientnum, data);
 		return DISC_NONE;
 	}
@@ -119,7 +114,7 @@ namespace CubeJSrv {
 		SvClientInfo *ci = (SvClientInfo*)getclientinfo(n);
         if(ci->connected)
         {
-            MsgDataType<MSG_CDIS> data(n);
+            MsgDataType<CubeJProtocol::MSG_CDIS> data(n);
             SendMessage(ci->clientnum, data);
         }
         clients.removeobj(ci);
@@ -133,7 +128,7 @@ namespace CubeJSrv {
         lastsend += curtime - (curtime%33);
         return true;
 	}
-
+	
 	void Server::parsePacket(int sender, int chan, packetbuf &p) {
         if(sender<0) return;
         CubeJProtocol::MSG_TYPE type;
@@ -142,25 +137,30 @@ namespace CubeJSrv {
         reliablemessages = p.packet->flags&ENET_PACKET_FLAG_RELIABLE ? true : false;
 
         SvClientInfo *ci = sender>=0 ? (SvClientInfo*)getclientinfo(sender) : NULL;
+		conoutf("[DEBUG] parsing ", type);
 
         while( (curmsg = p.length()) < p.maxlen)
         {
         	type = (CubeJProtocol::MSG_TYPE)getint(p);
+            conoutf("[DEBUG] parsing Msg type: %d", type);
         	if(ci && !ci->connected) {
                 if(chan == 0) {
                     return;
                 }
-                if(chan != 1 || ( type != CubeJProtocol::MSG_REQ_CONNECT && type != CubeJProtocol::MSG_REQ_REMOTE )) {
+				//validating should be handles by handlers itself, because they hold all the information about the message
+                //~ if ( chan != 1 || ( type != CubeJProtocol::MSG_REQ_CONNECT && type != CubeJProtocol::MSG_REQ_REMOTE ) ) {
+                if ( chan != CHANNEL_PRECONNECT ) {
+					conoutf("[DEBUG] Disconnect: clientnum: %d, type %d", ci->getclientnum(), type);
                     disconnect_client(sender, DISC_TAGT); return;
                 }
         	}
 
         	//parse all messages
-            CubeJProtocol::ReceiveMessage(type, sender, chan, p);
+            receive(type, sender, chan, p);
         }
 	}
 
-    void Server::connectClient(int cn, char* text) {
+    void Server::registerClient(int cn, char* text) {
         CubeJSrv::SvClientInfo *ci = (CubeJSrv::SvClientInfo*)getclientinfo(cn);
         connecting.removeobj(ci);
         clients.add(ci);
@@ -172,21 +172,20 @@ namespace CubeJSrv {
         packetbuf p(MAXTRANS, info.flag);
 
         //send all client infos
-        loopv(clients) {
+        loopv(clients) if(clients[i]->type == CubeJ::CLIENT_TYPE_HEAD  &&  !clients[i]->isConnected() ) {
             MsgDataType<MSG_SND_CLIENTINFO> data(clients[i]->clientnum, clients[i]->name);
             data.addmsg(p);
         }
 
-        //send scene info
-        //GetSceneManager().sendsceneinfo(p);
-
+        //send scene status
+        GetSceneManager().sendscenestatus(p);
         sendpacket(ci->clientnum, info.channel, p.finalize());
     }
 
-    void Server::connectRemoteClient(int cn) {
+    void Server::registerRemoteClient(int cn) {
         CubeJSrv::SvClientInfo *ci = (CubeJSrv::SvClientInfo*)getclientinfo(cn);
         if(!ci) {
-            conoutf("[DEBUG] Server::connectRemoteClient - no clientinfo, abort connect");
+            conoutf("[DEBUG] Server::registerRemoteClient - no clientinfo, abort connect");
             return;
         }
 
@@ -196,15 +195,26 @@ namespace CubeJSrv {
 
         packetbuf p(MAXTRANS, info.flag);
 
-        //send all client infos
-        loopv(clients) { //if(clients[i]->type == SDL_HEAD) {
+        //send client infos of not connected (free) heads
+        loopv(clients) {
             MsgDataType<MSG_SND_CLIENTINFO> data(clients[i]->clientnum, clients[i]->name);
             data.addmsg(p);
-            conoutf("[DEBUG] Server::connectRemoteClient - send %d:%s", clients[i]->clientnum, clients[i]->name);
+            conoutf("[DEBUG] Server::registerRemoteClient - send %d:%s", clients[i]->clientnum, clients[i]->name);
         }
 
+        //GetSceneManager().sendscenestatus(p);
         sendpacket(ci->clientnum, info.channel, p.finalize());
     }
+
+	void Server::connectRemoteClient(int head, int remote) {
+        SvClientInfo *cihead = (SvClientInfo*)getclientinfo(head);
+        SvClientInfo *ciremote = (SvClientInfo*)getclientinfo(remote);
+		ciremote->connected = true;
+		if(!cihead || !ciremote)
+			return;
+		MsgDataType<MSG_ACK_REMOTE> data(head);
+        SendMessage(remote, data);
+	}
 
 	Server& GetServer() {
 		static Server server;

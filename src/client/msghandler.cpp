@@ -1,8 +1,8 @@
 #include "client.h"
 
 namespace CubeJ {
-	using namespace CubeJProtocol;	
-	
+	using namespace CubeJProtocol;
+
     template <> void receiveMessage<MSG_ERROR_OVERFLOW>(int sender, int channel, packetbuf& p) { p.cleanup(); }
 
     template <> void receiveMessage<MSG_ERROR_TAG>(int sender, int channel, packetbuf& p) { p.cleanup(); }
@@ -29,10 +29,11 @@ namespace CubeJ {
 
     template <> void receiveMessage<MSG_SND_CLIENTINFO>(int sender, int channel, packetbuf& p) {
         int cn = getint(p);
+		int type = getint(p);
         char text[MAXTRANS];
         getstring(text, p);
-		CubeJ::GetClient().ackConnect(cn, text);
-        conoutf("[DEBUG] receiveMessage<MSG_SND_CLIENTINFO>: %d %s", cn, text);
+		CubeJ::GetClient().ackConnect(cn, type, text);
+        conoutf("[DEBUG] receiveMessage<MSG_SND_CLIENTINFO>: cn: %d type: %d name: %s", cn, type, text);
     }
 
     template <> void receiveMessage<MSG_SND_SCENESTATUS>(int sender, int channel, packetbuf& p) {
@@ -45,5 +46,9 @@ namespace CubeJ {
         int clientnum = getint(p);
         conoutf("[DEBUG] receiveMessage<MSG_REQ_REMOTE> sender: %d, remote client: %d", sender, clientnum);
 		GetClient().connectRemoteClient(clientnum);
+    }
+
+    template <> void receiveMessage<MSG_REQ_LISTMAPS>(int sender, int channel, packetbuf& p) {
+        conoutf("[DEBUG] receiveMessage<MSG_REQ_LISTMAPS>");
     }
 }

@@ -13,8 +13,7 @@ namespace CubeJ
     friend class Client;
     public:
         ClientInfo();
-		ClientInfo(int cn, const char* s);
-        ClientInfo(int type, int cn);
+		ClientInfo(int cn, int type, const char* s);
         ~ClientInfo();
 
         void setName(char* text);

@@ -51,7 +51,7 @@ int main (void) {
     }
     CubeJProtocol::Init();
     RemoteClient& remoteclient = GetRemoteClient();
-    remoteclient.connect("localhost", 26785, 25000);
+    remoteclient.connectToServer("localhost", 26785, 25000);
 
     usleep(1000000);
 

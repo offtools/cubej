@@ -39,4 +39,9 @@ namespace CubeJSrv {
         conoutf("[DEBUG] receiveMessage<MSG_ACK_REMOTE> client: %d, remote: %d", sender, remote);
 		GetServer ().connectRemoteClient(sender, remote);
     }
+
+    template <> void receiveMessage<MSG_REQ_LISTMAPS>(int sender, int channel, packetbuf& p) {
+        conoutf("[DEBUG] receiveMessage<MSG_REQ_LISTMAPS> sender: %d", sender);
+		GetServer ().forwardMessage(sender, channel, p);
+    }
 }

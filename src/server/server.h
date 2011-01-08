@@ -8,7 +8,6 @@
 namespace CubeJSrv {
 
 	static const int RESERVE_CLIENTS = 3;
-	static const int NUM_CHANNELS = 3;
 
 	static int CUBEJ_LANINFO_PORT = 26784;
 	static int CUBEJ_SERVER_PORT = 26785;
@@ -34,10 +33,13 @@ namespace CubeJSrv {
 		int connectmillis;
 		//is connected
 		bool connected; //( will be status )
+		//clientnum pair client
+		int pairnum;
 		//local client or not
 		bool local;
 		//messages
 		vector<uchar> messages;
+		vector<uchar> remote;
 	};
 
 	class SceneObject {
@@ -97,6 +99,8 @@ namespace CubeJSrv {
 
 		int numClients();
 
+        void forwardMessage(int sender, int channel, packetbuf& p);
+
 	private:
 		vector<SvClientInfo*> clients;
 		vector<SvClientInfo*> connecting;
@@ -114,7 +118,7 @@ namespace CubeJSrv {
 
 	Server& GetServer();
 	SceneManager& GetSceneManager();
-	
+
 	template <MSG_TYPE N> void receiveMessage(int sender, int channel, packetbuf& p) { p.cleanup(); }
 }
 

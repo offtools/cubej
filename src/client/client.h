@@ -29,7 +29,7 @@ namespace CubeJ
 			void initConnect(int cn, int protocol);
 
 			//called when received a client info message about new connected client
-			void ackConnect(int cn, char* text);
+			void ackConnect(int cn, int type, char* text);
 
 			void finishConnect(bool remote);
 

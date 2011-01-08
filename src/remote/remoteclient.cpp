@@ -1,7 +1,7 @@
 #include "remoteclient.h"
 namespace CubeJRemote {
 
-    RemoteClient::RemoteClient() : peer(NULL), host(NULL), rate(0), numchannels(3), clientnum(-1) {
+    RemoteClient::RemoteClient() : peer(NULL), host(NULL), rate(0), numchannels(CubeJProtocol::NUM_CHANNELS), clientnum(-1), head(NULL) {
         registerMsgHandler( CubeJProtocol::MSG_ERROR_OVERFLOW , receiveMessage<CubeJProtocol::MSG_ERROR_OVERFLOW>);
         registerMsgHandler( CubeJProtocol::MSG_ERROR_TAG , receiveMessage<CubeJProtocol::MSG_ERROR_TAG>);
         registerMsgHandler( CubeJProtocol::MSG_SND_SERVINFO , receiveMessage<CubeJProtocol::MSG_SND_SERVINFO>);
@@ -15,14 +15,14 @@ namespace CubeJRemote {
         disconnect();
     }
 
-    void RemoteClient::connect(const char* sname, int port, int r) {
+    void RemoteClient::connectToServer(const char* sname, int port, int r) {
         servername = sname;
         rate = r;
         address.port = port;
 
         if(enet_address_set_host (&address, servername.c_str()) < 0 )
         {
-            std::cout << "[DEBUG] RemoteClient::connect - could not resolve server " << servername;
+            std::cout << "[DEBUG] RemoteClient::connectToServer - could not resolve server " << servername;
             return;
         }
 
@@ -30,11 +30,38 @@ namespace CubeJRemote {
 
         if(host)
         {
-            std::cout << "[DEBUG] RemoteClient::connect - connecting to host" << std::endl;
+            std::cout << "[DEBUG] RemoteClient::connectToServer - connecting to host" << std::endl;
             peer = enet_host_connect(host, &address, numchannels, 0);
             enet_host_flush(host);
         }
-        else std::cout << "[DEBUG] RemoteClient::connect - could not connect to server";
+        else std::cout << "[DEBUG] RemoteClient::connectToServer - could not connect to server";
+    }
+
+    void RemoteClient::connectClient(int cn) {
+		loopv(clientcache) if(clientcache[i]->getclientnum() == cn) {
+            if(head)
+                GetRemoteClient().disconnectClient();
+            head = clientcache[i];
+
+            ///[TEST]
+            CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_LISTMAPS> data;
+            SendMessage(data);
+            return;
+		}
+		conoutf("[DEBUG] RemoteClient::connectClient: error - client %d not found in clientcache", cn);
+    }
+
+    void RemoteClient::disconnectClient() {
+        head = NULL;
+    }
+
+    void RemoteClient::disconnectClient(int cn) {
+		loopv(clientcache) if(clientcache[i]->getclientnum() == cn) {
+            if(head)
+                GetRemoteClient().disconnectClient();
+            delete clientcache.remove(i);
+            return;
+		}
     }
 
     void RemoteClient::update() {
@@ -79,12 +106,12 @@ namespace CubeJRemote {
 
 	void RemoteClient::updateclientcache(int cn, int type, char* name) {
 		loopv(clientcache) if(clientcache[i]->getclientnum() == cn) {
+		    if(head == clientcache[i]) {
+                GetRemoteClient().disconnectClient();
+		    }
 			delete clientcache.remove(i);
 		}
-		CubeJ::ClientInfo* ci = clientcache.add(new CubeJ::ClientInfo(type, cn));
-		if(name && *name && ci->gettype() == CubeJ::CLIENT_TYPE_HEAD) {
-			ci->setName(name);
-		}
+		clientcache.add(new CubeJ::ClientInfo(cn, type, name));
 	}
 
     void RemoteClient::disconnect() {

@@ -1,11 +1,11 @@
 #include "client.h"
 
 namespace CubeJ
-{	
+{
 
 	Client::Client() : self(*new ClientInfo), connected(false), messagecn(-1), messagereliable(false)
 	{
-				
+
         registerMsgHandler( MSG_ERROR_OVERFLOW , receiveMessage<MSG_ERROR_OVERFLOW>);
         registerMsgHandler( MSG_ERROR_TAG , receiveMessage<MSG_ERROR_TAG>);
         registerMsgHandler( MSG_SND_SERVINFO , receiveMessage<MSG_SND_SERVINFO>);
@@ -14,7 +14,8 @@ namespace CubeJ
         registerMsgHandler( MSG_SND_SCENESTATUS , receiveMessage<MSG_SND_SCENESTATUS>);
         registerMsgHandler( MSG_DISCOVER_REMOTE , receiveMessage<MSG_DISCOVER_REMOTE>);
         registerMsgHandler( MSG_REQ_REMOTE , receiveMessage<MSG_REQ_REMOTE>);
-		
+        registerMsgHandler( MSG_REQ_LISTMAPS, receiveMessage<MSG_REQ_LISTMAPS>);
+
 		cameras.add(new dynent);
 		clients.add(&self);
 	}
@@ -65,7 +66,7 @@ namespace CubeJ
         SendMessage(data);
     }
 
-    void Client::ackConnect(int cn, char* text) {
+    void Client::ackConnect(int cn, int type, char* text) {
         filtertext(text, text, false);
 		if(!text[0]) copystring(text, "unnamed");
 
@@ -82,7 +83,7 @@ namespace CubeJ
         while(cn >= clients.length()) clients.add(NULL);
         if(!clients[cn])
         {
-            ClientInfo *p = new ClientInfo(cn, text);
+            ClientInfo *p = new ClientInfo(cn, type, text);
             clients[cn] = p;
         }
     }
@@ -148,7 +149,7 @@ namespace CubeJ
 	void Client::connectRemoteClient(int n) {
 		conoutf("[DEBUG] Client::connectRemoteClient");
 		//TODO: check remote client
-		clients.add(new ClientInfo (CLIENT_TYPE_REMOTE, n));
+		clients.add(new ClientInfo (n, CLIENT_TYPE_REMOTE, NULL));
         CubeJProtocol::MsgDataType<CubeJProtocol::MSG_ACK_REMOTE> data(n);
         SendMessage(data);
 	}

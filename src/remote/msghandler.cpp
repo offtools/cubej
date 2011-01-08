@@ -23,15 +23,21 @@ namespace CubeJRemote {
 
     template <> void receiveMessage<CubeJProtocol::MSG_SND_CLIENTINFO>(int sender, int channel, packetbuf& p) {
         int cn = getint(p);
+		int type = getint(p);
         char text[MAXTRANS];
         getstring(text, p);
         if(GetRemoteClient().getclientnum() != cn) {
-            std::cout << "[DEBUG] receiveMessage<CubeJProtocol::MSG_SND_CLIENTINFO> clientnum: " << cn << " name: " << text << std::endl;
-            ///TODO: add add client info first ..., call connect to head separate
-            CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_REMOTE> data(cn);
+            std::cout << "[DEBUG] receiveMessage<CubeJProtocol::MSG_SND_CLIENTINFO> clientnum: " << cn << "type: " << type << " name: " << text << std::endl;
+			GetRemoteClient().updateclientcache(cn, type, text);
+			CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_REMOTE> data(cn);
             SendMessage(data);
-            std::cout << "[DEBUG] sending MSG_REQ_REMOTE> clientnum: " << cn << std::endl;
         }
+    }
+
+    template <> void receiveMessage<CubeJProtocol::MSG_CDIS>(int sender, int channel, packetbuf& p) {
+        int clientnum = getint(p);
+        std::cout << "[DEBUG] receiveMessage<CubeJProtocol::MSG_CDIS> clientnum: " << clientnum << std::endl;
+
     }
 
     template <> void receiveMessage<CubeJProtocol::MSG_SND_SCENESTATUS>(int sender, int channel, packetbuf& p) {
@@ -42,5 +48,6 @@ namespace CubeJRemote {
 	template <> void receiveMessage<CubeJProtocol::MSG_ACK_REMOTE>(int sender, int channel, packetbuf& p) {
         int clientnum = getint(p);
         std::cout  << "[DEBUG] receiveMessage<MSG_ACK_REMOTE> control over client: " << clientnum << std::endl;
+        GetRemoteClient().connectClient(clientnum);
     }
 }

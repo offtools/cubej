@@ -19,35 +19,41 @@ namespace CubeJProtocol
 		if( n < NUM_MESSAGES )
 			receivehandler[n] = func;
 	}
-	
+
 	void MsgHandler::receive(MSG_TYPE n, int sender, int channel, packetbuf& p) {
 	    if (  n < NUM_MESSAGES && receivehandler[n] &&  channel == GetMsgTypeInfo(n).channel ) {
             receivehandler[n](sender, channel, p);
 	    }
 	    else {
             conoutf("[DEBUG] CubeJProtocol::ReceiveMessage - Message Type or Message Handler \"%s\" not found", GetMsgTypeInfo(n).description);
-            receivehandler[n](sender, channel, p);
+            receivehandler[MSG_ERROR_TAG](sender, channel, p);
 	    }
 	}
-	
+
 	void MsgHandler::receive(int sender, int channel, packetbuf& p) {
         MSG_TYPE type = (MSG_TYPE)getint(p);
         receive(type, sender, channel, p);
 	}
-	
+
     void Init() {
         conoutf("init: protocol");
-        registermsgtype( MSG_ERROR_OVERFLOW, "error_overflow", CHANNEL_DEFAULT, 0);
-        registermsgtype( MSG_ERROR_TAG, "error_tag", CHANNEL_DEFAULT, 0 );
-		registermsgtype( MSG_SND_SERVINFO, "serverinfo", CHANNEL_DEFAULT, ENET_PACKET_FLAG_RELIABLE );
-        registermsgtype( MSG_REQ_CONNECT, "client_connect", CHANNEL_PRECONNECT, ENET_PACKET_FLAG_RELIABLE );
-        registermsgtype( MSG_DISCOVER_REMOTE, "remoteclient_connect", CHANNEL_PRECONNECT, ENET_PACKET_FLAG_RELIABLE );
-        registermsgtype( MSG_CDIS, "client_disconnect", CHANNEL_PRECONNECT, ENET_PACKET_FLAG_RELIABLE );
-        registermsgtype( MSG_SND_CLIENTINFO, "server_clientinfo", CHANNEL_DEFAULT, ENET_PACKET_FLAG_RELIABLE );
-        registermsgtype( MSG_SND_SCENESTATUS, "server_scenestatus", CHANNEL_DEFAULT, ENET_PACKET_FLAG_RELIABLE );
-		registermsgtype( MSG_REQ_REMOTE, "client_requestremote", CHANNEL_PRECONNECT, ENET_PACKET_FLAG_RELIABLE );
-		registermsgtype( MSG_ACK_REMOTE, "client_ackremote", CHANNEL_PRECONNECT, ENET_PACKET_FLAG_RELIABLE );
+        registermsgtype( MSG_ERROR_OVERFLOW,    "MSG_ERROR_OVERFLOW",   CHANNEL_DEFAULT,        0);
+        registermsgtype( MSG_ERROR_TAG,         "MSG_ERROR_TAG",        CHANNEL_DEFAULT,        0 );
+		registermsgtype( MSG_SND_SERVINFO,      "MSG_SND_SERVINFO",     CHANNEL_DEFAULT,        ENET_PACKET_FLAG_RELIABLE );
+        registermsgtype( MSG_REQ_CONNECT,       "MSG_REQ_CONNECT",      CHANNEL_PRECONNECT,     ENET_PACKET_FLAG_RELIABLE );
+        registermsgtype( MSG_DISCOVER_REMOTE,   "MSG_DISCOVER_REMOTE",  CHANNEL_PRECONNECT,     ENET_PACKET_FLAG_RELIABLE );
+        registermsgtype( MSG_CDIS,              "MSG_CDIS",             CHANNEL_PRECONNECT,     ENET_PACKET_FLAG_RELIABLE );
+		registermsgtype( MSG_REQ_REMOTE,        "MSG_REQ_REMOTE",       CHANNEL_PRECONNECT,     ENET_PACKET_FLAG_RELIABLE );
+		registermsgtype( MSG_ACK_REMOTE,        "MSG_ACK_REMOTE",       CHANNEL_PRECONNECT,     ENET_PACKET_FLAG_RELIABLE );
+        registermsgtype( MSG_SND_CLIENTINFO,    "MSG_SND_CLIENTINFO",   CHANNEL_DEFAULT,        ENET_PACKET_FLAG_RELIABLE );
+        registermsgtype( MSG_SND_SCENESTATUS,   "MSG_SND_SCENESTATUS",  CHANNEL_DEFAULT,        ENET_PACKET_FLAG_RELIABLE );
+		registermsgtype( MSG_REQ_LISTMAPS,      "MSG_REQ_LISTMAPS",     CHANNEL_REMOTE,         ENET_PACKET_FLAG_RELIABLE );
+		registermsgtype( MSG_SND_LISTMAPS,      "MSG_SND_LISTMAPS",     CHANNEL_REMOTE,         ENET_PACKET_FLAG_RELIABLE );
     }
+
+    MsgInfoType& GetMsgTypeInfo(MSG_TYPE n) {
+		return typeinfo[n];
+	}
 
     MsgDataType<MSG_REQ_CONNECT>::MsgDataType(const char* text) : info(GetMsgTypeInfo(MSG_REQ_CONNECT)), name(text) {}
 
@@ -70,11 +76,19 @@ namespace CubeJProtocol
         putint(p, protocol);
     }
 
-    MsgDataType<MSG_SND_CLIENTINFO>::MsgDataType(int i, const char* text) : info(GetMsgTypeInfo(MSG_SND_CLIENTINFO)), cn(i), name(text) {}
+    MsgDataType<MSG_CDIS>::MsgDataType(int cn) : info(GetMsgTypeInfo(MSG_CDIS)), clientnum(cn) {}
+
+    void MsgDataType<MSG_CDIS>::addmsg(packetbuf& p) {
+        putint(p, MSG_CDIS);
+        putint(p, clientnum);
+    }
+
+    MsgDataType<MSG_SND_CLIENTINFO>::MsgDataType(int i, int t, const char* text) : info(GetMsgTypeInfo(MSG_SND_CLIENTINFO)), cn(i), type(t), name(text) {}
 
     void MsgDataType<MSG_SND_CLIENTINFO>::addmsg(packetbuf& p) {
         putint(p, MSG_SND_CLIENTINFO);
         putint(p, cn);
+		putint(p, type);
         sendstring(name, p);
     }
 
@@ -99,9 +113,21 @@ namespace CubeJProtocol
 		putint(p, clientnum);
     }
 
-    MsgInfoType& GetMsgTypeInfo(MSG_TYPE n) {
-		return typeinfo[n];
-	}
+    MsgDataType<MSG_REQ_LISTMAPS>::MsgDataType() : info(GetMsgTypeInfo(MSG_REQ_LISTMAPS)) {}
+
+    void MsgDataType<MSG_REQ_LISTMAPS>::addmsg(packetbuf& p) {
+        putint(p, MSG_REQ_LISTMAPS);
+    }
+
+    MsgDataType<MSG_SND_LISTMAPS>::MsgDataType(vector<char *> &files) : info(GetMsgTypeInfo(MSG_SND_LISTMAPS)), listing(files) {}
+
+    void MsgDataType<MSG_SND_LISTMAPS>::addmsg(packetbuf& p) {
+        putint(p, MSG_SND_LISTMAPS);
+        loopv(listing) {
+            sendstring(listing[i], p);
+        }
+    }
+
 
     //~ void RegisterMsgHandler(MSG_TYPE n, void (*func)(int, int, packetbuf&) ) {
         //~ if(!typeinfo[n].receivehandler)

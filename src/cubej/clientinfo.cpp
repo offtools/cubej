@@ -7,16 +7,12 @@ namespace CubeJ
         name[0] = '\0';
     }
 
-    ClientInfo::ClientInfo(int n, const char* s)  : clientnum(n) {
+    ClientInfo::ClientInfo(int n, int t, const char* s)  : clientnum(n), type(t) {
         if(!s)
             name[0] = '\0';
         else
             copystring(name, s);
     }
-
-	ClientInfo::ClientInfo(int t, int cn)  : clientnum(cn), type(t) {
-		name[0] = '\0';
-	}
 
     ClientInfo::~ClientInfo() {}
 

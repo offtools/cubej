@@ -99,7 +99,7 @@ namespace CubeJSrv {
 
 		int numClients();
 
-        void forwardMessage(int sender, int channel, packetbuf& p);
+        void forwardMessage(int cn, int channel, packetbuf& p);
 
 	private:
 		vector<SvClientInfo*> clients;

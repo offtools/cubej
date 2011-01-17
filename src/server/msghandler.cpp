@@ -9,14 +9,9 @@ namespace CubeJSrv {
 
     template <> void receiveMessage<MSG_REQ_CONNECT>(int sender, int channel, packetbuf& p) {
         conoutf("[DEBUG] receiveMessage<MSG_REQ_CONNECT>");
-		char text[MAXTRANS];
-        getstring(text, p);
-        filtertext(text, text, false, MAXNAMELEN);
-
-		MsgInfoType& info = GetMsgTypeInfo(MSG_REQ_CONNECT);
-
-		if (info.channel == channel)
-            CubeJSrv::GetServer().registerClient(sender, text);
+        MsgDataType<MSG_REQ_CONNECT> data(p);
+		if (data.info.channel == channel)
+            CubeJSrv::GetServer().registerClient(sender, data.name);
     }
 
     template <> void receiveMessage<MSG_DISCOVER_REMOTE>(int sender, int channel, packetbuf& p) {
@@ -25,9 +20,9 @@ namespace CubeJSrv {
     }
 
     template <> void receiveMessage<MSG_REQ_REMOTE>(int sender, int channel, packetbuf& p) {
-        int clientnum = getint(p);
-        conoutf("[DEBUG] receiveMessage<MSG_REQ_REMOTE> remote: %d, client: %d", sender, clientnum);
-        SvClientInfo *ci = (SvClientInfo*)getclientinfo(clientnum);
+        MsgDataType<MSG_REQ_REMOTE> rcv(p);
+        conoutf("[DEBUG] receiveMessage<MSG_REQ_REMOTE> remote: %d, client: %d", sender, rcv.clientnum);
+        SvClientInfo *ci = (SvClientInfo*)getclientinfo(rcv.clientnum);
         if(!ci)
             return;
         MsgDataType<MSG_REQ_REMOTE> data(sender);
@@ -41,7 +36,13 @@ namespace CubeJSrv {
     }
 
     template <> void receiveMessage<MSG_REQ_LISTMAPS>(int sender, int channel, packetbuf& p) {
-        conoutf("[DEBUG] receiveMessage<MSG_REQ_LISTMAPS> sender: %d", sender);
+		conoutf("[DEBUG] receiveMessage<MSG_REQ_LISTMAPS>");
 		GetServer ().forwardMessage(sender, channel, p);
+    }
+
+    template <> void receiveMessage<MSG_SND_LISTMAPS>(int sender, int channel, packetbuf& p) {
+		conoutf("[DEBUG] receiveMessage<MSG_SND_LISTMAPS>");
+		GetServer ().forwardMessage(sender, channel, p);
+		p.cleanup();
     }
 }

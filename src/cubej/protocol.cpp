@@ -11,7 +11,6 @@ namespace CubeJProtocol
             typeinfo[type].description = descr;
             typeinfo[type].channel = channel;
             typeinfo[type].flag = flag;
-            //~ typeinfo[type].receivehandler = NULL;
         }
     }
 
@@ -55,7 +54,14 @@ namespace CubeJProtocol
 		return typeinfo[n];
 	}
 
-    MsgDataType<MSG_REQ_CONNECT>::MsgDataType(const char* text) : info(GetMsgTypeInfo(MSG_REQ_CONNECT)), name(text) {}
+    MsgDataType<MSG_REQ_CONNECT>::MsgDataType(const char* text) : info(GetMsgTypeInfo(MSG_REQ_CONNECT)) {
+        copystring(name, text, MAXNAMELEN);
+    }
+
+    MsgDataType<MSG_REQ_CONNECT>::MsgDataType(packetbuf& p) : info(GetMsgTypeInfo(MSG_REQ_CONNECT)) {
+        getstring(name, p);
+        filtertext(name, name, false, MAXNAMELEN);
+    }
 
     void MsgDataType<MSG_REQ_CONNECT>::addmsg(packetbuf& p) {
         putint(p, MSG_REQ_CONNECT);
@@ -68,7 +74,8 @@ namespace CubeJProtocol
         putint(p, MSG_DISCOVER_REMOTE);
     }
 
-    MsgDataType<MSG_SND_SERVINFO>::MsgDataType(int n, int p) : info(GetMsgTypeInfo(MSG_SND_SERVINFO)),  clientnum(n), protocol(p) {}
+    MsgDataType<MSG_SND_SERVINFO>::MsgDataType(int n, int p) : info(GetMsgTypeInfo(MSG_SND_SERVINFO)), clientnum(n), protocol(p) {}
+    MsgDataType<MSG_SND_SERVINFO>::MsgDataType(packetbuf& p) : info(GetMsgTypeInfo(MSG_SND_SERVINFO)), clientnum(getint(p)), protocol(getint(p)) {}
 
     void MsgDataType<MSG_SND_SERVINFO>::addmsg(packetbuf& p) {
         putint(p, MSG_SND_SERVINFO);
@@ -100,6 +107,7 @@ namespace CubeJProtocol
     }
 
     MsgDataType<MSG_REQ_REMOTE>::MsgDataType(int cn) : info(GetMsgTypeInfo(MSG_REQ_REMOTE)), clientnum(cn) {}
+    MsgDataType<MSG_REQ_REMOTE>::MsgDataType(packetbuf& p) : info(GetMsgTypeInfo(MSG_REQ_REMOTE)), clientnum(getint(p)) {}
 
     void MsgDataType<MSG_REQ_REMOTE>::addmsg(packetbuf& p) {
         putint(p, MSG_REQ_REMOTE);
@@ -119,36 +127,15 @@ namespace CubeJProtocol
         putint(p, MSG_REQ_LISTMAPS);
     }
 
-    MsgDataType<MSG_SND_LISTMAPS>::MsgDataType(vector<char *> &files) : info(GetMsgTypeInfo(MSG_SND_LISTMAPS)), listing(files) {}
+    MsgDataType<MSG_SND_LISTMAPS>::MsgDataType(vector<char *> &files) : info(GetMsgTypeInfo(MSG_SND_LISTMAPS)), listing(files) {
+        length = files.length();
+    }
 
     void MsgDataType<MSG_SND_LISTMAPS>::addmsg(packetbuf& p) {
         putint(p, MSG_SND_LISTMAPS);
+        putint(p, length);
         loopv(listing) {
             sendstring(listing[i], p);
         }
     }
-
-
-    //~ void RegisterMsgHandler(MSG_TYPE n, void (*func)(int, int, packetbuf&) ) {
-        //~ if(!typeinfo[n].receivehandler)
-            //~ typeinfo[n].receivehandler = func;
-        //~ else
-            //~ conoutf("[DEBUG] CubeJProtocol::RegisterMsgHandler - handler already registered");
-    //~ }
-
-	//~ void ReceiveMessage(MSG_TYPE n, int sender, int channel, packetbuf& p) {
-	    //~ if (n < NUM_MESSAGES && typeinfo[n].receivehandler) {
-            //~ typeinfo[n].receivehandler(sender, channel, p);
-	    //~ }
-	    //~ else {
-            //~ conoutf("[DEBUG] CubeJProtocol::ReceiveMessage - Message Type or Message Handler \"%s\" not found", typeinfo[n].description);
-            //~ typeinfo[MSG_ERROR_TAG].receivehandler(sender, channel, p);
-	    //~ }
-	//~ }
-
-    //~ void ReceiveMessage(int sender, int channel, packetbuf& p) {
-        //~ MSG_TYPE type = (MSG_TYPE)getint(p);
-        //~ conoutf("ReceiveMessage: type %d, sender: %d", type, sender);
-        //~ ReceiveMessage(type, sender, channel, p);
-    //~ }
 }

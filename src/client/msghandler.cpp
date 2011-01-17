@@ -3,15 +3,14 @@
 namespace CubeJ {
 	using namespace CubeJProtocol;
 
+    ///TODO: do not use p.cleanup, use subbuf instead
     template <> void receiveMessage<MSG_ERROR_OVERFLOW>(int sender, int channel, packetbuf& p) { p.cleanup(); }
 
     template <> void receiveMessage<MSG_ERROR_TAG>(int sender, int channel, packetbuf& p) { p.cleanup(); }
 
     template <> void receiveMessage<MSG_SND_SERVINFO>(int sender, int channel, packetbuf& p) {
-        int clientnum = getint(p);
-        int protocol = getint(p);
-        conoutf("[DEBUG] receiveMessage<MSG_SND_SERVINFO>");
-        CubeJ::GetClient().initConnect(clientnum, protocol);
+        MsgDataType<MSG_SND_SERVINFO> data(p);
+        CubeJ::GetClient().initConnect(data.clientnum, data.protocol);
 	}
 
     template <> void receiveMessage<MSG_REQ_CONNECT>(int sender, int channel, packetbuf& p) {
@@ -50,5 +49,12 @@ namespace CubeJ {
 
     template <> void receiveMessage<MSG_REQ_LISTMAPS>(int sender, int channel, packetbuf& p) {
         conoutf("[DEBUG] receiveMessage<MSG_REQ_LISTMAPS>");
-    }
+        vector<char *> files;
+        if ( ! listfiles("packages/base", "ogz", files) ) {
+			conoutf ("[DEBUG] listdir: no scenes found");
+		}
+		conoutf("[DEBUG] files length: %d", files.length());
+		MsgDataType<MSG_SND_LISTMAPS> data(files);
+		SendMessage(data);
+	}
 }

@@ -89,16 +89,19 @@ namespace CubeJProtocol
 
 	template <> struct MsgDataType<MSG_SND_SERVINFO> {
 		MsgDataType(int n, int p);
+        MsgDataType(packetbuf& p);
 		MsgInfoType& info;
-		int clientnum;
-		int protocol;
+		const int clientnum;
+		const int protocol;
 		void addmsg(packetbuf& p);
 	};
 
 	template <> struct MsgDataType<MSG_REQ_CONNECT> {
 		MsgDataType(const char* text);
+        MsgDataType(packetbuf& p);
 		MsgInfoType& info;
-        const char* name;
+        char name[MAXTRANS];
+        char passhash[MAXTRANS];
 		void addmsg(packetbuf& p);
 	};
 
@@ -133,6 +136,7 @@ namespace CubeJProtocol
 
 	template <> struct MsgDataType<MSG_REQ_REMOTE> {
 		MsgDataType(int clientnum);
+        MsgDataType(packetbuf& p);
 		MsgInfoType& info;
         int clientnum;
 		void addmsg(packetbuf& p);
@@ -154,12 +158,10 @@ namespace CubeJProtocol
     template <> struct MsgDataType<MSG_SND_LISTMAPS> {
         MsgDataType(vector<char *> &files);
         MsgInfoType& info;
+        int length;
         vector<char *> &listing;
         void addmsg(packetbuf& p);
     };
-
-	//~ void ReceiveMessage(MSG_TYPE n, int sender, int channel, packetbuf& p);
-    //~ void ReceiveMessage(int sender, int channel, packetbuf& p);
 }
 
 namespace CubeJ

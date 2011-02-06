@@ -1,65 +1,104 @@
 #include <string>
 #include <iostream>
 
-#include "engine.h"
-#include "cube.h"
-
-#include "cubej.h"
-#include "protocol.h"
+#include "config.h"
 #include "remoteclient.h"
+#include "juce_amalgamated.h"
+#include "ui_mainwindow.h"
 
 //CHANNEL 4: Client to Control
 //CHANNEL 5: Control to Client
 
-void cleanup()
-{
-    recorder::stop();
-    cleanupserver();
-    SDL_ShowCursor(1);
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
-    SDL_SetGamma(1, 1, 1);
-    freeocta(worldroot);
-    extern void clear_command(); clear_command();
-    extern void clear_console(); clear_console();
-    extern void clear_mdls();    clear_mdls();
-    extern void clear_sound();   clear_sound();
-    SDL_Quit();
-}
+//void cleanup()
+//{
+//    recorder::stop();
+//    cleanupserver();
+//    SDL_ShowCursor(1);
+//    SDL_WM_GrabInput(SDL_GRAB_OFF);
+//    SDL_SetGamma(1, 1, 1);
+//    freeocta(worldroot);
+//    extern void clear_command(); clear_command();
+//    extern void clear_console(); clear_console();
+//    extern void clear_mdls();    clear_mdls();
+//    extern void clear_sound();   clear_sound();
+//    SDL_Quit();
+//}
 
-void quit()                     // normal exit
-{
-    writeservercfg();
-    abortconnect();
-    disconnect();
-    localdisconnect();
-    writecfg();
-    cleanup();
-    exit(EXIT_SUCCESS);
-}
-
-bool doquit = false;
+//void quit()                     // normal exit
+//{
+//    writeservercfg();
+//    abortconnect();
+//    disconnect();
+//    localdisconnect();
+//    writecfg();
+//    cleanup();
+//    exit(EXIT_SUCCESS);
+//}
 
 using namespace CubeJRemote;
 
-int main (void) {
+class RemoteApp  : public JUCEApplication
+{
+public:
+    //==============================================================================
+    RemoteApp() : mainwindow(0) {}
 
-    std::cout << "[DEBUG] CubeJRemote - remote App" << std::endl;
+    ~RemoteApp() {}
 
-    if(enet_initialize () < 0) {
-        std::cout << "[DEBUG] CubeJRemote - could not init enet" << std::endl;
-        return -1;
+    //==============================================================================
+    void initialise (const String& commandLine)
+    {
+        if(enet_initialize () < 0) {
+            Logger::outputDebugString (T("Could not initialize enet"));
+            systemRequestedQuit();
+        }
+
+        CubeJProtocol::Init();
+
+        mainwindow = new MainWindow();
+        mainwindow->centreWithSize (800, 600);
+        mainwindow->setVisible (true);
     }
-    CubeJProtocol::Init();
-    RemoteClient& remoteclient = GetRemoteClient();
-    remoteclient.connectToServer("localhost", 26785, 25000);
 
-    usleep(1000000);
-
-
-    while (!doquit) {
-        usleep(100000);
-        remoteclient.update();
+    void shutdown()
+    {
+        // Do your application's shutdown code here..
+        std::cout << "RemoteApp::shutdown" << std::endl;
+        GetRemoteClient().disconnect();
+        delete mainwindow;
+        mainwindow = 0;
     }
 
-    return 0;
-}
+    void systemRequestedQuit()
+    {
+        std::cout << "RemoteApp::systemRequestedQuit" << std::endl;
+        shutdown();
+        JUCEApplication::quit();
+    }
+
+    const String getApplicationName()
+    {
+        return AppInfo::projectName;
+    }
+
+    const String getApplicationVersion()
+    {
+        return AppInfo::versionString;
+    }
+
+    bool moreThanOneInstanceAllowed()
+    {
+        return true;
+    }
+
+    void anotherInstanceStarted (const String& commandLine)
+    {
+
+    }
+
+private:
+      MainWindow* mainwindow;
+};
+
+START_JUCE_APPLICATION(RemoteApp)
+

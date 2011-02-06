@@ -48,16 +48,14 @@ namespace CubeJRemote {
 	template <> void receiveMessage<CubeJProtocol::MSG_ACK_REMOTE>(int sender, int channel, packetbuf& p) {
         int clientnum = getint(p);
         std::cout  << "[DEBUG] receiveMessage<MSG_ACK_REMOTE> control over client: " << clientnum << std::endl;
-        GetRemoteClient().connectClient(clientnum);
+        GetRemoteClient().connectWithClient(clientnum);
     }
 
-	template <> void receiveMessage<CubeJProtocol::MSG_SND_LISTMAPS>(int sender, int channel, packetbuf& p) {
-        char text[MAXTRANS];
-        int length = getint(p);
-        conoutf("[DEBUG] receiveMessage<CubeJProtocol::MSG_SND_LISTMAPS>");
-        loopi(length) {
-            getstring(text, p);
-            conoutf("[DEBUG] map: %s", text);
+	template <> void receiveMessage<CubeJProtocol::MSG_FWD_LISTMAPS>(int sender, int channel, packetbuf& p) {
+        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_FWD_LISTMAPS> data(p);
+        std::cout  << "[DEBUG] receiveMessage<MSG_FWD_LISTMAPS> size: " << data.len << std::endl;
+        loopi(data.len) {
+            GetRemoteClient().GetSceneManager().updateSceneListing(data.listing[i]);
         }
-	}
+    }
 }

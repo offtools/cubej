@@ -4,7 +4,7 @@ override CXXFLAGS+= -Wall -fsigned-char
 PLATFORM= $(shell uname -s)
 PLATFORM_PREFIX= native
 
-INCLUDES= -I../shared -I../engine -I../cubej -I../client -I../server -I../enet/include
+INCLUDES= -I../shared -I../engine -I../cubej -I../client -I../server -I../enet/include -I../thirdparty/juce/
 
 STRIP=
 ifeq (,$(findstring -g,$(CXXFLAGS)))
@@ -19,8 +19,8 @@ WINDRES= windres
 CLIENT_INCLUDES= $(INCLUDES) -I../include
 CLIENT_LIBS= -mwindows -L../lib -lSDL -lSDL_image -lSDL_mixer -lzdll -lopengl32 -lenet -lws2_32 -lwinmm
 else
-CLIENT_INCLUDES= $(INCLUDES) -I/usr/X11R6/include `sdl-config --cflags`
-CLIENT_LIBS= -L../enet/.libs -lenet -L/usr/X11R6/lib `sdl-config --libs` -lSDL_image -lSDL_mixer -lz -lGL
+CLIENT_INCLUDES= $(INCLUDES) -I/usr/X11R6/include `sdl-config --cflags`  -I/usr/include/freetype2
+CLIENT_LIBS= -L../enet/.libs -lenet -L/usr/X11R6/lib `sdl-config --libs` -lSDL_image -lSDL_mixer -lz -lGL -lfreetype -lpthread -lasound
 endif
 ifeq ($(PLATFORM),Linux)
 CLIENT_LIBS+= -lrt
@@ -71,6 +71,7 @@ CLIENT_OBJS= \
 	../engine/water.o \
 	../engine/world.o \
 	../engine/worldio.o \
+    ../thirdparty/juce/juce_amalgamated.o \
 	../cubej/debug.o \
 	../client/client.o \
 	../cubej/clientinfo.o \
@@ -79,7 +80,13 @@ CLIENT_OBJS= \
 	../cubej/stubs.o \
 	../server/server.o \
 	remoteclient.o \
+	scene.o \
 	msghandler.o \
+	ui_connectpanel.o \
+	ui_mainloop.o \
+	ui_scenecomponent.o \
+    ui_connectcomponent.o \
+	ui_mainwindow.o \
     main.o
 
 ifneq (,$(findstring MINGW,$(PLATFORM)))

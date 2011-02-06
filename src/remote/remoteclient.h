@@ -3,12 +3,13 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
 
 #include "engine.h"
 #include "cube.h"
-
 #include "protocol.h"
 #include "clientinfo.h"
+#include "scene.h"
 
 namespace CubeJRemote {
 
@@ -17,11 +18,16 @@ namespace CubeJRemote {
             RemoteClient();
             ~RemoteClient();
 
-            void connectToServer(const char* sname, int port, int rate);
+            void registerSceneManager(SceneMgr* );
+            SceneMgr& GetSceneManager();
+
+            void setServername(const char* name);
+            void setServerport(int port);
+            void connectWithServer();
+            void connectWithServer(const char* sname, int port);
 			void update();
             void disconnect();
-
-            void connectClient(int cn);
+            void connectWithClient(int cn);
             void disconnectClient();
             void disconnectClient(int cn);
 
@@ -33,6 +39,7 @@ namespace CubeJRemote {
             ENetPeer* peer;
         private:
             std::string servername;
+            int port;
             ENetHost* host;
             ENetAddress address;
             ENetEvent event;
@@ -40,7 +47,9 @@ namespace CubeJRemote {
             int numchannels;
             int clientnum;
             CubeJ::ClientInfo* head;
-            vector <CubeJ::ClientInfo*> clientcache;
+            std::vector <CubeJ::ClientInfo*> clientcache;
+
+            SceneMgr* scenemgr;
     };
 
     RemoteClient& GetRemoteClient();

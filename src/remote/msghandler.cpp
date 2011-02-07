@@ -58,4 +58,9 @@ namespace CubeJRemote {
             GetRemoteClient().GetSceneManager().updateSceneListing(data.listing[i]);
         }
     }
+
+	template <> void receiveMessage<CubeJProtocol::MSG_SND_SCENEINFO>(int sender, int channel, packetbuf& p) {
+        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_SND_SCENEINFO> data(p);
+        GetRemoteClient().GetSceneManager().setCurrentScene(data.mapname, data.worldsize, data.mapversion);
+	}
 }

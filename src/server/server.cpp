@@ -55,6 +55,16 @@ namespace CubeJSrv {
         data.addmsg(p);
     }
 
+    void SceneManager::changeScene(const char* name) {
+        conoutf("[DEBUG] SceneManager::changeScene: %s", name);
+        if(name && name[0]) {
+            hasscene = true;
+            copystring(mapname, name);
+            CubeJProtocol::MsgDataType<CubeJProtocol::MSG_CMD_CHANGESCENE> data(mapname);
+            SendMessage(-1, data);
+        }
+    }
+
     void SceneManager::reset() {
         hasscene = false;
         mapname[0] = '\0';
@@ -69,6 +79,7 @@ namespace CubeJSrv {
         registerMsgHandler( CubeJProtocol::MSG_DISCOVER_REMOTE , receiveMessage<CubeJProtocol::MSG_DISCOVER_REMOTE>);
         registerMsgHandler( CubeJProtocol::MSG_REQ_REMOTE , receiveMessage<CubeJProtocol::MSG_REQ_REMOTE>);
         registerMsgHandler( CubeJProtocol::MSG_ACK_REMOTE , receiveMessage<CubeJProtocol::MSG_ACK_REMOTE>);
+        registerMsgHandler( CubeJProtocol::MSG_REQ_CHANGESCENE , receiveMessage<CubeJProtocol::MSG_REQ_CHANGESCENE>);
 	}
 
 	Server::~Server() {}

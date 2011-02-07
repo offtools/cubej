@@ -27,17 +27,17 @@ namespace CubeJProtocol
 
         MSG_SND_CLIENTINFO,     //6
 
-		//7: server runs an active scene or not
+		//server runs an active scene or not
 		MSG_SND_SCENESTATUS,
 
-		//8:
-		MSG_REQ_SCENEINFO,
-
-        //9:
+		//send scene information to remote interface
         MSG_SND_SCENEINFO,
 
-		//10:
+		//request scene change from server
 		MSG_REQ_CHANGESCENE,
+
+		//change scene
+		MSG_CMD_CHANGESCENE,
 
 		//Remote Gui Client sends request to an client
 		MSG_REQ_REMOTE,
@@ -49,7 +49,7 @@ namespace CubeJProtocol
         MSG_REQ_LISTMAPS,
 
         //client sends listing of avabiable maps over remote channel
-        MSG_SND_LISTMAPS,
+        MSG_FWD_LISTMAPS,
 
 		MSG_PONG,
 
@@ -134,6 +134,17 @@ namespace CubeJProtocol
 		void addmsg(packetbuf& p);
 	};
 
+    template <> struct MsgDataType<MSG_SND_SCENEINFO> {
+        MsgDataType(const char*, int, int);
+        MsgDataType(packetbuf &);
+        ~MsgDataType();
+        MsgInfoType& info;
+        const char* mapname;
+        int worldsize;
+        int mapversion;
+        void addmsg(packetbuf& p);
+    };
+
 	template <> struct MsgDataType<MSG_REQ_REMOTE> {
 		MsgDataType(int clientnum);
         MsgDataType(packetbuf& p);
@@ -149,17 +160,38 @@ namespace CubeJProtocol
         void addmsg(packetbuf& p);
     };
 
+    template <> struct MsgDataType<MSG_REQ_CHANGESCENE> {
+        MsgDataType(const char *);
+        MsgDataType(packetbuf& p);
+        ~MsgDataType();
+        MsgInfoType& info;
+        char* name;
+        void addmsg(packetbuf& p);
+    };
+
+    template <> struct MsgDataType<MSG_CMD_CHANGESCENE> {
+        MsgDataType(const char *);
+        MsgDataType(packetbuf& p);
+        ~MsgDataType();
+        MsgInfoType& info;
+        char* name;
+        void addmsg(packetbuf& p);
+    };
+
     template <> struct MsgDataType<MSG_REQ_LISTMAPS> {
         MsgDataType();
         MsgInfoType& info;
         void addmsg(packetbuf& p);
     };
 
-    template <> struct MsgDataType<MSG_SND_LISTMAPS> {
+    template <> struct MsgDataType<MSG_FWD_LISTMAPS> {
         MsgDataType(vector<char *> &files);
+        MsgDataType(packetbuf& p);
+        ~MsgDataType();
+
         MsgInfoType& info;
-        int length;
-        vector<char *> &listing;
+        int len;
+        vector<char *> listing;
         void addmsg(packetbuf& p);
     };
 }

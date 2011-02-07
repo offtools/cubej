@@ -6,6 +6,7 @@
 #include "ui_connectpanel.h"
 #include "ui_mainloop.h"
 #include "ui_scenecomponent.h"
+#include "ui_maintoolbar.h"
 
 class MainWindow  : public DocumentWindow
 {
@@ -44,8 +45,8 @@ public:
 
     enum CommandIDs
     {
-        showServerDialog           = 0x2000,
-        showMapDialog              = 0x2001
+        ConnectWithServer           = 0x2000,
+        showMapDialog               = 0x2001
     };
 
 private:
@@ -60,7 +61,7 @@ private:
     TabbedComponent* right;
 
     //=======Toolbar==============
-    Toolbar* toolbar;
+    MainToolbar* toolbar;
 
     //========Content Tabs========
     SceneComponent* scenes;

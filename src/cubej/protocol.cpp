@@ -46,8 +46,11 @@ namespace CubeJProtocol
 		registermsgtype( MSG_ACK_REMOTE,        "MSG_ACK_REMOTE",       CHANNEL_PRECONNECT,     ENET_PACKET_FLAG_RELIABLE );
         registermsgtype( MSG_SND_CLIENTINFO,    "MSG_SND_CLIENTINFO",   CHANNEL_DEFAULT,        ENET_PACKET_FLAG_RELIABLE );
         registermsgtype( MSG_SND_SCENESTATUS,   "MSG_SND_SCENESTATUS",  CHANNEL_DEFAULT,        ENET_PACKET_FLAG_RELIABLE );
+        registermsgtype( MSG_SND_SCENEINFO,     "MSG_SND_SCENEINFO",    CHANNEL_REMOTE,         ENET_PACKET_FLAG_RELIABLE );
 		registermsgtype( MSG_REQ_LISTMAPS,      "MSG_REQ_LISTMAPS",     CHANNEL_REMOTE,         ENET_PACKET_FLAG_RELIABLE );
-		registermsgtype( MSG_SND_LISTMAPS,      "MSG_SND_LISTMAPS",     CHANNEL_REMOTE,         ENET_PACKET_FLAG_RELIABLE );
+		registermsgtype( MSG_FWD_LISTMAPS,      "MSG_FWD_LISTMAPS",     CHANNEL_REMOTE,         ENET_PACKET_FLAG_RELIABLE );
+		registermsgtype( MSG_REQ_CHANGESCENE,   "MSG_REQ_CHANGESCENE",  CHANNEL_DEFAULT,        ENET_PACKET_FLAG_RELIABLE );
+		registermsgtype( MSG_CMD_CHANGESCENE,   "MSG_CMD_CHANGESCENE",  CHANNEL_DEFAULT,        ENET_PACKET_FLAG_RELIABLE );
     }
 
     MsgInfoType& GetMsgTypeInfo(MSG_TYPE n) {
@@ -106,6 +109,28 @@ namespace CubeJProtocol
         putint(p, hasscene);
     }
 
+    MsgDataType<MSG_SND_SCENEINFO>::MsgDataType(const char* name, int size,  int version) : info(GetMsgTypeInfo(MSG_SND_SCENEINFO)), mapname(newstring(name)), worldsize(size), mapversion(version) {}
+
+    MsgDataType<MSG_SND_SCENEINFO>::MsgDataType(packetbuf &p) : info(GetMsgTypeInfo(MSG_SND_SCENEINFO)) {
+        char text[MAXTRANS];
+        getstring(text, p);
+        mapname = newstring(text);
+        worldsize = getint(p);
+        mapversion = getint(p);
+    }
+
+    MsgDataType<MSG_SND_SCENEINFO>::~MsgDataType() {
+        delete[] mapname;
+    }
+
+    void MsgDataType<MSG_SND_SCENEINFO>::addmsg(packetbuf& p) {
+        putint(p, MSG_SND_SCENEINFO);
+        sendstring(mapname, p);
+        putint(p, worldsize);
+        putint(p, mapversion);
+    }
+
+
     MsgDataType<MSG_REQ_REMOTE>::MsgDataType(int cn) : info(GetMsgTypeInfo(MSG_REQ_REMOTE)), clientnum(cn) {}
     MsgDataType<MSG_REQ_REMOTE>::MsgDataType(packetbuf& p) : info(GetMsgTypeInfo(MSG_REQ_REMOTE)), clientnum(getint(p)) {}
 
@@ -127,15 +152,62 @@ namespace CubeJProtocol
         putint(p, MSG_REQ_LISTMAPS);
     }
 
-    MsgDataType<MSG_SND_LISTMAPS>::MsgDataType(vector<char *> &files) : info(GetMsgTypeInfo(MSG_SND_LISTMAPS)), listing(files) {
-        length = files.length();
+    MsgDataType<MSG_FWD_LISTMAPS>::MsgDataType(vector<char *> &files) : info(GetMsgTypeInfo(MSG_FWD_LISTMAPS)), listing(files) {
+        len = files.length();
     }
 
-    void MsgDataType<MSG_SND_LISTMAPS>::addmsg(packetbuf& p) {
-        putint(p, MSG_SND_LISTMAPS);
-        putint(p, length);
+    MsgDataType<MSG_FWD_LISTMAPS>::MsgDataType(packetbuf& p) : info(GetMsgTypeInfo(MSG_FWD_LISTMAPS)) {
+        len = getint(p);
+        loopi(len) {
+            char text[MAXTRANS];
+            getstring(text, p);
+            listing.add(newstring(text));
+        }
+    }
+
+    MsgDataType<MSG_FWD_LISTMAPS>::~MsgDataType() {
+        listing.deletearrays();
+    }
+
+    void MsgDataType<MSG_FWD_LISTMAPS>::addmsg(packetbuf& p) {
+        putint(p, MSG_FWD_LISTMAPS);
+        putint(p, len);
         loopv(listing) {
             sendstring(listing[i], p);
         }
+    }
+
+    MsgDataType<MSG_REQ_CHANGESCENE>::MsgDataType(const char* text) : info(GetMsgTypeInfo(MSG_REQ_CHANGESCENE)), name(newstring(text)) {}
+
+    MsgDataType<MSG_REQ_CHANGESCENE>::MsgDataType(packetbuf& p) : info(GetMsgTypeInfo(MSG_REQ_CHANGESCENE)) {
+        char text[MAXTRANS];
+        getstring(text, p);
+        name = newstring(text);
+    }
+
+    MsgDataType<MSG_REQ_CHANGESCENE>::~MsgDataType() {
+        delete[] name;
+    }
+
+    void MsgDataType<MSG_REQ_CHANGESCENE>::addmsg(packetbuf& p) {
+        putint(p, MSG_REQ_CHANGESCENE);
+        sendstring(name, p);
+    }
+
+    MsgDataType<MSG_CMD_CHANGESCENE>::MsgDataType(const char* text) : info(GetMsgTypeInfo(MSG_CMD_CHANGESCENE)), name(newstring(text)) {}
+
+    MsgDataType<MSG_CMD_CHANGESCENE>::MsgDataType(packetbuf& p) : info(GetMsgTypeInfo(MSG_CMD_CHANGESCENE)) {
+        char text[MAXTRANS];
+        getstring(text, p);
+        name = newstring(text);
+    }
+
+    MsgDataType<MSG_CMD_CHANGESCENE>::~MsgDataType() {
+        delete[] name;
+    }
+
+    void MsgDataType<MSG_CMD_CHANGESCENE>::addmsg(packetbuf& p) {
+        putint(p, MSG_CMD_CHANGESCENE);
+        sendstring(name, p);
     }
 }

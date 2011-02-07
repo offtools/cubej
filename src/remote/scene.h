@@ -1,6 +1,10 @@
 #ifndef REMOTE_SCENE_H
 #define REMOTE_SCENE_H
 
+#include <string>
+#include <iostream>
+#include <vector>
+
 #include "protocol.h"
 
 namespace CubeJRemote {
@@ -9,13 +13,19 @@ namespace CubeJRemote {
     {
         public:
             SceneInfo();
-            SceneInfo(const char* _name);
+            SceneInfo(const char *);
             ~SceneInfo();
 
             const char* getSceneName();
+            void setMapVersion(int );
+            int getMapVersion();
+            void setWorldSize(int );
+            int getWorldSize();
 
         private:
-            char* name;
+            std::string mapname;
+            int worldsize;
+            int mapversion;
     };
 
     class SceneMgr
@@ -25,24 +35,27 @@ namespace CubeJRemote {
             virtual ~SceneMgr();
 
             void newScene();
-            void loadScene(int i);
+            void loadScene(unsigned int i);
             void loadScene(const char* name);
             void saveCurrentScene();
-            void saveCurrentScene(char* name);
+            void saveCurrentScene(const char* name);
 
             const SceneInfo* getCurrentScene();
+            void setCurrentScene(const char* name, int worldsize, int mapversion);
             const char* getCurrentSceneName();
 
             int getNumScenes();
-            SceneInfo* getSceneInfo(int i);
+            SceneInfo* getSceneInfo(unsigned int i);
 
             virtual void updateSceneListing(const char* name) = 0;
 
         protected:
-            vector<SceneInfo *> scenes;
+            std::vector<SceneInfo *> scenes;
+            SceneInfo* find(const char* name);
 
         private:
-            SceneInfo* currentScene;
+            std::vector<SceneInfo *>::iterator currentSceneIter;
+            void clear();
     };
 }
 

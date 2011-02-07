@@ -9,6 +9,7 @@ namespace CubeJRemote {
         registerMsgHandler( CubeJProtocol::MSG_SND_SCENESTATUS , receiveMessage<CubeJProtocol::MSG_SND_SCENESTATUS>);
         registerMsgHandler( CubeJProtocol::MSG_ACK_REMOTE , receiveMessage<CubeJProtocol::MSG_ACK_REMOTE>);
         registerMsgHandler( CubeJProtocol::MSG_FWD_LISTMAPS , receiveMessage<CubeJProtocol::MSG_FWD_LISTMAPS>);
+        registerMsgHandler( CubeJProtocol::MSG_SND_SCENEINFO , receiveMessage<CubeJProtocol::MSG_SND_SCENEINFO>);
     }
 
     RemoteClient::~RemoteClient()

@@ -59,6 +59,7 @@ namespace CubeJSrv {
 		int newobject(int type, int owner);
 		int deleteobject(int id);
 		void sendscenestatus(packetbuf& p);
+		void changeScene(const char* name);
 		void reset();
 
 	private:

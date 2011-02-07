@@ -86,6 +86,7 @@ CLIENT_OBJS= \
 	ui_mainloop.o \
 	ui_scenecomponent.o \
     ui_connectcomponent.o \
+	ui_maintoolbar.o \
 	ui_mainwindow.o \
     main.o
 

@@ -4,6 +4,7 @@ SceneComponent::SceneComponent()
 {
     listBox = new ListBox (T("SCENES"), this);
     listBox->setRowHeight (28);
+    listBox->setMultipleSelectionEnabled (false);
     addChangeListener(this);
 
     loadbutton = new TextButton ( T("load"), T("Load selected Scene") );
@@ -61,12 +62,8 @@ void SceneComponent::selectedRowsChanged(int) {
 
 void SceneComponent::updateSceneListing(const char* name) {
     std::cout << "SceneComponent::updateSceneListing: " << name << std::endl;
-    loopv(scenes) if( strcmp(name, scenes[i]->getSceneName()) == 0) {
-        //update existing
-
-        return;
-    }
-    scenes.add(new CubeJRemote::SceneInfo(name));
+    if(! find(name) )
+        scenes.push_back(new CubeJRemote::SceneInfo(name));
     sendChangeMessage (this);
 }
 

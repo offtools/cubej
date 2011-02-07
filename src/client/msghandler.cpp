@@ -54,7 +54,13 @@ namespace CubeJ {
 			conoutf ("[DEBUG] listdir: no scenes found");
 		}
 		conoutf("[DEBUG] files length: %d", files.length());
-		MsgDataType<MSG_SND_LISTMAPS> data(files);
+		MsgDataType<MSG_FWD_LISTMAPS> data(files);
 		SendMessage(data);
 	}
+
+    template <> void receiveMessage<MSG_CMD_CHANGESCENE>(int sender, int channel, packetbuf& p) {
+        MsgDataType<MSG_CMD_CHANGESCENE> data(p);
+        conoutf("[DEBUG] receiveMessage<MSG_CMD_CHANGESCENE> %s", data.name);
+        GetClient().loadScene(data.name);
+    }
 }

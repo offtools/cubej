@@ -40,9 +40,14 @@ namespace CubeJSrv {
 		GetServer ().forwardMessage(sender, channel, p);
     }
 
-    template <> void receiveMessage<MSG_SND_LISTMAPS>(int sender, int channel, packetbuf& p) {
-		conoutf("[DEBUG] receiveMessage<MSG_SND_LISTMAPS>");
+    template <> void receiveMessage<MSG_FWD_LISTMAPS>(int sender, int channel, packetbuf& p) {
+		conoutf("[DEBUG] receiveMessage<MSG_FWD_LISTMAPS>");
 		GetServer ().forwardMessage(sender, channel, p);
 		p.cleanup();
+    }
+
+    template <> void receiveMessage<MSG_REQ_CHANGESCENE>(int sender, int channel, packetbuf& p) {
+        MsgDataType<MSG_REQ_CHANGESCENE> data(p);
+        GetSceneManager().changeScene(data.name);
     }
 }

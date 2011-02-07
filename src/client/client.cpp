@@ -15,7 +15,9 @@ namespace CubeJ
         registerMsgHandler( MSG_DISCOVER_REMOTE , receiveMessage<MSG_DISCOVER_REMOTE>);
         registerMsgHandler( MSG_REQ_REMOTE , receiveMessage<MSG_REQ_REMOTE>);
         registerMsgHandler( MSG_REQ_LISTMAPS, receiveMessage<MSG_REQ_LISTMAPS>);
+        registerMsgHandler( MSG_CMD_CHANGESCENE, receiveMessage<MSG_CMD_CHANGESCENE>);
 
+        clientmap[0] = '\0';
 		cameras.add(new dynent);
 		clients.add(&self);
 	}
@@ -144,6 +146,14 @@ namespace CubeJ
         else {
             //change scene
         }
+    }
+
+    void Client::loadScene(const char* name) {
+        if(load_world(name)) {
+            copystring(clientmap, name);
+        }
+        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_SND_SCENEINFO> data(clientmap, getworldsize(), getmapversion());
+        SendMessage(data);
     }
 
 	void Client::connectRemoteClient(int n) {

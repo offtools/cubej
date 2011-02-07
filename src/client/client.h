@@ -34,6 +34,7 @@ namespace CubeJ
 			void finishConnect(bool remote);
 
 			void requestScene(bool srvscene);
+			void loadScene(const char* name);
 
 			void connectRemoteClient(int n);
 
@@ -47,6 +48,7 @@ namespace CubeJ
 			vector<uchar> messages;
 			int messagecn;
 			bool messagereliable;
+            string clientmap;
 	};
 
 	Client & GetClient();

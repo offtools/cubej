@@ -1,13 +1,13 @@
 #include <string>
 #include <iostream>
+
 #include "remoteclient.h"
 #include "ui_mainwindow.h"
 #include "ui_connectcomponent.h"
 
 ContentComp::ContentComp (MainWindow* _mainwindow) : mainwindow(_mainwindow), mainloop(new MainLoop) {
 
-    toolbar = new Toolbar();
-    toolbar->setSize(getWidth(), 30);
+    toolbar = new MainToolbar( *mainwindow->commandManager );
     addAndMakeVisible (toolbar);
 
     horizontalLayout.setItemLayout (0, 30, 30, 30);
@@ -22,7 +22,6 @@ ContentComp::ContentComp (MainWindow* _mainwindow) : mainwindow(_mainwindow), ma
 
     right = new TabbedComponent (TabbedButtonBar::TabsAtBottom);
     right->setTabBarDepth (30);
-//    right->addTab (T("Connect"), Colours::lightgrey, new ConnectPanel(mainloop), false);
     right->addTab (T("Connect"), Colours::lightgrey, new ConnectComponent, false);
     scenes = new SceneComponent;
     CubeJRemote::GetRemoteClient().registerSceneManager(scenes);
@@ -74,7 +73,7 @@ const PopupMenu ContentComp::getMenuForIndex (int menuIndex, const String& menuN
 
     if (menuIndex == 0)
     {
-        menu.addCommandItem (commandManager, showServerDialog);
+        menu.addCommandItem (commandManager, ConnectWithServer);
         menu.addSeparator();
         menu.addCommandItem (commandManager, StandardApplicationCommandIDs::quit);
     }
@@ -95,7 +94,7 @@ ApplicationCommandTarget* ContentComp::getNextCommandTarget() {
 
 void ContentComp::getAllCommands (Array <CommandID>& commands) {
 
-    const CommandID ids[] = { showServerDialog,
+    const CommandID ids[] = { ConnectWithServer,
                               showMapDialog
     };
 
@@ -108,8 +107,8 @@ void ContentComp::getCommandInfo (CommandID commandID, ApplicationCommandInfo& r
 
         switch (commandID)
         {
-        case showServerDialog:
-            result.setInfo (T("Connect"), T("Connect to a server"), serverCategory, 0);
+        case ConnectWithServer:
+            result.setInfo (T("Connect"), T("Connect with server"), serverCategory, 0);
             result.addDefaultKeypress (T('1'), ModifierKeys::commandModifier);
             break;
         case showMapDialog:
@@ -122,15 +121,19 @@ void ContentComp::getCommandInfo (CommandID commandID, ApplicationCommandInfo& r
 bool ContentComp::perform (const InvocationInfo& info) {
     switch (info.commandID)
     {
-        case showServerDialog:
-            std::cout << "showServerDialog" << std::endl;
+        case ConnectWithServer:
+        {
+            std::cout << "ConnectWithServer" << std::endl;
+            CubeJRemote::RemoteClient& remote = CubeJRemote::GetRemoteClient();
+            remote.connectWithServer();
+            mainloop->startTimer(50);
             break;
+        }
         default:
             return false;
     }
     return true;
 }
-
 
 
 MainWindow::MainWindow() : DocumentWindow (AppInfo::projectName, Colours::lightgrey, DocumentWindow::allButtons, true)

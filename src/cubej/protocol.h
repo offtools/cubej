@@ -64,8 +64,6 @@ namespace CubeJProtocol
 			const char* description;
 			int channel;
 			int flag;
-			//~ ReceiveHandler receivehandler;
-			//void (*receivehandler)(int sender, int channel, packetbuf& p);
 	};
 
 	struct MsgHandler {

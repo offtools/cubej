@@ -50,4 +50,10 @@ namespace CubeJSrv {
         MsgDataType<MSG_REQ_CHANGESCENE> data(p);
         GetSceneManager().changeScene(data.name);
     }
+
+    template <> void receiveMessage<MSG_SND_SCENEINFO>(int sender, int channel, packetbuf& p) {
+		conoutf("[DEBUG] receiveMessage<MSG_SND_SCENEINFO>");
+		GetServer ().forwardMessage(sender, channel, p);
+		p.cleanup();
+    }
 }

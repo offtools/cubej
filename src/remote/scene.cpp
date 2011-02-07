@@ -47,8 +47,7 @@ namespace CubeJRemote {
     }
 
     void SceneMgr::clear() {
-        std::vector<SceneInfo *>::iterator iter = scenes.begin();
-        for(scenes.begin(); iter != scenes.end(); iter++) {
+        for(std::vector<SceneInfo *>::iterator iter = scenes.begin(); iter != scenes.end(); iter++) {
             delete (*iter);
             scenes.erase(iter);
         }
@@ -102,12 +101,12 @@ namespace CubeJRemote {
             scenes.push_back(new SceneInfo(cstr));
             info = find(cstr);
         }
-        std::string name(cstr);
-        for(scenes.begin(); currentSceneIter != scenes.end(); currentSceneIter++) {
-            if( name.compare( (*currentSceneIter)->getSceneName()) == 0 ) {
+        for(currentSceneIter = scenes.begin(); currentSceneIter != scenes.end(); currentSceneIter++) {
+            if( *currentSceneIter == info ) {
                 (*currentSceneIter)->setMapVersion(mapversion);
                 (*currentSceneIter)->setWorldSize(worldsize);
                 updateSceneListing((*currentSceneIter)->getSceneName());
+                return;
             }
         }
     }

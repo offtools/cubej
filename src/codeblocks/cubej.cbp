@@ -318,8 +318,6 @@
 		<Unit filename="../remote/scene.h" />
 		<Unit filename="../remote/ui_connectcomponent.cpp" />
 		<Unit filename="../remote/ui_connectcomponent.h" />
-		<Unit filename="../remote/ui_connectpanel.cpp" />
-		<Unit filename="../remote/ui_connectpanel.h" />
 		<Unit filename="../remote/ui_mainloop.cpp" />
 		<Unit filename="../remote/ui_mainloop.h" />
 		<Unit filename="../remote/ui_maintoolbar.cpp" />

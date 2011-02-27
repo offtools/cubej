@@ -5,6 +5,7 @@
 
 #include "client.h"
 #include "entities.h"
+#include "clientinfo.h"
 
 namespace entities
 {

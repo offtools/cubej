@@ -1,15 +1,17 @@
 #include <string>
 #include <iostream>
 
+#include "dispatcher.h"
 #include "ui_scenecomponent.h"
 
-SceneComponent::SceneComponent()
+SceneComponent::SceneComponent() : loadlistener(0)
 {
     listBox = new ListBox (T("SCENES"), this);
     listBox->setRowHeight (28);
     listBox->setMultipleSelectionEnabled (false);
 
     loadbutton = new TextButton ( T("load"), T("Load selected Scene") );
+    loadbutton->addButtonListener(this);
 
     layout.setItemLayout (0, -0.8, -1.0, -1.0);
     layout.setItemLayout (1, 30, 30, 30);
@@ -25,7 +27,7 @@ SceneComponent::~SceneComponent()
 
 int SceneComponent::getNumRows()
 {
-    return 0; //getNumScenes();
+    return sceneinfo.size();
 }
 
 void SceneComponent::resized()
@@ -47,50 +49,54 @@ void SceneComponent::paintListBoxItem (int rowNumber,
                        int width, int height,
                        bool rowIsSelected)
 {
-//    if (rowIsSelected)
-//        g.fillAll (Colours::lightblue);
-//
-//    g.setColour (Colours::black);
-//    g.drawText ( getSceneInfo(rowNumber)->getSceneName(),
-//                4, 0, width - 4, height,
-//                Justification::centredLeft, true);
+    if (rowIsSelected)
+        g.fillAll (Colours::lightblue);
 
+    g.setColour (Colours::black);
+    g.drawText ( sceneinfo[rowNumber]->getSceneName(),
+                4, 0, width - 4, height,
+                Justification::centredLeft, true);
 }
 
 void SceneComponent::selectedRowsChanged(int) {
 
 }
 
-//void SceneComponent::buttonClicked (Button *button) {
-//    std::cout << "SceneComponent::buttonClicked" << std::endl;
-//    const SparseSet<int> selection = listBox->getSelectedRows ();
-//    if(selection.isEmpty())
-//        return;
-//    std::cout << "selection: " << selection[0] << " " << getSceneInfo(selection[0])->getSceneName() << std::endl;
-//    loadScene(selection[0]);
-//}
-
-//void SceneComponent::updateSceneListing(const char *name) {
-//    scenes.push_back(new CubeJRemote::SceneInfo(name));
-//}
-//
-//void SceneComponent::receiveMessageListMaps(int sender, int channel, packetbuf& p) {
-//    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_FWD_LISTMAPS> data(p);
-//    std::cout  << "[DEBUG] MainComponent::receiveMessageCallback<MSG_FWD_LISTMAPS> size: " << data.len << std::endl;
-//    loopi( data.len ) if(! find(data.listing[i]) )
-//    {
-//        updateSceneListing(data.listing[i]);
-//    }
-//    if ( data.len ) {
-//        listBox->updateContent();
-//    }
-//}
-
 std::string SceneComponent::getSelectedSceneName() {
-    return "mapname";
+    SparseSet< int > rows = listBox->getSelectedRows ();
+    if( !rows.size() )
+        return 0;
+    int idx = rows[0];
+    return sceneinfo[idx]->getSceneName();
 }
 
-void SceneComponent::connectLoadListener(ButtonListener* listener) {
-    loadbutton->addButtonListener(listener);
+void SceneComponent::buttonClicked (Button *button) {
+    loadlistener->postMessage(NetworkDispatcher::AppCommandID::MSG_REQ_CHANGESCENE, this);
 }
 
+void SceneComponent::addLoadListener(AppMessageCommandListener<SceneComponent> *listener) {
+    loadlistener = listener;
+}
+
+class eqalSceneInfo : public std::unary_function<CubeJRemote::SceneInfo, bool> {
+        std::string path;
+    public:
+        explicit eqalSceneInfo (const std::string s) : path(s) {}
+        bool operator() (const CubeJRemote::SceneInfo* si) const { std::string s(si->getSceneName()); return path == s; }
+};
+
+void SceneComponent::CallbackListMaps(int sender, int channel, packetbuf& p) {
+    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_FWD_LISTMAPS> data(p);
+    std::vector<CubeJRemote::SceneInfo*>::iterator it;
+    for(int i = 0; i < data.len; i++) {
+        it = find_if(sceneinfo.begin(), sceneinfo.end(), eqalSceneInfo( data.listing[i] ) );
+        if ( it != sceneinfo.end() && sceneinfo.size() ) {
+            return;
+        }
+        else {
+            std::cout <<  "listing[" << i << "] " << data.listing[i] << std::endl;
+            sceneinfo.push_back( new CubeJRemote::SceneInfo(data.listing[i]) );
+        }
+    }
+    listBox->updateContent();
+}

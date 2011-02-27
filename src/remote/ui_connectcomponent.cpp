@@ -1,9 +1,11 @@
+#include "dispatcher.h"
 #include "ui_connectcomponent.h"
 
-ConnectComponent::ConnectComponent()
+ConnectComponent::ConnectComponent() : clientnum(0)
 {
     listBox = new ListBox (T("CLIENTCONNECT"), this);
     listBox->setRowHeight (28);
+    listBox->setMultipleSelectionEnabled (false);
 
     hFrame = new Component();
     conn = new TextButton ( T("connect"), T("Connect with Client") );
@@ -48,35 +50,64 @@ void ConnectComponent::resized() {
                                  true);
 }
 
-int ConnectComponent::getNumRows() { return 0; }
+int ConnectComponent::getNumRows() { return clients.size(); }
 
 void ConnectComponent::paintListBoxItem (int rowNumber, Graphics& g, int width, int height, bool rowIsSelected) {
-//    if (rowIsSelected)
-//        g.fillAll (Colours::lightblue);
-//
-//    g.setColour (Colours::black);
-//    g.drawText ( clientcache[rowNumber]->getName(),
-//                4, 0, width - 4, height,
-//                Justification::centredLeft, true);
+    if (rowIsSelected)
+        g.fillAll (Colours::lightblue);
+
+    g.setColour (Colours::black);
+    g.drawText ( clients[rowNumber]->getName(),
+                4, 0, width - 4, height,
+                Justification::centredLeft, true);
 }
 
 void ConnectComponent::selectedRowsChanged (int lastRowselected) {}
 
-void ConnectComponent::buttonClicked (Button *) {
-//    std::cout << "ConnectComponent::buttonClicked" std::endl;
-//    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_REMOTE> data(cn);
-//    dispatcher.SendMessage(data);
+void ConnectComponent::addConnectListener(AppMessageCommandListener<ConnectComponent>* listener) {
+    connect = listener;
 }
 
-//void ConnectComponent::updateclientcache(int cn, int type, char* name) {
-//    for (std::vector<CubeJ::ClientInfo*>::iterator it = clientcache.begin(); it != clientcache.end(); it++) {
-//        if((*it)->getClientnum() == cn) {
-//            if(head == *it) {
-//                disconnectClient();
-//            }
-//            delete *it;
-//            clientcache.erase(it);
-//        }
-//    }
-//    clientcache.push_back(new CubeJ::ClientInfo(cn, type, name));
-//}
+void ConnectComponent::buttonClicked (Button *button) {
+    if(button == conn) {
+        connect->postMessage(NetworkDispatcher::AppCommandID::CONNECT_CLIENT, this);
+    }
+
+    else if (button == disc) {
+        connect->postMessage(NetworkDispatcher::AppCommandID::DISCONNECT_CLIENT, this);
+    }
+}
+
+void ConnectComponent::CallbackSrvInfo(int sender, int channel, packetbuf& p) {
+    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_SND_SERVINFO> data(p);
+    if(data.protocol != CubeJProtocol::PROTOCOL_VERSION) {
+        std::cout << "[DEBUG] NetworkDispatcher::receiveMessage<CubeJProtocol::MSG_SND_SERVINFO> - wrong protocol version" << std::endl;
+        return;
+    }
+    clientnum = data.clientnum;
+    connect->postMessage(NetworkDispatcher::AppCommandID::REQ_CLIENTLIST, this);
+}
+
+class eqalClientInfo : public std::unary_function<CubeJ::ClientInfo, bool> {
+        int cn;
+    public:
+        explicit eqalClientInfo (const int i) : cn(i) {}
+        bool operator() (const CubeJ::ClientInfo* ci) const { return cn == ci->getClientnum(); }
+};
+
+void ConnectComponent::CallbackClientInfo(int sender, int channel, packetbuf& p) {
+    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_SND_CLIENTINFO> data(p);
+    std::vector<CubeJ::ClientInfo*>::iterator it;
+    it = find_if(clients.begin(), clients.end(), eqalClientInfo(clientnum));
+    if( it != clients.end() && !clients.size() ) return;
+    clients.push_back( new CubeJ::ClientInfo(data.cn, data.type, data.name) );
+    listBox->updateContent();
+}
+
+const CubeJ::ClientInfo* ConnectComponent::getSelectedClient() const {
+    SparseSet< int > rows = listBox->getSelectedRows ();
+    if( !rows.size() )
+        return 0;
+    int idx = rows[0];
+    return clients[idx];
+}

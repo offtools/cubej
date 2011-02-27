@@ -1,4 +1,5 @@
 #include "dispatcher.h"
+#include "clientinfo.h"
 
 NetworkDispatcher::NetworkDispatcher()
 {
@@ -19,23 +20,41 @@ inline void NetworkDispatcher::timerCallback() {
     update();
 }
 
-void NetworkDispatcher::CallbackSrvInfo(int sender, int channel, packetbuf& p) {
-    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_SND_SERVINFO> data(p);
-    if(data.protocol != CubeJProtocol::PROTOCOL_VERSION) {
-        std::cout << "[DEBUG] NetworkDispatcher::receiveMessage<CubeJProtocol::MSG_SND_SERVINFO> - wrong protocol version" << std::endl;
-        return;
-    }
-    std::cout << "[DEBUG] NetworkDispatcher::receiveMessageCallback<MSG_SND_SERVINFO> clientnum: " << data.clientnum << ", protocol: " << data.protocol << std::endl;
-
-    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_DISCOVER_REMOTE> snd;
-    SendMessage(snd);
+void NetworkDispatcher::handleData (MainToolbar* data) {
+    std::cout << "AppMessageListener<MainToolbar>::handleData" << data->getServerName() << data->getServerPort() << std::endl;
+    connectWithServer(data->getServerName().toCString(), data->getServerPort());
 }
 
-//void ConnectServerButtonListener::buttonClicked(Button* button) {
-//    std::cout << "ConnectServerButtonListener::buttonClicked" << std::endl;
-//    nethandle.connectWithServer(ref.getServerName().toCString (), ref.getServerPort());
-//}
+void NetworkDispatcher::handleData (int id, ConnectComponent* data) {
+    switch (id)
+    {
+        case CONNECT_CLIENT:
+        {
+            const CubeJ::ClientInfo* ci = data->getSelectedClient();
+            if( ci ) {
+                connectWithClient(ci->getClientnum());
+            }
+            return;
+        }
+        case DISCONNECT_CLIENT:
+        {
+            std::cout << "NetworkDispatcher::handleData - DISCONNECT" << std::endl;
+            return;
+        }
+        case REQ_CLIENTLIST:
+        {
+            std::cout << "NetworkDispatcher::handleData - REQ_CLIENTLIST" << std::endl;
+            CubeJProtocol::MsgDataType<CubeJProtocol::MSG_DISCOVER_REMOTE> snd;
+            SendMessage(snd);
+            return;
+        }
+        default:
+            return;
+    }
+}
 
-void NetworkDispatcher::handleData (ConnectComponent* data) {
-    std::cout << "AppMessageListener::handleMessage: " << data->teststring << std::endl;
+void NetworkDispatcher::handleData (int id, SceneComponent* data) {
+    if ( id == MSG_REQ_CHANGESCENE ) {
+        RequestChangeScene(data->getSelectedSceneName().c_str());
+    }
 }

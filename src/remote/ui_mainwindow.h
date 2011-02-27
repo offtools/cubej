@@ -9,6 +9,13 @@
 #include "ui_scenecomponent.h"
 #include "ui_maintoolbar.h"
 
+//template <typename T>
+//class KeyedVector : std::vector<T> {
+//    public:
+//        void add ( const T& x ) {
+//            find_if()
+//        }
+//}
 
 class MainWindow  : public DocumentWindow
 {
@@ -55,7 +62,7 @@ public:
 //    void CallbackClientInfo(int sender, int channel, packetbuf& p);
 //    void CallbackCDis(int sender, int channel, packetbuf& p);
 //    void CallbackSceneStatus(int sender, int channel, packetbuf& p);
-//    void CallbackAckRemote(int sender, int channel, packetbuf& p);
+    void CallbackAckRemote(int sender, int channel, packetbuf& p);
 //    void CallbackSceneInfo(int sender, int channel, packetbuf& p);
 //    void CallbackListMaps(int sender, int channel, packetbuf& p);
 

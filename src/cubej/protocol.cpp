@@ -149,6 +149,7 @@ namespace CubeJProtocol
     }
 
     MsgDataType<MSG_ACK_REMOTE>::MsgDataType(int cn) : info(GetMsgTypeInfo(MSG_ACK_REMOTE)), clientnum(cn) {}
+    MsgDataType<MSG_ACK_REMOTE>::MsgDataType(packetbuf& p) : info(GetMsgTypeInfo(MSG_ACK_REMOTE)), clientnum(getint(p)) {}
 
     void MsgDataType<MSG_ACK_REMOTE>::addmsg(packetbuf& p) {
         putint(p, MSG_ACK_REMOTE);

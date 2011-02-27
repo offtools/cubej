@@ -45,10 +45,10 @@ public:
     //==============================================================================
     void initialise (const String& commandLine)
     {
-//        if(!CubeJRemote::Init()) {
-//            Logger::outputDebugString (T("Could not initialize Enet"));
-//            systemRequestedQuit();
-//        }
+        if(!CubeJRemote::Init()) {
+            Logger::outputDebugString (T("Could not initialize Enet"));
+            systemRequestedQuit();
+        }
 
         mainwindow = new MainWindow();
         mainwindow->centreWithSize (1024, 800);

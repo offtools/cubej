@@ -31,6 +31,8 @@ namespace CubeJRemote {
     }
 
     void RemoteInterface::connectWithClient(int cn) {
+        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_REMOTE> data(cn);
+        SendMessage(data);
     }
 
     void RemoteInterface::disconnectClient() {
@@ -89,6 +91,11 @@ namespace CubeJRemote {
     }
 
     void RemoteInterface::RequestClientInfoList() {}
+
+    void RemoteInterface::RequestChangeScene(const char* path) {
+        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_CHANGESCENE> data(path);
+        SendMessage(data);
+    }
 
     bool Init() {
         if(enet_initialize () < 0)

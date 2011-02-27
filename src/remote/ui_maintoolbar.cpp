@@ -131,7 +131,9 @@ ToolbarItemComponent* MainToolbar::createItem (int itemId) {
         }
         case connect_server:
         {
-            return connectitem = new ConnectItem (itemId);
+            connectitem = new ConnectItem (connect_server);
+            connectitem->button_connect->addButtonListener(this);
+            return connectitem;
         }
 
         default:
@@ -140,9 +142,12 @@ ToolbarItemComponent* MainToolbar::createItem (int itemId) {
 
     return 0;
 }
+void MainToolbar::addCommandListener(AppMessageListener<MainToolbar>* listener) {
+    commandlistener = listener;
+}
 
-void MainToolbar::addConnectListener(ButtonListener* listener) {
-    connectitem->button_connect->addButtonListener(listener);
+void MainToolbar::buttonClicked(Button* button) {
+    commandlistener->postMessage(this);
 }
 
 String MainToolbar::getServerName() {

@@ -1,4 +1,4 @@
-CXXFLAGS= -O3 -fomit-frame-pointer -ggdb
+CXXFLAGS= -O3 -fomit-frame-pointer -ggdb -std=c++0x
 override CXXFLAGS+= -Wall -fsigned-char
 
 PLATFORM= $(shell uname -s)
@@ -82,6 +82,7 @@ CLIENT_OBJS= \
 	dispatcher.o \
 	msghandler.o \
     remoteclient.o \
+    scene.o \
 	ui_scenecomponent.o \
     ui_connectcomponent.o \
 	ui_maintoolbar.o \

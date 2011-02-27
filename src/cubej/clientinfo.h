@@ -18,9 +18,9 @@ namespace CubeJ
 
         void setName(const char* text);
         void setClientnum(int cn);
-        const char* getName();
-        int getClientnum();
-		int getType();
+        const char* getName() const { return name; }
+        int getClientnum() const { return clientnum; }
+		int getType() const { return type; }
 
     protected:
         //unique id for an client

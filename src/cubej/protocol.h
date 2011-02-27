@@ -155,6 +155,7 @@ namespace CubeJProtocol
 
     template <> struct MsgDataType<MSG_ACK_REMOTE> {
         MsgDataType(int clientnum);
+        MsgDataType(packetbuf& p);
         MsgInfoType& info;
 		int clientnum;
         void addmsg(packetbuf& p);

@@ -5,6 +5,8 @@
 #include <iostream>
 
 #include "protocol.h"
+#include "clientinfo.h"
+
 
 namespace CubeJRemote {
 

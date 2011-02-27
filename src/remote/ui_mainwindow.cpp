@@ -2,10 +2,7 @@
 
 MainComponent::MainComponent (MainWindow* mwin) : mainwindow(mwin), nethandle(new NetworkDispatcher)
 {
-
-    toolbar = new MainToolbar( * mainwindow->commandManager);
-    toolbar->addConnectListener(new ConnectServerButtonListener(*toolbar, *nethandle));
-    addAndMakeVisible (toolbar);
+    addAndMakeVisible (toolbar = new MainToolbar( * mainwindow->commandManager));
 
     horizontalLayout.setItemLayout (0, 30, 30, 30);
     verticalLayout.setItemLayout (0, -0.2, -0.8, -0.4);
@@ -20,11 +17,7 @@ MainComponent::MainComponent (MainWindow* mwin) : mainwindow(mwin), nethandle(ne
     right = new TabbedComponent (TabbedButtonBar::TabsAtBottom);
     right->setTabBarDepth (30);
     right->addTab (T("Connect"), Colours::lightgrey, clientlist = new ConnectComponent(), false);
-    scenes = new SceneComponent();
-
-//    scenes->connectLoadListener(new ButtonListenerAdapter<SceneComponent>(*scenes));
-    //    dispatcher.registerSceneManager(scenes);
-    right->addTab (T("Scene"), Colours::lightgrey, scenes, false);
+    right->addTab (T("Scene"), Colours::lightgrey, scenes = new SceneComponent(), false);
     right->setCurrentTabIndex (0);
     verticalDividerBar = new StretchableLayoutResizerBar (&verticalLayout, 1, true);
 
@@ -32,14 +25,17 @@ MainComponent::MainComponent (MainWindow* mwin) : mainwindow(mwin), nethandle(ne
     addAndMakeVisible (verticalDividerBar);
     addAndMakeVisible (right);
 
-    nethandle->addMessageHandler<CubeJProtocol::MSG_SND_SERVINFO, NetworkDispatcher>(nethandle, &NetworkDispatcher::CallbackSrvInfo);
+    toolbar->addCommandListener(nethandle);
+    clientlist->addConnectListener(nethandle);
+    scenes->addLoadListener(nethandle);
 
-//    dispatcher.addMessageHandler<CubeJProtocol::MSG_SND_CLIENTINFO, MainComponent>(this, &MainComponent::CallbackClientInfo);
-//    dispatcher.addMessageHandler<CubeJProtocol::MSG_CDIS, MainComponent>(this, &MainComponent::CallbackCDis);
-//    dispatcher.addMessageHandler<CubeJProtocol::MSG_SND_SCENESTATUS, MainComponent>(this, &MainComponent::CallbackSceneStatus);
-//    dispatcher.addMessageHandler<CubeJProtocol::MSG_ACK_REMOTE, MainComponent>(this, &MainComponent::CallbackAckRemote);
-//    dispatcher.addMessageHandler<CubeJProtocol::MSG_SND_SCENEINFO, MainComponent>(this, &MainComponent::CallbackSceneInfo);
-//    dispatcher.addMessageHandler<CubeJProtocol::MSG_FWD_LISTMAPS, MainComponent>(this, &MainComponent::CallbackListMaps);
+    nethandle->addMessageHandler<CubeJProtocol::MSG_SND_SERVINFO, ConnectComponent>(clientlist, &ConnectComponent::CallbackSrvInfo);
+    nethandle->addMessageHandler<CubeJProtocol::MSG_SND_CLIENTINFO, ConnectComponent>(clientlist, &ConnectComponent::CallbackClientInfo);
+//    nethandler.addMessageHandler<CubeJProtocol::MSG_CDIS, MainComponent>(this, &MainComponent::CallbackCDis);
+//    nethandler.addMessageHandler<CubeJProtocol::MSG_SND_SCENESTATUS, MainComponent>(this, &MainComponent::CallbackSceneStatus);
+    nethandle->addMessageHandler<CubeJProtocol::MSG_ACK_REMOTE, MainComponent>(this, &MainComponent::CallbackAckRemote);
+//    nethandler.addMessageHandler<CubeJProtocol::MSG_SND_SCENEINFO, MainComponent>(this, &MainComponent::CallbackSceneInfo);
+    nethandle->addMessageHandler<CubeJProtocol::MSG_FWD_LISTMAPS, SceneComponent>(scenes, &SceneComponent::CallbackListMaps);
 }
 
 MainComponent::~MainComponent() {
@@ -130,7 +126,7 @@ bool MainComponent::perform (const InvocationInfo& info) {
         case ConnectWithServer:
         {
             std::cout << "ConnectWithServer" << std::endl;
-//            dispatcher.connectWithServer();
+            nethandle->connectWithServer( toolbar->getServerName().toCString(), toolbar->getServerPort() );
             break;
         }
         default:
@@ -141,11 +137,6 @@ bool MainComponent::perform (const InvocationInfo& info) {
 
 //Callbacks
 
-//void MainComponent::CallbackClientInfo(int sender, int channel, packetbuf& p) {
-//    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_SND_CLIENTINFO> data(p);
-//    clientlist->updateclientcache(data.cn, data.type, data.name);
-//}
-//
 //void MainComponent::CallbackCDis(int sender, int channel, packetbuf& p) {
 //    int clientnum = getint(p);
 //    std::cout << "[DEBUG] MainComponent::receiveMessageCallback<CubeJProtocol::MSG_CDIS> clientnum: " << clientnum << std::endl;
@@ -161,12 +152,12 @@ bool MainComponent::perform (const InvocationInfo& info) {
 //    dispatcher.SendMessage(data);
 //}
 //
-//void MainComponent::CallbackAckRemote(int sender, int channel, packetbuf& p) {
-//    int clientnum = getint(p);
-//    std::cout  << "[DEBUG] MainComponent::receiveMessageCallback<MSG_ACK_REMOTE> control over client: " << clientnum << std::endl;
-//    dispatcher.connectWithClient(clientnum);
-//}
-//
+void MainComponent::CallbackAckRemote(int sender, int channel, packetbuf& p) {
+    int clientnum = getint(p);
+    std::cout  << "[DEBUG] MainComponent::receiveMessageCallback<MSG_ACK_REMOTE> control over client: " << clientnum << std::endl;
+    nethandle->RequestMapList();
+}
+
 //void MainComponent::CallbackSceneInfo(int sender, int channel, packetbuf& p) {
 ////    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_SND_SCENEINFO> data(p);
 ////    dispatcher.GetSceneManager().setCurrentScene(data.mapname, data.worldsize, data.mapversion);

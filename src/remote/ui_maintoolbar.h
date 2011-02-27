@@ -3,7 +3,7 @@
 
 #include "config.h"
 #include "juce_amalgamated.h"
-
+#include "ui_listener.h"
 
 class ConnectItem : public ToolbarItemComponent {
     public:
@@ -23,7 +23,8 @@ class ConnectItem : public ToolbarItemComponent {
 };
 
 class MainToolbar : public Component,
-                    public ToolbarItemFactory
+                    public ToolbarItemFactory,
+                    public ButtonListener
 {
     public:
         MainToolbar(ApplicationCommandManager& mgr);
@@ -46,8 +47,8 @@ class MainToolbar : public Component,
         void getDefaultItemSet (Array <int>& ids);
         ToolbarItemComponent* createItem (int itemId);
 
-        //register extra Listener for Connect Button
-        void addConnectListener(ButtonListener* listener);
+        //register Listener for Connect Button
+        void addCommandListener(AppMessageListener<MainToolbar>* messagelistener);
 
         //Values
         String getServerName();
@@ -57,6 +58,9 @@ class MainToolbar : public Component,
         ApplicationCommandManager&      commandmgr;
         ConnectItem*                    connectitem;
         Toolbar*                        toolbar;
+        AppMessageListener<MainToolbar> *commandlistener;
+
+        void buttonClicked(Button* button);
 };
 
 

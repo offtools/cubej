@@ -26,17 +26,4 @@ namespace CubeJ
     void ClientInfo::setClientnum(int cn) {
         clientnum = cn;
     }
-
-    const char* ClientInfo::getName() {
-        return name;
-    }
-
-    int ClientInfo::getClientnum() {
-        return clientnum;
-    }
-
-	int ClientInfo::getType() {
-		return type;
-	}
-
 }

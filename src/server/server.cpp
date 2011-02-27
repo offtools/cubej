@@ -1,5 +1,6 @@
 #include "server.h"
 #include "protocol.h"
+#include "clientinfo.h"
 
 ///TODO: remote not in clients
 
@@ -197,7 +198,7 @@ namespace CubeJSrv {
         packetbuf p(MAXTRANS, info.flag);
 
         //send client infos of not connected (free) heads
-        loopv(clients) {
+        loopv(clients) if(clients[i]->type == CubeJ::CLIENT_TYPE_HEAD) {
             MsgDataType<MSG_SND_CLIENTINFO> data(clients[i]->clientnum, clients[i]->type, clients[i]->name);
             data.addmsg(p);
             conoutf("[DEBUG] Server::registerRemoteInterface - send %d:%s", clients[i]->clientnum, clients[i]->name);

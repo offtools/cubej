@@ -2,7 +2,7 @@
 <CodeBlocks_layout_file>
 	<ActiveTarget name="default" />
 	<File name="../client/client.cpp" open="0" top="0" tabpos="15">
-		<Cursor position="4379" topLine="152" />
+		<Cursor position="4157" topLine="144" />
 	</File>
 	<File name="../client/client.h" open="0" top="0" tabpos="11">
 		<Cursor position="852" topLine="28" />
@@ -11,25 +11,25 @@
 		<Cursor position="22074" topLine="667" />
 	</File>
 	<File name="../client/msghandler.cpp" open="0" top="0" tabpos="26">
-		<Cursor position="2037" topLine="0" />
+		<Cursor position="906" topLine="9" />
 	</File>
 	<File name="../cubej/clientinfo.cpp" open="0" top="0" tabpos="19">
-		<Cursor position="416" topLine="3" />
+		<Cursor position="657" topLine="0" />
 	</File>
 	<File name="../cubej/clientinfo.h" open="0" top="0" tabpos="18">
-		<Cursor position="386" topLine="4" />
+		<Cursor position="580" topLine="0" />
 	</File>
 	<File name="../cubej/cubej.h" open="0" top="0" tabpos="2">
 		<Cursor position="157" topLine="0" />
 	</File>
-	<File name="../cubej/protocol.cpp" open="0" top="0" tabpos="8">
-		<Cursor position="3021" topLine="39" />
+	<File name="../cubej/protocol.cpp" open="1" top="0" tabpos="14">
+		<Cursor position="6188" topLine="146" />
 	</File>
-	<File name="../cubej/protocol.h" open="0" top="0" tabpos="10">
-		<Cursor position="4873" topLine="178" />
+	<File name="../cubej/protocol.h" open="1" top="0" tabpos="13">
+		<Cursor position="4590" topLine="169" />
 	</File>
 	<File name="../cubej/stubs.cpp" open="0" top="0" tabpos="24">
-		<Cursor position="6195" topLine="182" />
+		<Cursor position="125" topLine="0" />
 	</File>
 	<File name="../enet/callbacks.c" open="0" top="0" tabpos="0">
 		<Cursor position="786" topLine="0" />
@@ -109,65 +109,68 @@
 	<File name="../engine/world.cpp" open="0" top="0" tabpos="4">
 		<Cursor position="33189" topLine="1192" />
 	</File>
-	<File name="../remote/config.h" open="1" top="0" tabpos="8">
-		<Cursor position="462" topLine="0" />
+	<File name="../remote/config.h" open="0" top="0" tabpos="8">
+		<Cursor position="148" topLine="0" />
 	</File>
-	<File name="../remote/dispatcher.cpp" open="1" top="0" tabpos="15">
-		<Cursor position="938" topLine="3" />
+	<File name="../remote/dispatcher.cpp" open="1" top="0" tabpos="9">
+		<Cursor position="1111" topLine="6" />
 	</File>
-	<File name="../remote/dispatcher.h" open="1" top="0" tabpos="14">
-		<Cursor position="333" topLine="0" />
+	<File name="../remote/dispatcher.h" open="1" top="0" tabpos="6">
+		<Cursor position="199" topLine="6" />
 	</File>
-	<File name="../remote/main.cpp" open="1" top="0" tabpos="11">
-		<Cursor position="1877" topLine="57" />
+	<File name="../remote/main.cpp" open="0" top="0" tabpos="11">
+		<Cursor position="1243" topLine="66" />
 	</File>
-	<File name="../remote/msghandler.cpp" open="1" top="0" tabpos="16">
-		<Cursor position="796" topLine="0" />
+	<File name="../remote/msghandler.cpp" open="1" top="0" tabpos="2">
+		<Cursor position="951" topLine="0" />
 	</File>
-	<File name="../remote/msghandler.h" open="1" top="0" tabpos="13">
-		<Cursor position="743" topLine="0" />
+	<File name="../remote/msghandler.h" open="0" top="0" tabpos="13">
+		<Cursor position="138" topLine="0" />
 	</File>
-	<File name="../remote/remoteclient.cpp" open="1" top="0" tabpos="17">
-		<Cursor position="670" topLine="6" />
+	<File name="../remote/remoteclient.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="1198" topLine="20" />
 	</File>
-	<File name="../remote/remoteclient.h" open="1" top="0" tabpos="9">
-		<Cursor position="70" topLine="0" />
+	<File name="../remote/remoteclient.h" open="1" top="0" tabpos="7">
+		<Cursor position="576" topLine="10" />
 	</File>
-	<File name="../remote/scene.cpp" open="1" top="0" tabpos="2">
-		<Cursor position="0" topLine="0" />
+	<File name="../remote/scene.cpp" open="1" top="0" tabpos="12">
+		<Cursor position="791" topLine="19" />
 	</File>
-	<File name="../remote/scene.h" open="1" top="0" tabpos="1">
-		<Cursor position="1069" topLine="30" />
+	<File name="../remote/scene.h" open="1" top="0" tabpos="11">
+		<Cursor position="283" topLine="0" />
 	</File>
-	<File name="../remote/ui_connectcomponent.cpp" open="1" top="0" tabpos="4">
-		<Cursor position="29" topLine="0" />
+	<File name="../remote/ui_connectcomponent.cpp" open="1" top="0" tabpos="10">
+		<Cursor position="3260" topLine="74" />
 	</File>
-	<File name="../remote/ui_connectcomponent.h" open="1" top="0" tabpos="3">
-		<Cursor position="88" topLine="7" />
+	<File name="../remote/ui_connectcomponent.h" open="1" top="0" tabpos="5">
+		<Cursor position="747" topLine="9" />
 	</File>
-	<File name="../remote/ui_maintoolbar.cpp" open="1" top="1" tabpos="6">
-		<Cursor position="5970" topLine="51" />
+	<File name="../remote/ui_listener.h" open="0" top="0" tabpos="0">
+		<Cursor position="403" topLine="0" />
 	</File>
-	<File name="../remote/ui_maintoolbar.h" open="1" top="0" tabpos="5">
-		<Cursor position="1380" topLine="21" />
+	<File name="../remote/ui_maintoolbar.cpp" open="1" top="0" tabpos="15">
+		<Cursor position="5538" topLine="0" />
 	</File>
-	<File name="../remote/ui_mainwindow.cpp" open="1" top="0" tabpos="18">
-		<Cursor position="0" topLine="0" />
+	<File name="../remote/ui_maintoolbar.h" open="0" top="0" tabpos="5">
+		<Cursor position="940" topLine="0" />
 	</File>
-	<File name="../remote/ui_mainwindow.h" open="1" top="0" tabpos="7">
-		<Cursor position="66" topLine="27" />
+	<File name="../remote/ui_mainwindow.cpp" open="1" top="1" tabpos="8">
+		<Cursor position="6671" topLine="198" />
 	</File>
-	<File name="../remote/ui_scenecomponent.cpp" open="1" top="0" tabpos="19">
-		<Cursor position="2734" topLine="57" />
+	<File name="../remote/ui_mainwindow.h" open="0" top="0" tabpos="7">
+		<Cursor position="1766" topLine="42" />
 	</File>
-	<File name="../remote/ui_scenecomponent.h" open="1" top="0" tabpos="12">
-		<Cursor position="674" topLine="2" />
+	<File name="../remote/ui_scenecomponent.cpp" open="1" top="0" tabpos="3">
+		<Cursor position="2240" topLine="61" />
+	</File>
+	<File name="../remote/ui_scenecomponent.h" open="1" top="0" tabpos="4">
+		<Cursor position="922" topLine="14" />
 	</File>
 	<File name="../server/msghandler.cpp" open="0" top="0" tabpos="1">
-		<Cursor position="1582" topLine="12" />
+		<Cursor position="1606" topLine="9" />
 	</File>
 	<File name="../server/server.cpp" open="0" top="0" tabpos="22">
-		<Cursor position="7154" topLine="177" />
+		<Cursor position="7701" topLine="197" />
 	</File>
 	<File name="../server/server.h" open="0" top="0" tabpos="21">
 		<Cursor position="176" topLine="0" />
@@ -209,9 +212,9 @@
 		<Cursor position="1570" topLine="19" />
 	</File>
 	<File name="../thirdparty/juce/juce_amalgamated.cpp" open="0" top="0" tabpos="11">
-		<Cursor position="1667279" topLine="70257" />
+		<Cursor position="1667151" topLine="70257" />
 	</File>
 	<File name="../thirdparty/juce/juce_amalgamated.h" open="0" top="0" tabpos="0">
-		<Cursor position="48199" topLine="1588" />
+		<Cursor position="509987" topLine="19720" />
 	</File>
 </CodeBlocks_layout_file>

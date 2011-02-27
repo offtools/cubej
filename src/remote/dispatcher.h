@@ -4,23 +4,16 @@
 #include "dispatcher.h"
 #include "remoteclient.h"
 #include "juce_amalgamated.h"
-#include "ui_maintoolbar.h"
 #include "ui_listener.h"
+#include "ui_maintoolbar.h"
 #include "ui_connectcomponent.h"
-
-class NetworkDispatcher;
-
-//class ConnectServerButtonListener : public ButtonListenerAdapter<MainToolbar> {
-//    public:
-//        ConnectServerButtonListener(MainToolbar& toolbar, NetworkDispatcher& net) : ButtonListenerAdapter<MainToolbar>(toolbar), nethandle(net) {}
-//        void buttonClicked(Button* button);
-//    private:
-//        NetworkDispatcher& nethandle;
-//};
+#include "ui_scenecomponent.h"
 
 class NetworkDispatcher :   public CubeJRemote::RemoteInterface,
                             public Timer,
-                            public AppMessageListener<ConnectComponent>
+                            public AppMessageListener<MainToolbar>,
+                            public AppMessageCommandListener<ConnectComponent>,
+                            public AppMessageCommandListener<SceneComponent>
 {
     public:
         NetworkDispatcher();
@@ -28,9 +21,22 @@ class NetworkDispatcher :   public CubeJRemote::RemoteInterface,
 
         void connectWithServer(const char* sname, int port);
 
-        //Callback for MSG_SND_SRVINFO
-        void CallbackSrvInfo(int sender, int channel, packetbuf& p);
-        void handleData (ConnectComponent* data);
+        //Network Message Callbacks
+
+
+        //Command ID's
+        enum AppCommandID {
+            CONNECT_CLIENT = 0,
+            DISCONNECT_CLIENT,
+            REQ_CLIENTLIST,
+            MSG_REQ_CHANGESCENE
+        } ;
+
+        //Application Message Callback
+        void handleData (MainToolbar* data);
+        void handleData (int id, ConnectComponent* data);
+        void handleData (int id, SceneComponent* data);
+
     private:
         void timerCallback();
 };

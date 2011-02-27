@@ -1,4 +1,5 @@
 #include "server.h"
+#include "clientinfo.h"
 
 namespace CubeJSrv {
 	using namespace CubeJProtocol;

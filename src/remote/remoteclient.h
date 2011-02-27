@@ -33,13 +33,13 @@ namespace CubeJRemote {
 
             void RequestMapList();
             void RequestClientInfoList();
+            void RequestChangeScene(const char* path);
 
             void SendMessage(int channel, packetbuf& p);
 
             template <CubeJProtocol::MSG_TYPE N> void SendMessage(CubeJProtocol::MsgDataType<N>& data) {
                 packetbuf p(MAXTRANS, data.info.flag);
                 data.addmsg(p);
-                conoutf("[DEBUG] sending msg - type: %d, channel: %d", N, data.info.channel);
                 SendMessage(data.info.channel, p);
             }
 

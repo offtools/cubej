@@ -93,10 +93,10 @@ namespace CubeJSrv {
 
         void registerClient(int cn, char* name);
 
-        void registerRemoteClient(int cn);
+        void registerRemoteInterface(int cn);
 
         //after receiving ack from head, etablish connection between remote client and head
-        void connectRemoteClient(int head, int remote);
+        void connectRemoteInterface(int head, int remote);
 
 		int numClients();
 

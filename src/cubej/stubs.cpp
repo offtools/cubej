@@ -196,7 +196,7 @@ namespace server
     bool allowbroadcast(int n) {
         conoutf("game::allowbroadcast");
 		CubeJSrv::SvClientInfo *ci = (CubeJSrv::SvClientInfo*)getclientinfo(n);
-        return ci && ci->isConnected() && ci->gettype() == CubeJ::CLIENT_TYPE_HEAD;
+        return ci && ci->isConnected() && ci->getType() == CubeJ::CLIENT_TYPE_HEAD;
 	}
 
     void recordpacket(int chan, void *data, int len) {}

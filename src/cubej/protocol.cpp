@@ -93,13 +93,22 @@ namespace CubeJProtocol
         putint(p, clientnum);
     }
 
-    MsgDataType<MSG_SND_CLIENTINFO>::MsgDataType(int i, int t, const char* text) : info(GetMsgTypeInfo(MSG_SND_CLIENTINFO)), cn(i), type(t), name(text) {}
+    MsgDataType<MSG_SND_CLIENTINFO>::MsgDataType(int i, int t, const char* text) : info(GetMsgTypeInfo(MSG_SND_CLIENTINFO)), cn(i), type(t), name(newstring(text)) {}
+    MsgDataType<MSG_SND_CLIENTINFO>::MsgDataType(packetbuf& p) : info(GetMsgTypeInfo(MSG_SND_CLIENTINFO)), cn(getint(p)), type(getint(p)) {
+        char text[MAXTRANS];
+        getstring(text, p);
+        name = newstring(text);
+    }
 
     void MsgDataType<MSG_SND_CLIENTINFO>::addmsg(packetbuf& p) {
         putint(p, MSG_SND_CLIENTINFO);
         putint(p, cn);
 		putint(p, type);
         sendstring(name, p);
+    }
+
+    MsgDataType<MSG_SND_CLIENTINFO>::~MsgDataType() {
+        delete[] name;
     }
 
     MsgDataType<MSG_SND_SCENESTATUS>::MsgDataType(bool b) : info(GetMsgTypeInfo(MSG_SND_SCENESTATUS)), hasscene(b) {}

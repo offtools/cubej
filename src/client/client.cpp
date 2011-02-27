@@ -156,8 +156,8 @@ namespace CubeJ
         SendMessage(data);
     }
 
-	void Client::connectRemoteClient(int n) {
-		conoutf("[DEBUG] Client::connectRemoteClient");
+	void Client::connectRemoteInterface(int n) {
+		conoutf("[DEBUG] Client::connectRemoteInterface");
 		//TODO: check remote client
 		clients.add(new ClientInfo (n, CLIENT_TYPE_REMOTE, NULL));
         CubeJProtocol::MsgDataType<CubeJProtocol::MSG_ACK_REMOTE> data(n);
@@ -168,4 +168,18 @@ namespace CubeJ
 		static Client client;
 		return client;
 	}
+
+    char* retstr;
+
+	void testexec( char* s) {
+        retstr = newstring(executeret(s));
+        conoutf("TESTexec: %s", retstr);
+	}
+
+	void testresult() {
+        conoutf("TEST: %s", retstr);
+	}
+
+	ICOMMAND(testresult, "", (), testresult());
+	ICOMMAND(testexec, "s", ( char* s ), testexec(s));
 }

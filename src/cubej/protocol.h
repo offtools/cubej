@@ -118,10 +118,12 @@ namespace CubeJProtocol
 
 	template <> struct MsgDataType<MSG_SND_CLIENTINFO> {
 		MsgDataType(int i, int t, const char* text);
+        MsgDataType(packetbuf& p);
+        ~MsgDataType();
 		MsgInfoType& info;
         int cn;
 		int type;
-        const char* name;
+        char* name;
 		void addmsg(packetbuf& p);
 	};
 

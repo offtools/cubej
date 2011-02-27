@@ -8,5 +8,5 @@ MainLoop::MainLoop() {}
 MainLoop::~MainLoop() {}
 
 void MainLoop::timerCallback () {
-    GetRemoteClient().update();
+    GetRemoteInterface().update();
 }

@@ -1,11 +1,10 @@
 #ifndef REMOTE_SCENE_H
 #define REMOTE_SCENE_H
 
-#include <string>
-#include <iostream>
-#include <vector>
 
+#include "config."
 #include "protocol.h"
+#include "ui_mainwindow.h"
 
 namespace CubeJRemote {
 
@@ -31,7 +30,7 @@ namespace CubeJRemote {
     class SceneMgr
     {
         public:
-            SceneMgr();
+            SceneMgr(MainComponent &);
             virtual ~SceneMgr();
 
             void newScene();
@@ -54,6 +53,7 @@ namespace CubeJRemote {
             SceneInfo* find(const char* name);
 
         private:
+            MainComponent& maincomponent;
             std::vector<SceneInfo *>::iterator currentSceneIter;
             void clear();
     };

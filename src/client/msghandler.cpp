@@ -44,7 +44,7 @@ namespace CubeJ {
     template <> void receiveMessage<MSG_REQ_REMOTE>(int sender, int channel, packetbuf& p) {
         int clientnum = getint(p);
         conoutf("[DEBUG] receiveMessage<MSG_REQ_REMOTE> sender: %d, remote client: %d", sender, clientnum);
-		GetClient().connectRemoteClient(clientnum);
+		GetClient().connectRemoteInterface(clientnum);
     }
 
     template <> void receiveMessage<MSG_REQ_LISTMAPS>(int sender, int channel, packetbuf& p) {

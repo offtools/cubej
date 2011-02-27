@@ -142,12 +142,9 @@ void ConnectPanel::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_button_connect] -- add your button handler code here..
         const char* server = editor_server->getText().toCString();
         const int port = editor_port->getText().getIntValue ();
-        CubeJRemote::RemoteClient& remote = CubeJRemote::GetRemoteClient();
+        CubeJRemote::RemoteInterface& remote = CubeJRemote::GetRemoteInterface();
 
-
-        remote.setServername(server);
-        remote.setServerport(port);
-        remote.connectWithServer();
+        remote.connectWithServer(server, port);
 
         mainloop->startTimer(50);
         setEnabled(false);

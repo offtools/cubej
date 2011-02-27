@@ -1,78 +1,8 @@
-#include "remoteclient.h"
-#include "config.h"
 #include "ui_maintoolbar.h"
-#include "ui_mainwindow.h"
 
-MainToolbar::MainToolbar(ApplicationCommandManager& mgr) : commandmgr(mgr), factory(commandmgr) {
-    addAndMakeVisible (toolbar = new Toolbar());
-    toolbar->setSize(getWidth(), 30);
-    toolbar->addDefaultItems (factory);
-}
+//======================ConnectItem======================
 
-MainToolbar::~MainToolbar() {
-    deleteAllChildren();
-}
-
-void MainToolbar::resized() {
-    toolbar->setBounds (0, 0, getWidth(), getHeight());
-}
-
-MainToolbar::ItemFactory::ItemFactory(ApplicationCommandManager& mgr) : commandmgr(mgr) {}
-
-MainToolbar::ItemFactory::~ItemFactory() {}
-
-void MainToolbar::ItemFactory::getAllToolbarItemIds (Array <int>& ids) {
-    ids.add (doc_new);
-    ids.add (doc_open);
-    ids.add (doc_save);
-    ids.add (doc_saveAs);
-    ids.add (connect_server);
-}
-
-void MainToolbar::ItemFactory::getDefaultItemSet (Array <int>& ids) {
-    ids.add (doc_new);
-    ids.add (doc_open);
-    ids.add (doc_save);
-    ids.add (doc_saveAs);
-    ids.add (connect_server);
-}
-
-ToolbarItemComponent* MainToolbar::ItemFactory::createItem (int itemId) {
-    switch (itemId)
-    {
-        case doc_new:
-        {
-            Drawable* drawable = Drawable::createFromImageFile(File::getCurrentWorkingDirectory().getChildFile("data/icons/gtk-new.png"));
-            return new ToolbarButton (itemId, "new", drawable, 0);
-        }
-        case doc_open:
-        {
-            Drawable* drawable = Drawable::createFromImageFile(File::getCurrentWorkingDirectory().getChildFile("data/icons/gtk-open.png"));
-            return new ToolbarButton (itemId, "open", drawable, 0);
-        }
-        case doc_save:
-        {
-            Drawable* drawable = Drawable::createFromImageFile(File::getCurrentWorkingDirectory().getChildFile("data/icons/gtk-save.png"));
-            return new ToolbarButton (itemId, "save", drawable, 0);
-        }
-        case doc_saveAs:
-        {
-            Drawable* drawable = Drawable::createFromImageFile(File::getCurrentWorkingDirectory().getChildFile("data/icons/gtk-save-as.png"));
-            return new ToolbarButton (itemId, "save as", drawable, 0);
-        }
-        case connect_server:
-        {
-            return new CustomConnectPanel (itemId, commandmgr);
-        }
-
-        default:
-            break;
-    }
-
-    return 0;
-}
-
-MainToolbar::ItemFactory::CustomConnectPanel::CustomConnectPanel (const int toolbarItemId, ApplicationCommandManager& mgr) : ToolbarItemComponent(toolbarItemId, "Connect to Server", false), commandmgr(mgr) {
+ConnectItem::ConnectItem (const int toolbarItemId) : ToolbarItemComponent(toolbarItemId, "Connect to Server", false) {
     layout.setItemLayout (0, -0.2, -0.2, -0.2);
     layout.setItemLayout (1, -0.2, -0.2, -0.2);
     layout.setItemLayout (2, -0.2, -0.2, -0.2);
@@ -115,7 +45,6 @@ MainToolbar::ItemFactory::CustomConnectPanel::CustomConnectPanel (const int tool
 
     addAndMakeVisible (button_connect = new TextButton (T("BUTTON_CONNECT")));
     button_connect->setButtonText (T("connect"));
-    button_connect->addButtonListener (this);
 
     editor_server->setSize(80, 24);
     editor_port->setSize(80,24);
@@ -124,20 +53,20 @@ MainToolbar::ItemFactory::CustomConnectPanel::CustomConnectPanel (const int tool
     button_connect->setSize(80,24);
 }
 
-MainToolbar::ItemFactory::CustomConnectPanel::~CustomConnectPanel() {
+ConnectItem::~ConnectItem() {
     deleteAllChildren();
 }
 
-bool MainToolbar::ItemFactory::CustomConnectPanel::getToolbarItemSizes (int toolbarDepth, bool isToolbarVertical, int& preferredSize, int& minSize, int& maxSize) {
+bool ConnectItem::getToolbarItemSizes (int toolbarDepth, bool isToolbarVertical, int& preferredSize, int& minSize, int& maxSize) {
     preferredSize = 300;
     minSize = 200;
     maxSize = 400;
     return true;
 }
 
-void MainToolbar::ItemFactory::CustomConnectPanel::paintButtonArea (Graphics&, int, int, bool, bool) {}
+void ConnectItem::paintButtonArea (Graphics&, int, int, bool, bool) {}
 
-void MainToolbar::ItemFactory::CustomConnectPanel::contentAreaChanged (const Rectangle<int>& contentArea) {
+void ConnectItem::contentAreaChanged (const Rectangle<int>& contentArea) {
     Component* comps[] = { label_server, editor_server, label_port, editor_port, button_connect};
     layout.layOutComponents (comps, 5,
                                  0,
@@ -148,16 +77,78 @@ void MainToolbar::ItemFactory::CustomConnectPanel::contentAreaChanged (const Rec
                                  true);
 }
 
-void MainToolbar::ItemFactory::CustomConnectPanel::buttonClicked (Button* button) {
-    if (button == button_connect)
+//=====================Main Toolbar====================
+
+MainToolbar::MainToolbar(ApplicationCommandManager& cmdmgr) : commandmgr(cmdmgr) {
+    addAndMakeVisible(toolbar = new Toolbar);
+    toolbar->setSize(getWidth(), 30);
+    toolbar->addDefaultItems (*this);
+}
+
+MainToolbar::~MainToolbar() {
+    delete connectitem;
+    deleteAllChildren();
+}
+
+void MainToolbar::resized() {
+    toolbar->setBounds (0, 0, getWidth(), getHeight());
+}
+
+void MainToolbar::getAllToolbarItemIds (Array <int>& ids) {
+    ids.add (doc_new);
+    ids.add (doc_open);
+    ids.add (doc_save);
+    ids.add (doc_saveAs);
+    ids.add (connect_server);
+}
+
+void MainToolbar::getDefaultItemSet (Array <int>& ids) {
+    getAllToolbarItemIds(ids);
+}
+
+ToolbarItemComponent* MainToolbar::createItem (int itemId) {
+    switch (itemId)
     {
-        const char* server = editor_server->getText().toCString();
-        const int port = editor_port->getText().getIntValue ();
-        CubeJRemote::RemoteClient& remote = CubeJRemote::GetRemoteClient();
-        remote.setServername(server);
-        remote.setServerport(port);
-        setEnabled(false);
-        commandmgr.invokeDirectly(ContentComp::ConnectWithServer, false);
-        std::cout << "buttonClicked" << std::endl;
+        case doc_new:
+        {
+            Drawable* drawable = Drawable::createFromImageFile(File::getCurrentWorkingDirectory().getChildFile("data/icons/gtk-new.png"));
+            return new ToolbarButton (itemId, "new", drawable, 0);
+        }
+        case doc_open:
+        {
+            Drawable* drawable = Drawable::createFromImageFile(File::getCurrentWorkingDirectory().getChildFile("data/icons/gtk-open.png"));
+            return new ToolbarButton (itemId, "open", drawable, 0);
+        }
+        case doc_save:
+        {
+            Drawable* drawable = Drawable::createFromImageFile(File::getCurrentWorkingDirectory().getChildFile("data/icons/gtk-save.png"));
+            return new ToolbarButton (itemId, "save", drawable, 0);
+        }
+        case doc_saveAs:
+        {
+            Drawable* drawable = Drawable::createFromImageFile(File::getCurrentWorkingDirectory().getChildFile("data/icons/gtk-save-as.png"));
+            return new ToolbarButton (itemId, "save as", drawable, 0);
+        }
+        case connect_server:
+        {
+            return connectitem = new ConnectItem (itemId);
+        }
+
+        default:
+            break;
     }
+
+    return 0;
+}
+
+void MainToolbar::addConnectListener(ButtonListener* listener) {
+    connectitem->button_connect->addButtonListener(listener);
+}
+
+String MainToolbar::getServerName() {
+    return connectitem->editor_server->getText();
+}
+
+int MainToolbar::getServerPort() {
+    return connectitem->editor_port->getText().getIntValue ();
 }

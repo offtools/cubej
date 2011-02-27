@@ -16,9 +16,11 @@ namespace CubeJ
 		ClientInfo(int cn, int type, const char* s);
         ~ClientInfo();
 
-        void setName(char* text);
-        int getclientnum();
-		int gettype();
+        void setName(const char* text);
+        void setClientnum(int cn);
+        const char* getName();
+        int getClientnum();
+		int getType();
 
     protected:
         //unique id for an client

@@ -1,66 +1,58 @@
 #ifndef REMOTECLIENT_H
 #define REMOTECLIENT_H
 
-#include <string>
-#include <iostream>
-#include <vector>
 
-#include "engine.h"
-#include "cube.h"
+//#include "config.h"
 #include "protocol.h"
 #include "clientinfo.h"
-#include "scene.h"
+#include "msghandler.h"
 
 namespace CubeJRemote {
 
-    class RemoteClient : public CubeJProtocol::MsgHandler {
+    class RemoteInterface : public MsgHandlerDispatcher
+    {
         public:
-            RemoteClient();
-            ~RemoteClient();
+            RemoteInterface();
+            ~RemoteInterface();
 
-            void registerSceneManager(SceneMgr* );
-            SceneMgr& GetSceneManager();
+            //connect with Server
+            bool connectWithServer();
+            bool connectWithServer(const char* name, int port);
 
-            void setServername(const char* name);
-            void setServerport(int port);
-            void connectWithServer();
-            void connectWithServer(const char* sname, int port);
-			void update();
-            void disconnect();
+            //connect with Client (clientnum's received by sending MSG_DISCOVER_REMOTE)
             void connectWithClient(int cn);
+
+            //Disconnect from Server
+            void disconnect();
+
+            //close Client Connection
             void disconnectClient();
-            void disconnectClient(int cn);
 
-            void setclientnum(int n);
-            int getclientnum();
+            //Main Update Routine (receive and dispatch new Messages)
+			void update();
 
-			void updateclientcache(int cn, int type, char* name);
+            void RequestMapList();
+            void RequestClientInfoList();
 
-            ENetPeer* peer;
+            void SendMessage(int channel, packetbuf& p);
+
+            template <CubeJProtocol::MSG_TYPE N> void SendMessage(CubeJProtocol::MsgDataType<N>& data) {
+                packetbuf p(MAXTRANS, data.info.flag);
+                data.addmsg(p);
+                conoutf("[DEBUG] sending msg - type: %d, channel: %d", N, data.info.channel);
+                SendMessage(data.info.channel, p);
+            }
+
         private:
-            std::string servername;
             int port;
+            ENetPeer* peer;
             ENetHost* host;
             ENetAddress address;
             ENetEvent event;
             int rate;
             int numchannels;
-            int clientnum;
-            CubeJ::ClientInfo* head;
-            std::vector <CubeJ::ClientInfo*> clientcache;
-
-            SceneMgr* scenemgr;
     };
 
-    RemoteClient& GetRemoteClient();
-
-    template <CubeJProtocol::MSG_TYPE N> void receiveMessage(int sender, int channel, packetbuf& p) { p.cleanup(); }
-
-    template <CubeJProtocol::MSG_TYPE N> void SendMessage(CubeJProtocol::MsgDataType<N>& data) {
-        packetbuf p(MAXTRANS, data.info.flag);
-        data.addmsg(p);
-        conoutf("[DEBUG] sending msg - type: %d, channel: %d", N, data.info.channel);
-        if(GetRemoteClient().peer) enet_peer_send(GetRemoteClient().peer, data.info.channel, p.finalize());
- 	}
+    bool Init();
 }
 #endif // REMOTECLIENT_H

@@ -16,16 +16,26 @@ namespace CubeJ
 
     ClientInfo::~ClientInfo() {}
 
-    void ClientInfo::setName(char* text)  {
-        if(!text || !*text) copystring(text, "unnamed");
-        copystring(name, text, CubeJProtocol::MAXNAMELEN+1);
+    void ClientInfo::setName(const char* text)  {
+        if(!text || !*text)
+            copystring(name, "unamed");
+        else
+            copystring(name, text, CubeJProtocol::MAXNAMELEN+1);
     }
 
-    int ClientInfo::getclientnum() {
+    void ClientInfo::setClientnum(int cn) {
+        clientnum = cn;
+    }
+
+    const char* ClientInfo::getName() {
+        return name;
+    }
+
+    int ClientInfo::getClientnum() {
         return clientnum;
     }
 
-	int ClientInfo::gettype() {
+	int ClientInfo::getType() {
 		return type;
 	}
 

@@ -1,4 +1,3 @@
-#include "scene.h"
 #include "remoteclient.h"
 
 namespace CubeJRemote {
@@ -36,7 +35,7 @@ namespace CubeJRemote {
         return worldsize;
     }
 
-    SceneMgr::SceneMgr() : currentSceneIter(scenes.end()) {}
+    SceneMgr::SceneMgr(MainComponent & _main) : maincomponent(_main), currentSceneIter(scenes.end()) {}
 
     SceneMgr::~SceneMgr() {
         clear();
@@ -53,7 +52,14 @@ namespace CubeJRemote {
         }
     }
 
-    SceneInfo* SceneMgr::find(const char* cstr) {
+    bool SceneMgr::find(std::string str) {
+//        std::vector<SceneInfo *>::iterator iter = scenes.begin();
+//        std::string name(cstr);
+//        for(scenes.begin(); iter != scenes.end(); iter++) {
+//            if( name.compare( (*iter)->getSceneName()) == 0 )
+//                return (*iter);
+//        }
+//        return 0;
         std::vector<SceneInfo *>::iterator iter = scenes.begin();
         std::string name(cstr);
         for(scenes.begin(); iter != scenes.end(); iter++) {
@@ -66,14 +72,14 @@ namespace CubeJRemote {
     void SceneMgr::loadScene(const char* name) {
         if( find(name) ) {
             CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_CHANGESCENE> data(name);
-            SendMessage(data);
+            maincomponent.dispatcher.SendMessage(data);
         }
     }
 
     void SceneMgr::loadScene(unsigned int i) {
         if( i < scenes.size() ) {
             CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_CHANGESCENE> data(scenes[i]->getSceneName());
-            SendMessage(data);
+            maincomponent.dispatcher.SendMessage(data);
         }
     }
 
@@ -96,19 +102,20 @@ namespace CubeJRemote {
     }
 
     void SceneMgr::setCurrentScene(const char* cstr, int worldsize, int mapversion) {
-        SceneInfo* info = find(cstr);
-        if(!info) {
-            scenes.push_back(new SceneInfo(cstr));
-            info = find(cstr);
-        }
-        for(currentSceneIter = scenes.begin(); currentSceneIter != scenes.end(); currentSceneIter++) {
-            if( *currentSceneIter == info ) {
-                (*currentSceneIter)->setMapVersion(mapversion);
-                (*currentSceneIter)->setWorldSize(worldsize);
-                updateSceneListing((*currentSceneIter)->getSceneName());
-                return;
-            }
-        }
+//        SceneInfo* info = find(cstr);
+//        if(!info) {
+//            scenes.push_back(new SceneInfo(cstr));
+//            info = find(cstr);
+//        }
+        currentSceneIter = find_if(scenes.begin(), scenes.end(), mem_fun(&SceneMgr::find));
+//        for(currentSceneIter = scenes.begin(); currentSceneIter != scenes.end(); currentSceneIter++) {
+//            if( *currentSceneIter == info ) {
+//                (*currentSceneIter)->setMapVersion(mapversion);
+//                (*currentSceneIter)->setWorldSize(worldsize);
+//                updateSceneListing((*currentSceneIter)->getSceneName());
+//                return;
+//            }
+//        }
     }
 
     const char* SceneMgr::getCurrentSceneName() {

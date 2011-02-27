@@ -16,7 +16,7 @@ namespace CubeJSrv {
 
     template <> void receiveMessage<MSG_DISCOVER_REMOTE>(int sender, int channel, packetbuf& p) {
         conoutf("[DEBUG] receiveMessage<MSG_DISCOVER_REMOTE> sender: %d, channel: %d", sender, channel);
-        GetServer().registerRemoteClient(sender);
+        GetServer().registerRemoteInterface(sender);
     }
 
     template <> void receiveMessage<MSG_REQ_REMOTE>(int sender, int channel, packetbuf& p) {
@@ -26,13 +26,13 @@ namespace CubeJSrv {
         if(!ci)
             return;
         MsgDataType<MSG_REQ_REMOTE> data(sender);
-        SendMessage(ci->getclientnum(), data);
+        SendMessage(ci->getClientnum(), data);
     }
 
 	template <> void receiveMessage<MSG_ACK_REMOTE>(int sender, int channel, packetbuf& p) {
         int remote = getint(p);
         conoutf("[DEBUG] receiveMessage<MSG_ACK_REMOTE> client: %d, remote: %d", sender, remote);
-		GetServer ().connectRemoteClient(sender, remote);
+		GetServer ().connectRemoteInterface(sender, remote);
     }
 
     template <> void receiveMessage<MSG_REQ_LISTMAPS>(int sender, int channel, packetbuf& p) {

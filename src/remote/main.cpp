@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include "config.h"
-#include "remoteclient.h"
 #include "juce_amalgamated.h"
 #include "ui_mainwindow.h"
 
@@ -35,8 +34,6 @@
 //    exit(EXIT_SUCCESS);
 //}
 
-using namespace CubeJRemote;
-
 class RemoteApp  : public JUCEApplication
 {
 public:
@@ -48,15 +45,13 @@ public:
     //==============================================================================
     void initialise (const String& commandLine)
     {
-        if(enet_initialize () < 0) {
-            Logger::outputDebugString (T("Could not initialize enet"));
-            systemRequestedQuit();
-        }
-
-        CubeJProtocol::Init();
+//        if(!CubeJRemote::Init()) {
+//            Logger::outputDebugString (T("Could not initialize Enet"));
+//            systemRequestedQuit();
+//        }
 
         mainwindow = new MainWindow();
-        mainwindow->centreWithSize (800, 600);
+        mainwindow->centreWithSize (1024, 800);
         mainwindow->setVisible (true);
     }
 
@@ -64,7 +59,6 @@ public:
     {
         // Do your application's shutdown code here..
         std::cout << "RemoteApp::shutdown" << std::endl;
-        GetRemoteClient().disconnect();
         delete mainwindow;
         mainwindow = 0;
     }

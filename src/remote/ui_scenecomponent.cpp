@@ -1,3 +1,6 @@
+#include <string>
+#include <iostream>
+
 #include "ui_scenecomponent.h"
 
 SceneComponent::SceneComponent()
@@ -5,10 +8,8 @@ SceneComponent::SceneComponent()
     listBox = new ListBox (T("SCENES"), this);
     listBox->setRowHeight (28);
     listBox->setMultipleSelectionEnabled (false);
-    addChangeListener(this);
 
     loadbutton = new TextButton ( T("load"), T("Load selected Scene") );
-    loadbutton->addButtonListener(this);
 
     layout.setItemLayout (0, -0.8, -1.0, -1.0);
     layout.setItemLayout (1, 30, 30, 30);
@@ -24,7 +25,7 @@ SceneComponent::~SceneComponent()
 
 int SceneComponent::getNumRows()
 {
-    return getNumScenes();
+    return 0; //getNumScenes();
 }
 
 void SceneComponent::resized()
@@ -46,13 +47,13 @@ void SceneComponent::paintListBoxItem (int rowNumber,
                        int width, int height,
                        bool rowIsSelected)
 {
-    if (rowIsSelected)
-        g.fillAll (Colours::lightblue);
-
-    g.setColour (Colours::black);
-    g.drawText ( getSceneInfo(rowNumber)->getSceneName(),
-                4, 0, width - 4, height,
-                Justification::centredLeft, true);
+//    if (rowIsSelected)
+//        g.fillAll (Colours::lightblue);
+//
+//    g.setColour (Colours::black);
+//    g.drawText ( getSceneInfo(rowNumber)->getSceneName(),
+//                4, 0, width - 4, height,
+//                Justification::centredLeft, true);
 
 }
 
@@ -60,21 +61,36 @@ void SceneComponent::selectedRowsChanged(int) {
 
 }
 
-void SceneComponent::updateSceneListing(const char* name) {
-    std::cout << "SceneComponent::updateSceneListing: " << name << std::endl;
-    if(! find(name) )
-        scenes.push_back(new CubeJRemote::SceneInfo(name));
-    sendChangeMessage (this);
+//void SceneComponent::buttonClicked (Button *button) {
+//    std::cout << "SceneComponent::buttonClicked" << std::endl;
+//    const SparseSet<int> selection = listBox->getSelectedRows ();
+//    if(selection.isEmpty())
+//        return;
+//    std::cout << "selection: " << selection[0] << " " << getSceneInfo(selection[0])->getSceneName() << std::endl;
+//    loadScene(selection[0]);
+//}
+
+//void SceneComponent::updateSceneListing(const char *name) {
+//    scenes.push_back(new CubeJRemote::SceneInfo(name));
+//}
+//
+//void SceneComponent::receiveMessageListMaps(int sender, int channel, packetbuf& p) {
+//    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_FWD_LISTMAPS> data(p);
+//    std::cout  << "[DEBUG] MainComponent::receiveMessageCallback<MSG_FWD_LISTMAPS> size: " << data.len << std::endl;
+//    loopi( data.len ) if(! find(data.listing[i]) )
+//    {
+//        updateSceneListing(data.listing[i]);
+//    }
+//    if ( data.len ) {
+//        listBox->updateContent();
+//    }
+//}
+
+std::string SceneComponent::getSelectedSceneName() {
+    return "mapname";
 }
 
-void SceneComponent::buttonClicked (Button *button) {
-    const SparseSet<int> selection = listBox->getSelectedRows ();
-    if(selection.isEmpty())
-        return;
-    std::cout << "selection: " << selection[0] << " " << getSceneInfo(selection[0])->getSceneName() << std::endl;
-    loadScene(selection[0]);
+void SceneComponent::connectLoadListener(ButtonListener* listener) {
+    loadbutton->addButtonListener(listener);
 }
 
-void SceneComponent::changeListenerCallback (void *source) {
-    listBox->updateContent();
-}

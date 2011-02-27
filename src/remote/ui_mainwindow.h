@@ -2,11 +2,13 @@
 #define REMOTE_MAINWINDOW_H
 
 #include "config.h"
+#include "ui_listener.h"
+#include "dispatcher.h"
 #include "juce_amalgamated.h"
-#include "ui_connectpanel.h"
-#include "ui_mainloop.h"
+#include "ui_connectcomponent.h"
 #include "ui_scenecomponent.h"
 #include "ui_maintoolbar.h"
+
 
 class MainWindow  : public DocumentWindow
 {
@@ -26,13 +28,13 @@ private:
 //
 //};
 
-class ContentComp  : public Component,
-                     public MenuBarModel,
-                     public ApplicationCommandTarget
+class MainComponent : public Component,
+                      public MenuBarModel,
+                      public ApplicationCommandTarget
 {
 public:
-    ContentComp (MainWindow* _mainwindow);
-    ~ContentComp();
+    MainComponent (MainWindow* win);
+    ~MainComponent();
 
     void resized();
     const StringArray getMenuBarNames();
@@ -49,24 +51,34 @@ public:
         showMapDialog               = 0x2001
     };
 
+    //Callbacks
+//    void CallbackClientInfo(int sender, int channel, packetbuf& p);
+//    void CallbackCDis(int sender, int channel, packetbuf& p);
+//    void CallbackSceneStatus(int sender, int channel, packetbuf& p);
+//    void CallbackAckRemote(int sender, int channel, packetbuf& p);
+//    void CallbackSceneInfo(int sender, int channel, packetbuf& p);
+//    void CallbackListMaps(int sender, int channel, packetbuf& p);
+
 private:
     MainWindow* mainwindow;
 
-    //========Window Layout=======
-    StretchableLayoutManager verticalLayout;
-    StretchableLayoutManager horizontalLayout;
-    StretchableLayoutResizerBar* verticalDividerBar;
-    Component* vFrame;
-    TabbedComponent* left;
-    TabbedComponent* right;
+    //========Window Layout==========================
+    StretchableLayoutManager        verticalLayout;
+    StretchableLayoutManager        horizontalLayout;
+    StretchableLayoutResizerBar*    verticalDividerBar;
+    Component*                      vFrame;
+    TabbedComponent*                left;
+    TabbedComponent*                right;
 
-    //=======Toolbar==============
-    MainToolbar* toolbar;
+    //=======Toolbar=================================
+    MainToolbar*                    toolbar;
 
-    //========Content Tabs========
-    SceneComponent* scenes;
+    //========Content Tabs===========================
+    SceneComponent*                 scenes;
+    ConnectComponent*               clientlist;
 
-    MainLoop* mainloop;
+    //======RemoteInterface==========================
+    NetworkDispatcher*              nethandle;
 };
 
 #endif // REMOTE_MAINWINDOW_H

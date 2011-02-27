@@ -79,11 +79,9 @@ CLIENT_OBJS= \
 	../cubej/protocol.o \
 	../cubej/stubs.o \
 	../server/server.o \
-	remoteclient.o \
-	scene.o \
+	dispatcher.o \
 	msghandler.o \
-	ui_connectpanel.o \
-	ui_mainloop.o \
+    remoteclient.o \
 	ui_scenecomponent.o \
     ui_connectcomponent.o \
 	ui_maintoolbar.o \

@@ -50,8 +50,33 @@ void ConnectComponent::resized() {
 
 int ConnectComponent::getNumRows() { return 0; }
 
-void ConnectComponent::paintListBoxItem (int rowNumber, Graphics& g, int width, int height, bool rowIsSelected) {}
+void ConnectComponent::paintListBoxItem (int rowNumber, Graphics& g, int width, int height, bool rowIsSelected) {
+//    if (rowIsSelected)
+//        g.fillAll (Colours::lightblue);
+//
+//    g.setColour (Colours::black);
+//    g.drawText ( clientcache[rowNumber]->getName(),
+//                4, 0, width - 4, height,
+//                Justification::centredLeft, true);
+}
 
 void ConnectComponent::selectedRowsChanged (int lastRowselected) {}
 
-void ConnectComponent::buttonClicked (Button *) {}
+void ConnectComponent::buttonClicked (Button *) {
+//    std::cout << "ConnectComponent::buttonClicked" std::endl;
+//    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_REMOTE> data(cn);
+//    dispatcher.SendMessage(data);
+}
+
+//void ConnectComponent::updateclientcache(int cn, int type, char* name) {
+//    for (std::vector<CubeJ::ClientInfo*>::iterator it = clientcache.begin(); it != clientcache.end(); it++) {
+//        if((*it)->getClientnum() == cn) {
+//            if(head == *it) {
+//                disconnectClient();
+//            }
+//            delete *it;
+//            clientcache.erase(it);
+//        }
+//    }
+//    clientcache.push_back(new CubeJ::ClientInfo(cn, type, name));
+//}

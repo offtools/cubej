@@ -1,66 +1,23 @@
-#include "remoteclient.h"
+#include "msghandler.h"
 
 namespace CubeJRemote {
 
-    template <> void receiveMessage<CubeJProtocol::MSG_ERROR_OVERFLOW>(int sender, int channel, packetbuf& p) { p.cleanup(); }
+    MsgHandlerDispatcher::MsgHandlerDispatcher() {}
+    MsgHandlerDispatcher::~MsgHandlerDispatcher() {}
 
-    template <> void receiveMessage<CubeJProtocol::MSG_ERROR_TAG>(int sender, int channel, packetbuf& p) { p.cleanup(); }
-
-    template <> void receiveMessage<CubeJProtocol::MSG_SND_SERVINFO>(int sender, int channel, packetbuf& p) {
-        int clientnum = getint(p);
-        int protocol = getint(p);
-        if(protocol != CubeJProtocol::PROTOCOL_VERSION) {
-            std::cout << "[DEBUG] receiveMessage<CubeJProtocol::MSG_SND_SERVINFO> - wrong protocol version" << std::endl;
-            return;
+    void MsgHandlerDispatcher ::receive(CubeJProtocol::MSG_TYPE n, int sender, int channel, packetbuf& p) {
+        std::cout << "receive type: " << GetMsgTypeInfo(n).description << " channel: " << GetMsgTypeInfo(n).channel << " " << channel << " " << handler[n] << std::endl;
+        if (  handler[n] != 0 &&  channel == GetMsgTypeInfo(n).channel ) {
+             (*handler[n]) (sender, channel, p);
         }
-        std::cout << "[DEBUG] receiveMessage<MSG_SND_SERVINFO> clientnum: " << clientnum << ", protocol: " << protocol << std::endl;
-
-        GetRemoteClient().setclientnum(clientnum);
-
-        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_DISCOVER_REMOTE> data;
-        SendMessage(data);
-	}
-
-    template <> void receiveMessage<CubeJProtocol::MSG_SND_CLIENTINFO>(int sender, int channel, packetbuf& p) {
-        int cn = getint(p);
-		int type = getint(p);
-        char text[MAXTRANS];
-        getstring(text, p);
-        if(GetRemoteClient().getclientnum() != cn) {
-            std::cout << "[DEBUG] receiveMessage<CubeJProtocol::MSG_SND_CLIENTINFO> clientnum: " << cn << "type: " << type << " name: " << text << std::endl;
-			GetRemoteClient().updateclientcache(cn, type, text);
-			CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_REMOTE> data(cn);
-            SendMessage(data);
+        else {
+            conoutf("[DEBUG] CubeJProtocol::ReceiveMessage - Message Type or Message Handler \"%s\" not found", GetMsgTypeInfo(n).description);
+            p.len = p.maxlen; //triggers !remaining()
         }
     }
 
-    template <> void receiveMessage<CubeJProtocol::MSG_CDIS>(int sender, int channel, packetbuf& p) {
-        int clientnum = getint(p);
-        std::cout << "[DEBUG] receiveMessage<CubeJProtocol::MSG_CDIS> clientnum: " << clientnum << std::endl;
-
+    void MsgHandlerDispatcher ::receive(int sender, int channel, packetbuf& p) {
+        CubeJProtocol::MSG_TYPE type = (CubeJProtocol::MSG_TYPE)getint(p);
+        receive(type, sender, channel, p);
     }
-
-    template <> void receiveMessage<CubeJProtocol::MSG_SND_SCENESTATUS>(int sender, int channel, packetbuf& p) {
-        int hasscene = getint(p);
-        conoutf("[DEBUG] receiveMessage<MSG_SND_SCENESTATUS> hasscene: %d", hasscene);
-    }
-
-	template <> void receiveMessage<CubeJProtocol::MSG_ACK_REMOTE>(int sender, int channel, packetbuf& p) {
-        int clientnum = getint(p);
-        std::cout  << "[DEBUG] receiveMessage<MSG_ACK_REMOTE> control over client: " << clientnum << std::endl;
-        GetRemoteClient().connectWithClient(clientnum);
-    }
-
-	template <> void receiveMessage<CubeJProtocol::MSG_FWD_LISTMAPS>(int sender, int channel, packetbuf& p) {
-        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_FWD_LISTMAPS> data(p);
-        std::cout  << "[DEBUG] receiveMessage<MSG_FWD_LISTMAPS> size: " << data.len << std::endl;
-        loopi(data.len) {
-            GetRemoteClient().GetSceneManager().updateSceneListing(data.listing[i]);
-        }
-    }
-
-	template <> void receiveMessage<CubeJProtocol::MSG_SND_SCENEINFO>(int sender, int channel, packetbuf& p) {
-        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_SND_SCENEINFO> data(p);
-        GetRemoteClient().GetSceneManager().setCurrentScene(data.mapname, data.worldsize, data.mapversion);
-	}
 }

@@ -183,10 +183,10 @@ namespace CubeJSrv {
         sendpacket(ci->clientnum, info.channel, p.finalize());
     }
 
-    void Server::registerRemoteClient(int cn) {
+    void Server::registerRemoteInterface(int cn) {
         CubeJSrv::SvClientInfo *ci = (CubeJSrv::SvClientInfo*)getclientinfo(cn);
         if(!ci) {
-            conoutf("[DEBUG] Server::registerRemoteClient - no clientinfo, abort connect");
+            conoutf("[DEBUG] Server::registerRemoteInterface - no clientinfo, abort connect");
             return;
         }
 
@@ -200,14 +200,14 @@ namespace CubeJSrv {
         loopv(clients) {
             MsgDataType<MSG_SND_CLIENTINFO> data(clients[i]->clientnum, clients[i]->type, clients[i]->name);
             data.addmsg(p);
-            conoutf("[DEBUG] Server::registerRemoteClient - send %d:%s", clients[i]->clientnum, clients[i]->name);
+            conoutf("[DEBUG] Server::registerRemoteInterface - send %d:%s", clients[i]->clientnum, clients[i]->name);
         }
 
         //GetSceneManager().sendscenestatus(p);
         sendpacket(ci->clientnum, info.channel, p.finalize());
     }
 
-	void Server::connectRemoteClient(int head, int remote) {
+	void Server::connectRemoteInterface(int head, int remote) {
         SvClientInfo *cihead = (SvClientInfo*)getclientinfo(head);
         SvClientInfo *ciremote = (SvClientInfo*)getclientinfo(remote);
 

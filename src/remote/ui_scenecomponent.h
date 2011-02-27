@@ -1,15 +1,11 @@
 #ifndef REMOTE_SCENECOMPONENT_H
 #define REMOTE_SCENECOMPONENT_H
 
-#include "scene.h"
+#include "config.h"
 #include "juce_amalgamated.h"
 
 class SceneComponent : public Component,
-                       public ListBoxModel,
-                       public CubeJRemote::SceneMgr,
-                       public ChangeBroadcaster,
-                       public ChangeListener,
-                       public ButtonListener
+                       public ListBoxModel
 {
     public:
         SceneComponent();
@@ -19,16 +15,20 @@ class SceneComponent : public Component,
         int getNumRows();
         void paintListBoxItem (int rowNumber, Graphics& g, int width, int height, bool rowIsSelected);
         void selectedRowsChanged (int lastRowselected);
-        void updateSceneListing(const char* name);
-        void changeListenerCallback (void *);
-        void buttonClicked (Button *);
+        //void updateSceneListing(const char *name);
+
+        //Callback
+        //void receiveMessageListMaps(int sender, int channel, packetbuf& p);
+
+        std::string getSelectedSceneName();
+
+        //=============Load Button Connector==============================
+        void connectLoadListener(ButtonListener* listener);
 
     protected:
     private:
         ListBox* listBox;
         TextButton* loadbutton;
-        TextButton* savebutton;
-        TextButton* newbutton;
         StretchableLayoutManager layout;
 };
 

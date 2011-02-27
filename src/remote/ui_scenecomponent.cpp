@@ -85,7 +85,7 @@ class eqalSceneInfo : public std::unary_function<CubeJRemote::SceneInfo, bool> {
         bool operator() (const CubeJRemote::SceneInfo* si) const { std::string s(si->getSceneName()); return path == s; }
 };
 
-void SceneComponent::CallbackListMaps(int sender, int channel, packetbuf& p) {
+void SceneComponent::CallbackListScenes(int sender, int channel, packetbuf& p) {
     CubeJProtocol::MsgDataType<CubeJProtocol::MSG_FWD_LISTMAPS> data(p);
     std::vector<CubeJRemote::SceneInfo*>::iterator it;
     for(int i = 0; i < data.len; i++) {
@@ -97,6 +97,24 @@ void SceneComponent::CallbackListMaps(int sender, int channel, packetbuf& p) {
             std::cout <<  "listing[" << i << "] " << data.listing[i] << std::endl;
             sceneinfo.push_back( new CubeJRemote::SceneInfo(data.listing[i]) );
         }
+    }
+    listBox->updateContent();
+}
+
+void SceneComponent::CallbackSceneInfo(int sender, int channel, packetbuf& p) {
+    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_SND_SCENEINFO> data(p);
+    std::vector<CubeJRemote::SceneInfo*>::iterator it;
+    it = find_if(sceneinfo.begin(), sceneinfo.end(), eqalSceneInfo( data.mapname ) );
+    if( it !=  sceneinfo.end() ) {
+        CubeJRemote::SceneInfo* si = *it;
+        si->setWorldSize(data.worldsize);
+        si->setMapVersion(data.mapversion);
+    }
+    else {
+        CubeJRemote::SceneInfo* si = new CubeJRemote::SceneInfo(data.mapname);
+        si->setWorldSize(data.worldsize);
+        si->setMapVersion(data.mapversion);
+        sceneinfo.push_back( si );
     }
     listBox->updateContent();
 }

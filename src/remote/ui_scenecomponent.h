@@ -20,7 +20,8 @@ class SceneComponent : public Component,
         void selectedRowsChanged (int lastRowselected);
 
         //Callback
-        void CallbackListMaps(int sender, int channel, packetbuf& p);
+        void CallbackListScenes(int sender, int channel, packetbuf& p);
+        void CallbackSceneInfo(int sender, int channel, packetbuf& p);
 
         //Widget Callback
         void buttonClicked (Button *);

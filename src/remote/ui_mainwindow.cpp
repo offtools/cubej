@@ -34,8 +34,8 @@ MainComponent::MainComponent (MainWindow* mwin) : mainwindow(mwin), nethandle(ne
 //    nethandler.addMessageHandler<CubeJProtocol::MSG_CDIS, MainComponent>(this, &MainComponent::CallbackCDis);
 //    nethandler.addMessageHandler<CubeJProtocol::MSG_SND_SCENESTATUS, MainComponent>(this, &MainComponent::CallbackSceneStatus);
     nethandle->addMessageHandler<CubeJProtocol::MSG_ACK_REMOTE, MainComponent>(this, &MainComponent::CallbackAckRemote);
-//    nethandler.addMessageHandler<CubeJProtocol::MSG_SND_SCENEINFO, MainComponent>(this, &MainComponent::CallbackSceneInfo);
-    nethandle->addMessageHandler<CubeJProtocol::MSG_FWD_LISTMAPS, SceneComponent>(scenes, &SceneComponent::CallbackListMaps);
+    nethandle->addMessageHandler<CubeJProtocol::MSG_SND_SCENEINFO, SceneComponent>(scenes, &SceneComponent::CallbackSceneInfo);
+    nethandle->addMessageHandler<CubeJProtocol::MSG_FWD_LISTMAPS, SceneComponent>(scenes, &SceneComponent::CallbackListScenes);
 }
 
 MainComponent::~MainComponent() {

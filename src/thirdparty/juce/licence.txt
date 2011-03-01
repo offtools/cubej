@@ -1,0 +1,2 @@
+JUCE © 2010 Raw Material Software Ltd.
+JUCE is released under the Gnu Public Licence. See gpl.txt

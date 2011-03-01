@@ -110,11 +110,6 @@ namespace CubeJSrv {
 		enet_uint32 lastsend;
 		//time since current scene started
 		int scenemillis;
-
-		//~ void registerMsgHandler(MSG_TYPE n, void (*func)(int, int, packetbuf&));
-		//~ void receive(MSG_TYPE n, int sender, int channel, packetbuf& p);
-		//~ void receive(int sender, int channel, packetbuf& p);
-		//~ CubeJProtocol::ReceiveHandler receivehandler[CubeJProtocol::NUM_MESSAGES];
 	};
 
 	Server& GetServer();

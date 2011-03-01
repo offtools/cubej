@@ -9,6 +9,7 @@ namespace CubeJ {
     template <> void receiveMessage<MSG_ERROR_TAG>(int sender, int channel, packetbuf& p) { p.cleanup(); }
 
     template <> void receiveMessage<MSG_SND_SERVINFO>(int sender, int channel, packetbuf& p) {
+        conoutf("[DEBUG] receiveMessage<MSG_SND_SERVINFO>");
         MsgDataType<MSG_SND_SERVINFO> data(p);
         CubeJ::GetClient().initConnect(data.clientnum, data.protocol);
 	}
@@ -48,25 +49,21 @@ namespace CubeJ {
     }
 
     template <> void receiveMessage<MSG_REQ_LISTMAPS>(int sender, int channel, packetbuf& p) {
-        conoutf("[DEBUG] receiveMessage<MSG_REQ_LISTMAPS>");
         vector<char *> files;
         if ( ! listfiles("packages/base", "ogz", files) ) {
 			conoutf ("[DEBUG] listdir: no scenes found");
 		}
-		conoutf("[DEBUG] files length: %d", files.length());
 		MsgDataType<MSG_FWD_LISTMAPS> data(files);
 		SendMessage(data);
 	}
 
     template <> void receiveMessage<MSG_CMD_CHANGESCENE>(int sender, int channel, packetbuf& p) {
         MsgDataType<MSG_CMD_CHANGESCENE> data(p);
-        conoutf("[DEBUG] receiveMessage<MSG_CMD_CHANGESCENE> %s", data.name);
         GetClient().loadScene(data.name);
     }
 
     template <> void receiveMessage<MSG_FWD_RCIN>(int sender, int channel, packetbuf& p) {
         MsgDataType<MSG_FWD_RCIN> data(p);
-        conoutf("[DEBUG] receiveMessage<MSG_FWD_RCIN> %s", data.line);
         GetClient().executeremote(data.line);
     }
 }

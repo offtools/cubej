@@ -227,7 +227,6 @@ namespace CubeJSrv {
 
     void Server::forwardMessage(int cn, int channel, packetbuf& p) {
         SvClientInfo *cm = (SvClientInfo*)getclientinfo(cn);
-        conoutf("[DEBUG] Server::forwardMessage: %d %s", cm->clientnum, p.buf);
         int curmsg = 0;
         while(curmsg<p.remaining()) {
             cm->remote.add(p.buf[curmsg++]);

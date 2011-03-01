@@ -30,7 +30,7 @@ class NetworkDispatcher :   public CubeJRemote::RemoteInterface,
         enum AppCommandID {
             CONNECT_CLIENT = 0,
             DISCONNECT_CLIENT,
-            REQ_CLIENTLIST,
+            MSG_DISCOVER_REMOTE,
             MSG_REQ_CHANGESCENE,
             MSG_FWD_RCIN
         } ;

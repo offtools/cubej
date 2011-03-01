@@ -85,7 +85,7 @@ void ConnectComponent::CallbackSrvInfo(int sender, int channel, packetbuf& p) {
         return;
     }
     clientnum = data.clientnum;
-    connect->postMessage(NetworkDispatcher::AppCommandID::REQ_CLIENTLIST, this);
+    connect->postMessage(NetworkDispatcher::AppCommandID::MSG_DISCOVER_REMOTE, this);
 }
 
 class eqalClientInfo : public std::unary_function<CubeJ::ClientInfo, bool> {

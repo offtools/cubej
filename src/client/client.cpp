@@ -2,8 +2,7 @@
 
 namespace CubeJ
 {
-
-	Client::Client() : self(*new ClientInfo), connected(false), messagecn(-1), messagereliable(false)
+	Client::Client() : self(*new ClientInfo), connected(false), remoteclientnum(-1), messagecn(-1), messagereliable(false)
 	{
 
         registerMsgHandler( MSG_ERROR_OVERFLOW , receiveMessage<MSG_ERROR_OVERFLOW>);
@@ -16,6 +15,7 @@ namespace CubeJ
         registerMsgHandler( MSG_REQ_REMOTE , receiveMessage<MSG_REQ_REMOTE>);
         registerMsgHandler( MSG_REQ_LISTMAPS, receiveMessage<MSG_REQ_LISTMAPS>);
         registerMsgHandler( MSG_CMD_CHANGESCENE, receiveMessage<MSG_CMD_CHANGESCENE>);
+        registerMsgHandler( MSG_FWD_RCIN, receiveMessage<MSG_FWD_RCIN>);
 
         clientmap[0] = '\0';
 		cameras.add(new dynent);
@@ -157,29 +157,25 @@ namespace CubeJ
     }
 
 	void Client::connectRemoteInterface(int n) {
-		conoutf("[DEBUG] Client::connectRemoteInterface");
-		//TODO: check remote client
+		conoutf("[DEBUG] Client::connectRemoteInterface, clientnum: %d", n);
+		remoteclientnum = n;
 		clients.add(new ClientInfo (n, CLIENT_TYPE_REMOTE, NULL));
         CubeJProtocol::MsgDataType<CubeJProtocol::MSG_ACK_REMOTE> data(n);
         SendMessage(data);
 	}
 
+    void Client::redirectcout(char *line) {
+        if(!remote || remoteclientnum == -1) return;
+        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_FWD_RCOUT> data(line);
+        SendMessage(data);
+    }
+
+    void Client::executeremote(char* line) {
+        execute(line);
+    }
+
 	Client& GetClient() {
 		static Client client;
 		return client;
 	}
-
-    char* retstr;
-
-	void testexec( char* s) {
-        retstr = newstring(executeret(s));
-        conoutf("TESTexec: %s", retstr);
-	}
-
-	void testresult() {
-        conoutf("TEST: %s", retstr);
-	}
-
-	ICOMMAND(testresult, "", (), testresult());
-	ICOMMAND(testexec, "s", ( char* s ), testexec(s));
 }

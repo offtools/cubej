@@ -58,3 +58,11 @@ void NetworkDispatcher::handleData (int id, SceneComponent* data) {
         RequestChangeScene(data->getSelectedSceneName().c_str());
     }
 }
+
+void NetworkDispatcher::handleData (int id, Console* data) {
+    if ( id == MSG_FWD_RCIN ) {
+        std::cout << "NetworkDispatcher::handleData: " <<  data->getCurrentCommand() << std::endl;
+        SendCommand(data->getCurrentCommand().toCString() );
+        data->clearCommandLine();
+    }
+}

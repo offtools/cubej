@@ -35,6 +35,8 @@ namespace game
     extern void edittoggled(bool on);
     extern void writeclientinfo(stream *f);
     extern void toserver(char *text);
+    //__offtools__: redirect console output to remote interface client
+    extern void redirectcout(char *line);
     extern void changemap(const char *name);
     extern void forceedit(const char *name);
     extern bool ispaused();
@@ -87,8 +89,8 @@ namespace game
     extern void serverinfoendcolumn(g3d_gui *g, int i);
     extern bool serverinfoentry(g3d_gui *g, int i, const char *name, int port, const char *desc, const char *map, int ping, const vector<int> &attr, int np);
     extern bool needminimap();
-} 
- 
+}
+
 namespace server
 {
     extern void *newclientinfo();

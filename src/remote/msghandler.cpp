@@ -6,7 +6,7 @@ namespace CubeJRemote {
     MsgHandlerDispatcher::~MsgHandlerDispatcher() {}
 
     void MsgHandlerDispatcher ::receive(CubeJProtocol::MSG_TYPE n, int sender, int channel, packetbuf& p) {
-        //conoutf("[DEBUG] CubeJProtocol::ReceiveMessage Type: %s, Channel: %d", n, GetMsgTypeInfo(n).description);
+        conoutf("[DEBUG] MsgHandlerDispatcher::receive Type: %d, Descr: %s", n, GetMsgTypeInfo(n).description);
         if (  handler[n] != 0 &&  channel == GetMsgTypeInfo(n).channel ) {
              (*handler[n]) (sender, channel, p);
         }

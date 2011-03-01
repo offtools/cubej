@@ -8,12 +8,14 @@
 #include "ui_maintoolbar.h"
 #include "ui_connectcomponent.h"
 #include "ui_scenecomponent.h"
+#include "ui_console.h"
 
 class NetworkDispatcher :   public CubeJRemote::RemoteInterface,
                             public Timer,
                             public AppMessageListener<MainToolbar>,
                             public AppMessageCommandListener<ConnectComponent>,
-                            public AppMessageCommandListener<SceneComponent>
+                            public AppMessageCommandListener<SceneComponent>,
+                            public AppMessageCommandListener<Console>
 {
     public:
         NetworkDispatcher();
@@ -29,13 +31,15 @@ class NetworkDispatcher :   public CubeJRemote::RemoteInterface,
             CONNECT_CLIENT = 0,
             DISCONNECT_CLIENT,
             REQ_CLIENTLIST,
-            MSG_REQ_CHANGESCENE
+            MSG_REQ_CHANGESCENE,
+            MSG_FWD_RCIN
         } ;
 
         //Application Message Callback
         void handleData (MainToolbar* data);
         void handleData (int id, ConnectComponent* data);
         void handleData (int id, SceneComponent* data);
+        void handleData (int id, Console* data);
 
     private:
         void timerCallback();

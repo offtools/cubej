@@ -8,14 +8,7 @@
 #include "ui_connectcomponent.h"
 #include "ui_scenecomponent.h"
 #include "ui_maintoolbar.h"
-
-//template <typename T>
-//class KeyedVector : std::vector<T> {
-//    public:
-//        void add ( const T& x ) {
-//            find_if()
-//        }
-//}
+#include "ui_console.h"
 
 class MainWindow  : public DocumentWindow
 {
@@ -83,6 +76,7 @@ private:
     //========Content Tabs===========================
     SceneComponent*                 scenes;
     ConnectComponent*               clientlist;
+    Console*                        console;
 
     //======RemoteInterface==========================
     NetworkDispatcher*              nethandle;

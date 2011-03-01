@@ -321,6 +321,8 @@
 		<Unit filename="../remote/scene.h" />
 		<Unit filename="../remote/ui_connectcomponent.cpp" />
 		<Unit filename="../remote/ui_connectcomponent.h" />
+		<Unit filename="../remote/ui_console.cpp" />
+		<Unit filename="../remote/ui_console.h" />
 		<Unit filename="../remote/ui_listener.h" />
 		<Unit filename="../remote/ui_maintoolbar.cpp" />
 		<Unit filename="../remote/ui_maintoolbar.h" />

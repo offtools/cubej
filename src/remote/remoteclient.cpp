@@ -97,6 +97,12 @@ namespace CubeJRemote {
         SendMessage(data);
     }
 
+    void RemoteInterface::SendCommand(const char *command) {
+        std::cout << "RemoteInterface::SendCommand: " << command << std::endl;
+        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_FWD_RCIN> data(command);
+        SendMessage(data);
+    }
+
     bool Init() {
         if(enet_initialize () < 0)
             return false;

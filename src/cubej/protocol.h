@@ -55,6 +55,12 @@ namespace CubeJProtocol
 
 		MSG_PING,
 
+		//Send commands from Remote Client to Client
+		MSG_FWD_RCIN,
+
+		//Redirect Console Output to Remote Client
+		MSG_FWD_RCOUT,
+
 		NUM_MESSAGES
 	};
 
@@ -193,6 +199,26 @@ namespace CubeJProtocol
         MsgInfoType& info;
         int len;
         vector<char *> listing;
+        void addmsg(packetbuf& p);
+    };
+
+	template <> struct MsgDataType<MSG_FWD_RCIN> {
+        MsgDataType(const char* line);
+        MsgDataType(packetbuf& p);
+        ~MsgDataType();
+
+        MsgInfoType& info;
+        char* line;
+        void addmsg(packetbuf& p);
+    };
+
+	template <> struct MsgDataType<MSG_FWD_RCOUT> {
+        MsgDataType(const char* line);
+        MsgDataType(packetbuf& p);
+        ~MsgDataType();
+
+        MsgInfoType& info;
+        char* line;
         void addmsg(packetbuf& p);
     };
 }

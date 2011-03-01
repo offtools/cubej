@@ -95,6 +95,7 @@ namespace game
     void edittoggled(bool on) { CubeJ::GetClient().editMode(on); }
     void writeclientinfo(stream *f) {}
     void toserver(char *text) {}
+    void redirectcout(char *line) { CubeJ::GetClient().redirectcout(line); }
     void changemap(const char *name) {}
     void forceedit(const char *name) {}
     bool ispaused() { return false; }

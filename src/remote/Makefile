@@ -87,6 +87,7 @@ CLIENT_OBJS= \
     ui_connectcomponent.o \
 	ui_maintoolbar.o \
 	ui_mainwindow.o \
+	ui_console.o \
     main.o
 
 ifneq (,$(findstring MINGW,$(PLATFORM)))

@@ -18,6 +18,7 @@ MainComponent::MainComponent (MainWindow* mwin) : mainwindow(mwin), nethandle(ne
     right->setTabBarDepth (30);
     right->addTab (T("Connect"), Colours::lightgrey, clientlist = new ConnectComponent(), false);
     right->addTab (T("Scene"), Colours::lightgrey, scenes = new SceneComponent(), false);
+    right->addTab (T("Console"), Colours::lightgrey, console = new Console(), false);
     right->setCurrentTabIndex (0);
     verticalDividerBar = new StretchableLayoutResizerBar (&verticalLayout, 1, true);
 
@@ -28,6 +29,7 @@ MainComponent::MainComponent (MainWindow* mwin) : mainwindow(mwin), nethandle(ne
     toolbar->addCommandListener(nethandle);
     clientlist->addConnectListener(nethandle);
     scenes->addLoadListener(nethandle);
+    console->addOnSendCommandListener(nethandle);
 
     nethandle->addMessageHandler<CubeJProtocol::MSG_SND_SERVINFO, ConnectComponent>(clientlist, &ConnectComponent::CallbackSrvInfo);
     nethandle->addMessageHandler<CubeJProtocol::MSG_SND_CLIENTINFO, ConnectComponent>(clientlist, &ConnectComponent::CallbackClientInfo);
@@ -36,6 +38,7 @@ MainComponent::MainComponent (MainWindow* mwin) : mainwindow(mwin), nethandle(ne
     nethandle->addMessageHandler<CubeJProtocol::MSG_ACK_REMOTE, MainComponent>(this, &MainComponent::CallbackAckRemote);
     nethandle->addMessageHandler<CubeJProtocol::MSG_SND_SCENEINFO, SceneComponent>(scenes, &SceneComponent::CallbackSceneInfo);
     nethandle->addMessageHandler<CubeJProtocol::MSG_FWD_LISTMAPS, SceneComponent>(scenes, &SceneComponent::CallbackListScenes);
+    nethandle->addMessageHandler<CubeJProtocol::MSG_FWD_RCOUT, Console>(console, &Console::onReceiveRCout);
 }
 
 MainComponent::~MainComponent() {

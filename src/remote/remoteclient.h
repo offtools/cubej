@@ -34,6 +34,7 @@ namespace CubeJRemote {
             void RequestMapList();
             void RequestClientInfoList();
             void RequestChangeScene(const char* path);
+            void SendCommand(const char *command);
 
             void SendMessage(int channel, packetbuf& p);
 

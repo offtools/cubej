@@ -31,6 +31,7 @@ void conoutfv(int type, const char *fmt, va_list args)
     conline(type, buf);
     filtertext(buf, buf);
     puts(buf);
+    game::redirectcout(buf);
 }
 
 void conoutf(const char *fmt, ...)

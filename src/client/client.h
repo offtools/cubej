@@ -37,6 +37,10 @@ namespace CubeJ
 			void loadScene(const char* name);
 
 			void connectRemoteInterface(int n);
+			//send console output to remote interface
+            void redirectcout(char *line);
+            //excute command from remote interface
+            void executeremote(char* line);
 
 		protected:
 		private:
@@ -44,6 +48,7 @@ namespace CubeJ
             vector<ClientInfo*> clients;
 			bool connected;
 			bool remote;
+			int remoteclientnum;
 			vector<dynent*> cameras;
 			vector<uchar> messages;
 			int messagecn;

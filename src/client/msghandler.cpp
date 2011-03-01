@@ -63,4 +63,10 @@ namespace CubeJ {
         conoutf("[DEBUG] receiveMessage<MSG_CMD_CHANGESCENE> %s", data.name);
         GetClient().loadScene(data.name);
     }
+
+    template <> void receiveMessage<MSG_FWD_RCIN>(int sender, int channel, packetbuf& p) {
+        MsgDataType<MSG_FWD_RCIN> data(p);
+        conoutf("[DEBUG] receiveMessage<MSG_FWD_RCIN> %s", data.line);
+        GetClient().executeremote(data.line);
+    }
 }

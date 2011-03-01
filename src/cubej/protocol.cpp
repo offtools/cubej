@@ -51,6 +51,8 @@ namespace CubeJProtocol
 		registermsgtype( MSG_FWD_LISTMAPS,      "MSG_FWD_LISTMAPS",     CHANNEL_REMOTE,         ENET_PACKET_FLAG_RELIABLE );
 		registermsgtype( MSG_REQ_CHANGESCENE,   "MSG_REQ_CHANGESCENE",  CHANNEL_DEFAULT,        ENET_PACKET_FLAG_RELIABLE );
 		registermsgtype( MSG_CMD_CHANGESCENE,   "MSG_CMD_CHANGESCENE",  CHANNEL_DEFAULT,        ENET_PACKET_FLAG_RELIABLE );
+		registermsgtype( MSG_FWD_RCIN,   		"MSG_FWD_RCIN",  		CHANNEL_REMOTE,        	ENET_PACKET_FLAG_RELIABLE );
+		registermsgtype( MSG_FWD_RCOUT,   		"MSG_FWD_RCOUT",  		CHANNEL_REMOTE,        	ENET_PACKET_FLAG_RELIABLE );
     }
 
     MsgInfoType& GetMsgTypeInfo(MSG_TYPE n) {
@@ -219,5 +221,39 @@ namespace CubeJProtocol
     void MsgDataType<MSG_CMD_CHANGESCENE>::addmsg(packetbuf& p) {
         putint(p, MSG_CMD_CHANGESCENE);
         sendstring(name, p);
+    }
+
+    MsgDataType<MSG_FWD_RCIN>::MsgDataType(const char* text) : info(GetMsgTypeInfo(MSG_FWD_RCIN)), line(newstring(text)) {}
+
+    MsgDataType<MSG_FWD_RCIN>::MsgDataType(packetbuf& p) : info(GetMsgTypeInfo(MSG_FWD_RCIN)) {
+        char text[MAXTRANS];
+        getstring(text, p);
+        line = newstring(text);
+    }
+
+    MsgDataType<MSG_FWD_RCIN>::~MsgDataType() {
+        delete[] line;
+    }
+
+    void MsgDataType<MSG_FWD_RCIN>::addmsg(packetbuf& p) {
+        putint(p, MSG_FWD_RCIN);
+        sendstring(line, p);
+    }
+
+    MsgDataType<MSG_FWD_RCOUT>::MsgDataType(const char* text) : info(GetMsgTypeInfo(MSG_FWD_RCOUT)), line(newstring(text)) {}
+
+    MsgDataType<MSG_FWD_RCOUT>::MsgDataType(packetbuf& p) : info(GetMsgTypeInfo(MSG_FWD_RCOUT)) {
+        char text[MAXTRANS];
+        getstring(text, p);
+        line = newstring(text);
+    }
+
+    MsgDataType<MSG_FWD_RCOUT>::~MsgDataType() {
+        delete[] line;
+    }
+
+    void MsgDataType<MSG_FWD_RCOUT>::addmsg(packetbuf& p) {
+        putint(p, MSG_FWD_RCOUT);
+        sendstring(line, p);
     }
 }

@@ -79,9 +79,9 @@ void ConnectComponent::buttonClicked (Button *button) {
 }
 
 void ConnectComponent::CallbackSrvInfo(int sender, int channel, packetbuf& p) {
-    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_SND_SERVINFO> data(p);
-    if(data.protocol != CubeJProtocol::PROTOCOL_VERSION) {
-        std::cout << "[DEBUG] NetworkDispatcher::receiveMessage<CubeJProtocol::MSG_SND_SERVINFO> - wrong protocol version" << std::endl;
+    CubeJ::MsgDataType<CubeJ::MSG_SND_SERVINFO> data(p);
+    if(data.protocol != CubeJ::PROTOCOL_VERSION) {
+        std::cout << "[DEBUG] NetworkDispatcher::receiveMessage<CubeJ::MSG_SND_SERVINFO> - wrong protocol version" << std::endl;
         return;
     }
     clientnum = data.clientnum;
@@ -96,7 +96,7 @@ class eqalClientInfo : public std::unary_function<CubeJ::ClientInfo, bool> {
 };
 
 void ConnectComponent::CallbackClientInfo(int sender, int channel, packetbuf& p) {
-    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_SND_CLIENTINFO> data(p);
+    CubeJ::MsgDataType<CubeJ::MSG_SND_CLIENTINFO> data(p);
     std::vector<CubeJ::ClientInfo*>::iterator it;
     it = find_if(clients.begin(), clients.end(), eqalClientInfo(clientnum));
     if( it != clients.end() && !clients.size() ) return;

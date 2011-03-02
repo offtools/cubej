@@ -4,7 +4,7 @@ override CXXFLAGS+= -Wall -fsigned-char
 PLATFORM= $(shell uname -s)
 PLATFORM_PREFIX= native
 
-INCLUDES= -I../shared -I../engine -I../cubej -I../client -I../server -I../enet/include -I../thirdparty/juce/
+INCLUDES= -I../shared -I../engine -I../cubej -I../client -I../server -I../enet/include -I../thirdparty/libjuce/src
 
 STRIP=
 ifeq (,$(findstring -g,$(CXXFLAGS)))
@@ -20,7 +20,7 @@ CLIENT_INCLUDES= $(INCLUDES) -I../include
 CLIENT_LIBS= -mwindows -L../lib -lSDL -lSDL_image -lSDL_mixer -lzdll -lopengl32 -lenet -lws2_32 -lwinmm
 else
 CLIENT_INCLUDES= $(INCLUDES) -I/usr/X11R6/include `sdl-config --cflags`  -I/usr/include/freetype2
-CLIENT_LIBS= -L../enet/.libs -lenet -L/usr/X11R6/lib `sdl-config --libs` -lSDL_image -lSDL_mixer -lz -lGL -lfreetype -lpthread -lasound
+CLIENT_LIBS= -L../enet/.libs -L../thirdparty/libjuce/src/.libs -ljuce -lenet -L/usr/X11R6/lib `sdl-config --libs` -lSDL_image -lSDL_mixer -lz -lGL -lfreetype -lpthread -lasound
 endif
 ifeq ($(PLATFORM),Linux)
 CLIENT_LIBS+= -lrt
@@ -71,7 +71,6 @@ CLIENT_OBJS= \
 	../engine/water.o \
 	../engine/world.o \
 	../engine/worldio.o \
-    ../thirdparty/juce/juce_amalgamated.o \
 	../cubej/debug.o \
 	../client/client.o \
 	../cubej/clientinfo.o \
@@ -113,6 +112,15 @@ libenet: ../enet/Makefile
 clean-enet: ../enet/Makefile
 	$(MAKE) -C ../enet/ clean
 
+thirdparty/libjuce/Makefile:
+	cd ../thirdparty/libjuce; ./configure --enable-shared=no --enable-static=yes
+
+libthirdparty/libjuce: ../thirdparty/libjuce/Makefile
+	$(MAKE)	-C ../thirdparty/libjuce/ all
+
+clean-thirdparty/libjuce: ../thirdparty/libjuce/Makefile
+	$(MAKE) -C ../thirdparty/libjuce/ clean
+
 clean:
 	-$(RM) $(CLIENT_PCH) $(CLIENT_OBJS) cubej_remote
 
@@ -135,7 +143,7 @@ remote: $(CLIENT_OBJS)
 
 install: all
 else
-remote:	libenet $(CLIENT_OBJS)
+remote:	libenet libthirdparty/libjuce $(CLIENT_OBJS)
 	$(CXX) $(CXXFLAGS) -o cubej_remote $(CLIENT_OBJS) $(CLIENT_LIBS)
 
 install: all

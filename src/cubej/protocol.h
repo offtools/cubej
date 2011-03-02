@@ -3,7 +3,7 @@
 
 #include "cube.h"
 
-namespace CubeJProtocol
+namespace CubeJ
 {
 	static const int PROTOCOL_VERSION  = 1;
     static const int NUM_CHANNELS = 6;
@@ -76,7 +76,7 @@ namespace CubeJProtocol
 		void registerMsgHandler(MSG_TYPE n, void (*func)(int, int, packetbuf&));
 		void receive(MSG_TYPE n, int sender, int channel, packetbuf& p);
 		void receive(int sender, int channel, packetbuf& p);
-		CubeJProtocol::ReceiveHandler receivehandler[NUM_MESSAGES];
+		CubeJ::ReceiveHandler receivehandler[NUM_MESSAGES];
 	};
 
     void Init();
@@ -225,8 +225,8 @@ namespace CubeJProtocol
 
 namespace CubeJ
 {
-    using namespace CubeJProtocol;
-    template <CubeJProtocol::MSG_TYPE N> void SendMessage(CubeJProtocol::MsgDataType<N>& data) {
+    using namespace CubeJ;
+    template <CubeJ::MSG_TYPE N> void SendMessage(CubeJ::MsgDataType<N>& data) {
         packetbuf p(MAXTRANS, data.info.flag);
         data.addmsg(p);
 		sendclientpacket(p.finalize(), data.info.channel);
@@ -235,7 +235,7 @@ namespace CubeJ
 
 namespace CubeJSrv
 {
-    using namespace CubeJProtocol;
+    using namespace CubeJ;
     template <MSG_TYPE N> void SendMessage(int cn, MsgDataType<N>& data, int exclude=-1) {
         packetbuf p(MAXTRANS, data.info.flag);
         data.addmsg(p);

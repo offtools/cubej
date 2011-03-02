@@ -74,5 +74,8 @@
 #include "iengine.h"
 #include "igame.h"
 
+//__offtools__ : interface extensions
+#include "ext_igame.h"
+
 #endif
 

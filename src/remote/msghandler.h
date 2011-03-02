@@ -34,16 +34,16 @@ namespace CubeJRemote {
             MsgHandlerDispatcher();
             ~MsgHandlerDispatcher();
 
-            template <typename CubeJProtocol::MSG_TYPE N, typename T>
+            template <typename CubeJ::MSG_TYPE N, typename T>
             void addMessageHandler(T* obj, void(T::*func)(int sender, int channel, packetbuf& p)) {
                 handler[N] = new MsgHandler<T>(obj, func);
             }
 
-            void receive(CubeJProtocol::MSG_TYPE n, int sender, int channel, packetbuf& p);
+            void receive(CubeJ::MSG_TYPE n, int sender, int channel, packetbuf& p);
             void receive(int sender, int channel, packetbuf& p);
 
         private:
-            MsgFunctor* handler[CubeJProtocol::NUM_MESSAGES];
+            MsgFunctor* handler[CubeJ::NUM_MESSAGES];
 
 	};
 }

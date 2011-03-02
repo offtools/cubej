@@ -2,7 +2,7 @@
 #include "clientinfo.h"
 
 namespace CubeJSrv {
-	using namespace CubeJProtocol;
+	using namespace CubeJ;
 
     template <> void receiveMessage<MSG_ERROR_OVERFLOW>(int sender, int channel, packetbuf& p) { p.cleanup(); }
 

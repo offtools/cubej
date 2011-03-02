@@ -1,7 +1,7 @@
 #include "remoteclient.h"
 namespace CubeJRemote {
 
-    RemoteInterface::RemoteInterface() : peer(NULL), host(NULL), rate(25000), numchannels(CubeJProtocol::NUM_CHANNELS) {}
+    RemoteInterface::RemoteInterface() : peer(NULL), host(NULL), rate(25000), numchannels(CubeJ::NUM_CHANNELS) {}
 
     RemoteInterface::~RemoteInterface()
     {
@@ -31,7 +31,7 @@ namespace CubeJRemote {
     }
 
     void RemoteInterface::connectWithClient(int cn) {
-        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_REMOTE> data(cn);
+        CubeJ::MsgDataType<CubeJ::MSG_REQ_REMOTE> data(cn);
         SendMessage(data);
     }
 
@@ -86,20 +86,20 @@ namespace CubeJRemote {
 
 
     void RemoteInterface::RequestMapList() {
-        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_LISTMAPS> data;
+        CubeJ::MsgDataType<CubeJ::MSG_REQ_LISTMAPS> data;
         SendMessage(data);
     }
 
     void RemoteInterface::RequestClientInfoList() {}
 
     void RemoteInterface::RequestChangeScene(const char* path) {
-        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_CHANGESCENE> data(path);
+        CubeJ::MsgDataType<CubeJ::MSG_REQ_CHANGESCENE> data(path);
         SendMessage(data);
     }
 
     void RemoteInterface::SendCommand(const char *command) {
         std::cout << "RemoteInterface::SendCommand: " << command << std::endl;
-        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_FWD_RCIN> data(command);
+        CubeJ::MsgDataType<CubeJ::MSG_FWD_RCIN> data(command);
         SendMessage(data);
     }
 
@@ -107,7 +107,7 @@ namespace CubeJRemote {
         if(enet_initialize () < 0)
             return false;
 
-        CubeJProtocol::Init();
+        CubeJ::Init();
         return true;
     }
 }

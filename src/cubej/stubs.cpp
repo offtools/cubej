@@ -237,7 +237,7 @@ namespace server
 	}
 
     int numchannels() {
-    	return CubeJProtocol::NUM_CHANNELS;
+    	return CubeJ::NUM_CHANNELS;
 	}
 
     void processmasterinput(const char *cmd, int cmdlen, const char *args) {}

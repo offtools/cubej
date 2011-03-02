@@ -1,0 +1,13 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+datarootdir=${prefix}/share
+datadir=${datarootdir}
+includedir=${prefix}/include/libjuce-1.52
+
+Name: libjuce
+Description: Sample library created by Anjuta project wizard.
+Version: 1.52
+Requires: 
+Libs: -L${libdir} -ljuce
+Cflags: -I${includedir}

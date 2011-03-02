@@ -44,7 +44,7 @@ void NetworkDispatcher::handleData (int id, ConnectComponent* data) {
         case MSG_DISCOVER_REMOTE:
         {
             std::cout << "NetworkDispatcher::handleData - MSG_DISCOVER_REMOTE" << std::endl;
-            CubeJProtocol::MsgDataType<CubeJProtocol::MSG_DISCOVER_REMOTE> snd;
+            CubeJ::MsgDataType<CubeJ::MSG_DISCOVER_REMOTE> snd;
             SendMessage(snd);
             return;
         }

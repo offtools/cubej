@@ -7,7 +7,7 @@
 
 namespace CubeJ
 {
-	class Client : public CubeJProtocol::MsgHandler
+	class Client : public CubeJ::MsgHandler
 	{
 		public:
 			Client();
@@ -59,7 +59,7 @@ namespace CubeJ
 	Client & GetClient();
 	//Scene& GetScene();
 
-	template <CubeJProtocol::MSG_TYPE N> void receiveMessage(int sender, int channel, packetbuf& p) { p.cleanup(); }
+	template <CubeJ::MSG_TYPE N> void receiveMessage(int sender, int channel, packetbuf& p) { p.cleanup(); }
 }
 
 #endif // CUBEJ_CLIENT_H_INCLUDED

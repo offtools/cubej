@@ -20,7 +20,7 @@ namespace CubeJ
         if(!text || !*text)
             copystring(name, "unamed");
         else
-            copystring(name, text, CubeJProtocol::MAXNAMELEN+1);
+            copystring(name, text, CubeJ::MAXNAMELEN+1);
     }
 
     void ClientInfo::setClientnum(int cn) {

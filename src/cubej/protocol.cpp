@@ -1,6 +1,6 @@
 #include "protocol.h"
 
-namespace CubeJProtocol
+namespace CubeJ
 {
 
     ///TODO (__offtools__) this should be const
@@ -24,7 +24,7 @@ namespace CubeJProtocol
             receivehandler[n](sender, channel, p);
 	    }
 	    else {
-            conoutf("[DEBUG] CubeJProtocol::ReceiveMessage - Message Type or Message Handler \"%s\" not found", GetMsgTypeInfo(n).description);
+            conoutf("[DEBUG] CubeJ::ReceiveMessage - Message Type or Message Handler \"%s\" not found", GetMsgTypeInfo(n).description);
             receivehandler[MSG_ERROR_TAG](sender, channel, p);
 	    }
 	}

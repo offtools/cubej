@@ -86,7 +86,7 @@ class eqalSceneInfo : public std::unary_function<CubeJRemote::SceneInfo, bool> {
 };
 
 void SceneComponent::CallbackListScenes(int sender, int channel, packetbuf& p) {
-    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_FWD_LISTMAPS> data(p);
+    CubeJ::MsgDataType<CubeJ::MSG_FWD_LISTMAPS> data(p);
     std::vector<CubeJRemote::SceneInfo*>::iterator it;
     for(int i = 0; i < data.len; i++) {
         it = find_if(sceneinfo.begin(), sceneinfo.end(), eqalSceneInfo( data.listing[i] ) );
@@ -94,7 +94,6 @@ void SceneComponent::CallbackListScenes(int sender, int channel, packetbuf& p) {
             return;
         }
         else {
-            std::cout <<  "listing[" << i << "] " << data.listing[i] << std::endl;
             sceneinfo.push_back( new CubeJRemote::SceneInfo(data.listing[i]) );
         }
     }
@@ -102,7 +101,7 @@ void SceneComponent::CallbackListScenes(int sender, int channel, packetbuf& p) {
 }
 
 void SceneComponent::CallbackSceneInfo(int sender, int channel, packetbuf& p) {
-    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_SND_SCENEINFO> data(p);
+    CubeJ::MsgDataType<CubeJ::MSG_SND_SCENEINFO> data(p);
     std::vector<CubeJRemote::SceneInfo*>::iterator it;
     it = find_if(sceneinfo.begin(), sceneinfo.end(), eqalSceneInfo( data.mapname ) );
     if( it !=  sceneinfo.end() ) {

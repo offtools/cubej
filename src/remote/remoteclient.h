@@ -38,7 +38,7 @@ namespace CubeJRemote {
 
             void SendMessage(int channel, packetbuf& p);
 
-            template <CubeJProtocol::MSG_TYPE N> void SendMessage(CubeJProtocol::MsgDataType<N>& data) {
+            template <CubeJ::MSG_TYPE N> void SendMessage(CubeJ::MsgDataType<N>& data) {
                 packetbuf p(MAXTRANS, data.info.flag);
                 data.addmsg(p);
                 SendMessage(data.info.channel, p);

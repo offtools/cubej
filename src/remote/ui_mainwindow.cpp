@@ -31,14 +31,14 @@ MainComponent::MainComponent (MainWindow* mwin) : mainwindow(mwin), nethandle(ne
     scenes->addLoadListener(nethandle);
     console->addOnSendCommandListener(nethandle);
 
-    nethandle->addMessageHandler<CubeJProtocol::MSG_SND_SERVINFO, ConnectComponent>(clientlist, &ConnectComponent::CallbackSrvInfo);
-    nethandle->addMessageHandler<CubeJProtocol::MSG_SND_CLIENTINFO, ConnectComponent>(clientlist, &ConnectComponent::CallbackClientInfo);
-//    nethandler.addMessageHandler<CubeJProtocol::MSG_CDIS, MainComponent>(this, &MainComponent::CallbackCDis);
-//    nethandler.addMessageHandler<CubeJProtocol::MSG_SND_SCENESTATUS, MainComponent>(this, &MainComponent::CallbackSceneStatus);
-    nethandle->addMessageHandler<CubeJProtocol::MSG_ACK_REMOTE, MainComponent>(this, &MainComponent::CallbackAckRemote);
-    nethandle->addMessageHandler<CubeJProtocol::MSG_SND_SCENEINFO, SceneComponent>(scenes, &SceneComponent::CallbackSceneInfo);
-    nethandle->addMessageHandler<CubeJProtocol::MSG_FWD_LISTMAPS, SceneComponent>(scenes, &SceneComponent::CallbackListScenes);
-    nethandle->addMessageHandler<CubeJProtocol::MSG_FWD_RCOUT, Console>(console, &Console::onReceiveRCout);
+    nethandle->addMessageHandler<CubeJ::MSG_SND_SERVINFO, ConnectComponent>(clientlist, &ConnectComponent::CallbackSrvInfo);
+    nethandle->addMessageHandler<CubeJ::MSG_SND_CLIENTINFO, ConnectComponent>(clientlist, &ConnectComponent::CallbackClientInfo);
+//    nethandler.addMessageHandler<CubeJ::MSG_CDIS, MainComponent>(this, &MainComponent::CallbackCDis);
+//    nethandler.addMessageHandler<CubeJ::MSG_SND_SCENESTATUS, MainComponent>(this, &MainComponent::CallbackSceneStatus);
+    nethandle->addMessageHandler<CubeJ::MSG_ACK_REMOTE, MainComponent>(this, &MainComponent::CallbackAckRemote);
+    nethandle->addMessageHandler<CubeJ::MSG_SND_SCENEINFO, SceneComponent>(scenes, &SceneComponent::CallbackSceneInfo);
+    nethandle->addMessageHandler<CubeJ::MSG_FWD_LISTMAPS, SceneComponent>(scenes, &SceneComponent::CallbackListScenes);
+    nethandle->addMessageHandler<CubeJ::MSG_FWD_RCOUT, Console>(console, &Console::onReceiveRCout);
 }
 
 MainComponent::~MainComponent() {
@@ -142,7 +142,7 @@ bool MainComponent::perform (const InvocationInfo& info) {
 
 //void MainComponent::CallbackCDis(int sender, int channel, packetbuf& p) {
 //    int clientnum = getint(p);
-//    std::cout << "[DEBUG] MainComponent::receiveMessageCallback<CubeJProtocol::MSG_CDIS> clientnum: " << clientnum << std::endl;
+//    std::cout << "[DEBUG] MainComponent::receiveMessageCallback<CubeJ::MSG_CDIS> clientnum: " << clientnum << std::endl;
 //
 //}
 //
@@ -151,7 +151,7 @@ bool MainComponent::perform (const InvocationInfo& info) {
 //    conoutf("[DEBUG] MainComponent::receiveMessageCallback<MSG_SND_SCENESTATUS> hasscene: %d", hasscene);
 //
 //    //request list of maps
-//    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_LISTMAPS> data;
+//    CubeJ::MsgDataType<CubeJ::MSG_REQ_LISTMAPS> data;
 //    dispatcher.SendMessage(data);
 //}
 //
@@ -162,7 +162,7 @@ void MainComponent::CallbackAckRemote(int sender, int channel, packetbuf& p) {
 }
 
 //void MainComponent::CallbackSceneInfo(int sender, int channel, packetbuf& p) {
-////    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_SND_SCENEINFO> data(p);
+////    CubeJ::MsgDataType<CubeJ::MSG_SND_SCENEINFO> data(p);
 ////    dispatcher.GetSceneManager().setCurrentScene(data.mapname, data.worldsize, data.mapversion);
 //}
 //

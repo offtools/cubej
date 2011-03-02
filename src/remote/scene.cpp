@@ -71,14 +71,14 @@ namespace CubeJRemote {
 //
 //    void SceneMgr::loadScene(const char* name) {
 //        if( find(name) ) {
-//            CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_CHANGESCENE> data(name);
+//            CubeJ::MsgDataType<CubeJ::MSG_REQ_CHANGESCENE> data(name);
 //            maincomponent.dispatcher.SendMessage(data);
 //        }
 //    }
 //
 //    void SceneMgr::loadScene(unsigned int i) {
 //        if( i < scenes.size() ) {
-//            CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_CHANGESCENE> data(scenes[i]->getSceneName());
+//            CubeJ::MsgDataType<CubeJ::MSG_REQ_CHANGESCENE> data(scenes[i]->getSceneName());
 //            maincomponent.dispatcher.SendMessage(data);
 //        }
 //    }

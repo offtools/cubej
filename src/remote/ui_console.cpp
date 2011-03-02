@@ -71,7 +71,7 @@ void Console::addOnSendCommandListener(AppMessageCommandListener<Console> *liste
 }
 
 void Console::onReceiveRCout(int sender, int channel, packetbuf& p) {
-    CubeJProtocol::MsgDataType<CubeJProtocol::MSG_FWD_RCOUT> data(p);
+    CubeJ::MsgDataType<CubeJ::MSG_FWD_RCOUT> data(p);
     console->setCaretPosition (console->getText ().length ());
     String newline( data.line );
     console->insertTextAtCaret( newline + T("\n"));

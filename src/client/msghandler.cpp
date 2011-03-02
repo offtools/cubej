@@ -1,7 +1,7 @@
 #include "client.h"
 
 namespace CubeJ {
-	using namespace CubeJProtocol;
+	using namespace CubeJ;
 
     ///TODO: do not use p.cleanup, use subbuf instead
     template <> void receiveMessage<MSG_ERROR_OVERFLOW>(int sender, int channel, packetbuf& p) { p.cleanup(); }

@@ -68,7 +68,7 @@ namespace CubeJSrv {
 		hashset<SceneObject*> objects;
 	};
 
-	class Server : public CubeJProtocol::MsgHandler {
+	class Server : public CubeJ::MsgHandler {
 	public:
 		Server();
 		~Server();

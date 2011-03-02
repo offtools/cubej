@@ -56,15 +56,15 @@ namespace CubeJ
 	void Client::initConnect(int cn, int protocol)
 	{
 	    conoutf("Client::initConnect");
-		if(protocol!=CubeJProtocol::PROTOCOL_VERSION)
+		if(protocol!=CubeJ::PROTOCOL_VERSION)
 		{
-			conoutf(CON_ERROR, "you are using a different game protocol (you: %d, server: %d)", CubeJProtocol::PROTOCOL_VERSION, protocol);
+			conoutf(CON_ERROR, "you are using a different game protocol (you: %d, server: %d)", CubeJ::PROTOCOL_VERSION, protocol);
 			disconnect();
 			return;
 		}
 
 		self.clientnum = cn;
-        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_REQ_CONNECT> data(self.name);
+        CubeJ::MsgDataType<CubeJ::MSG_REQ_CONNECT> data(self.name);
         SendMessage(data);
     }
 
@@ -134,7 +134,7 @@ namespace CubeJ
 	void Client::parsePacket(int chan, packetbuf &p) {
         while(p.remaining())
         {
-            CubeJProtocol::MSG_TYPE type = (CubeJProtocol::MSG_TYPE)getint(p);
+            CubeJ::MSG_TYPE type = (CubeJ::MSG_TYPE)getint(p);
             receive(type, -1, chan, p);
         }
 	}
@@ -152,7 +152,7 @@ namespace CubeJ
         if(load_world(name)) {
             copystring(clientmap, name);
         }
-        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_SND_SCENEINFO> data(clientmap, getworldsize(), getmapversion());
+        CubeJ::MsgDataType<CubeJ::MSG_SND_SCENEINFO> data(clientmap, getworldsize(), getmapversion());
         SendMessage(data);
     }
 
@@ -160,13 +160,13 @@ namespace CubeJ
 		conoutf("[DEBUG] Client::connectRemoteInterface, clientnum: %d", n);
 		remoteclientnum = n;
 		clients.add(new ClientInfo (n, CLIENT_TYPE_REMOTE, NULL));
-        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_ACK_REMOTE> data(n);
+        CubeJ::MsgDataType<CubeJ::MSG_ACK_REMOTE> data(n);
         SendMessage(data);
 	}
 
     void Client::redirectcout(char *line) {
         if(!remote || remoteclientnum == -1) return;
-        CubeJProtocol::MsgDataType<CubeJProtocol::MSG_FWD_RCOUT> data(line);
+        CubeJ::MsgDataType<CubeJ::MSG_FWD_RCOUT> data(line);
         SendMessage(data);
     }
 

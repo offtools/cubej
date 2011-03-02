@@ -170,7 +170,7 @@ extern void renderentattachment(const extentity &e);
 extern void renderentsphere(const extentity &e, float radius);
 extern void renderentring(const extentity &e, float radius, int axis = 0);
 
-// main -> error (__offtools__)
+// __offtools__ : main -> error
 extern void fatal(const char *s, ...);
 extern void keyrepeat(bool on);
 

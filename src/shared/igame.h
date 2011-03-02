@@ -35,8 +35,6 @@ namespace game
     extern void edittoggled(bool on);
     extern void writeclientinfo(stream *f);
     extern void toserver(char *text);
-    //__offtools__: redirect console output to remote interface client
-    extern void redirectcout(char *line);
     extern void changemap(const char *name);
     extern void forceedit(const char *name);
     extern bool ispaused();

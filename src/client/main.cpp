@@ -596,7 +596,7 @@ int main(int argc, char **argv)
     game::parseoptions(gameargs);
     initserver(dedicated>0, dedicated>1);  // never returns if dedicated
     ASSERT(dedicated <= 1);
-	CubeJProtocol::Init();
+	CubeJ::Init();
     game::initclient();
 
     log("video: mode");
